@@ -4,8 +4,26 @@
 
 import { HORSES_PER_LEVEL, LEVEL_COUNT, MAX_STRIKES } from '../game/config.js';
 
-/** What the looked-at list calls each breed. */
+/** What the looked-at list calls each horse breed. */
 export const BREED_NAMES = { A: 'Friesian', B: 'Haflinger', C: 'Camarillo White' };
+
+/** What the looked-at list calls each non-horse. */
+export const KIND_NAMES = {
+  goat: 'Goat',
+  sheep: 'Sheep',
+  centaur: 'Centaur',
+  reverseCentaur: 'Reverse centaur',
+  robotHorse: 'Robot horse',
+  horseSuit: 'Horse suit',
+};
+
+/**
+ * The looked-at list's label for an animal: its breed for a horse, its kind otherwise.
+ * @param {{kind: import('../game/levels.js').AnimalKind, breed: import('../game/levels.js').Breed}} animal
+ */
+export function animalLabel(animal) {
+  return animal.kind === 'horse' ? BREED_NAMES[animal.breed] : KIND_NAMES[animal.kind];
+}
 
 /**
  * Format a zoom factor like a camera display: "×1.0", "×4.5", "×24".
@@ -33,6 +51,7 @@ export function createZoomReadout(el) {
 /**
  * @typedef {object} Chip
  * @property {number} id
+ * @property {import('../game/world.js').AnimalKind} kind
  * @property {import('../game/world.js').Breed} breed
  * @property {string} label
  * @property {boolean} horse
@@ -59,7 +78,14 @@ export function stripModel(play) {
   const chips = [];
   for (let i = play.lookedAt.length - 1; i >= 0; i--) {
     const a = byId.get(play.lookedAt[i]);
-    if (a) chips.push({ id: a.id, breed: a.breed, label: BREED_NAMES[a.breed], horse: true });
+    if (!a) continue;
+    chips.push({
+      id: a.id,
+      kind: a.kind,
+      breed: a.breed,
+      label: animalLabel(a),
+      horse: a.kind === 'horse',
+    });
   }
   const horses = Math.min(play.horsesThisLevel, HORSES_PER_LEVEL);
   const strikes = Math.min(play.nonHorsesTotal, MAX_STRIKES);
@@ -127,7 +153,7 @@ export function createStrip(root, sprites) {
 function chipElement(chip, sprites) {
   const li = document.createElement('li');
   li.className = chip.horse ? 'chip horse' : 'chip non-horse';
-  const icon = sprites.horses[chip.breed].near;
+  const icon = sprites.creatures[chip.kind][chip.breed].near;
   const canvas = document.createElement('canvas');
   canvas.width = icon.width;
   canvas.height = icon.height;

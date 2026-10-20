@@ -13,6 +13,7 @@ import {
   stepAnimals,
 } from '../src/game/world.js';
 import { createRng } from '../src/game/rng.js';
+import { LEVELS, levelRoster } from '../src/game/levels.js';
 import {
   ANIMAL_MIN_SPACING,
   BARN_COUNT,
@@ -23,7 +24,6 @@ import {
   LOOK_THRESHOLD_MIN,
   LOOK_THRESHOLD_PEAK,
   OAK_COUNT,
-  SANDBOX_HORSE_COUNT,
   WORLD_HEIGHT,
   WORLD_WIDTH,
 } from '../src/game/config.js';
@@ -50,7 +50,7 @@ function level(seed) {
   const rng = createRng(seed);
   const hills = generateHills(rng);
   const scenery = placeScenery(rng, hills);
-  const animals = spawnAnimals(rng, hills, scenery, SANDBOX_HORSE_COUNT, ['A', 'B', 'C']);
+  const animals = spawnAnimals(rng, hills, scenery, levelRoster(rng, LEVELS[2]));
   return { hills, scenery, animals };
 }
 
@@ -97,7 +97,7 @@ test('every scenery object is placed on a visible slope, inside the pasture, wit
 test('animals spawn spaced apart, on a visible slope and clear of scenery', () => {
   for (const seed of SEEDS) {
     const { hills, scenery, animals } = level(seed);
-    assert.equal(animals.length, SANDBOX_HORSE_COUNT, `seed ${seed}`);
+    assert.equal(animals.length, 80, `seed ${seed}`);
     for (const a of animals) {
       assert.ok(onVisibleSlope(hills, a, HORSE_WIDTH / 2), `seed ${seed}: animal ${a.id}`);
       assert.ok(!inSceneryFootprint(scenery, a.x, a.y));

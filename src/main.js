@@ -9,13 +9,13 @@ import {
   stepCamera,
   zoomFactor,
 } from './game/camera.js';
-import { TICK_HZ } from './game/config.js';
+import { LEVEL_COUNT, TICK_HZ } from './game/config.js';
 import { createPlay, stepPlay } from './game/play.js';
 import { createInput } from './input.js';
-import { HORSE } from './render/art/horse.js';
 import { renderPasture } from './render/renderer.js';
-import { createSpriteSet } from './render/sprites.js';
+import { HEAD_BOXES, createSpriteSet } from './render/sprites.js';
 import { createStrip, createZoomReadout } from './ui/hud.js';
+import { createCard } from './ui/screens.js';
 
 const STEP = 1 / TICK_HZ;
 /** Don't try to catch up more than this after a stall (e.g. a background tab). */
@@ -28,18 +28,21 @@ const readout = createZoomReadout(
 );
 const sprites = createSpriteSet();
 const strip = createStrip(/** @type {HTMLElement} */ (document.getElementById('strip')), sprites);
-/** Head boxes by animal kind, for the visible-head rule. */
-const HEAD_BOXES = { horse: HORSE.headBox };
+const card = createCard(/** @type {HTMLElement} */ (document.getElementById('card')));
 
-/** A `?seed=123` URL reproduces a pasture exactly; otherwise pick one at random. */
-function readSeed() {
-  const param = new URLSearchParams(location.search).get('seed');
-  const parsed = param === null ? NaN : Number.parseInt(param, 10);
-  return Number.isFinite(parsed) ? parsed >>> 0 : Math.floor(Math.random() * 2 ** 32);
+/** @param {string} name */
+function readIntParam(name) {
+  const param = new URLSearchParams(location.search).get(name);
+  return param === null ? NaN : Number.parseInt(param, 10);
 }
 
-const seed = readSeed();
-let play = createPlay(seed);
+/** A `?seed=123` URL reproduces a game exactly; otherwise pick one at random. */
+const parsedSeed = readIntParam('seed');
+const seed = Number.isFinite(parsedSeed) ? parsedSeed >>> 0 : Math.floor(Math.random() * 2 ** 32);
+/** `?level=2` starts at a later level, for playtesting and tests. */
+const parsedLevel = readIntParam('level');
+const startLevel = parsedLevel >= 1 && parsedLevel <= LEVEL_COUNT ? parsedLevel : 1;
+let play = createPlay(seed, startLevel);
 const input = createInput(canvas);
 let camera = createCamera(canvas.clientWidth, canvas.clientHeight);
 
@@ -58,7 +61,10 @@ function update() {
   for (const w of frame.wheels) camera = applyWheel(camera, w.deltaY, w.x, w.y);
   if (frame.dragX || frame.dragY) camera = applyDrag(camera, frame.dragX, frame.dragY);
   camera = stepCamera(camera, STEP);
+  const level = play.level;
   play = stepPlay(play, camera, HEAD_BOXES, STEP);
+  // A new level starts with the whole pasture in view.
+  if (play.level !== level) camera = createCamera(camera.viewWidth, camera.viewHeight);
 }
 
 let last = performance.now();
@@ -75,6 +81,7 @@ function frame(now) {
   renderPasture(ctx, camera, play, seed, sprites);
   readout.update(zoomFactor(camera));
   strip.update(play);
+  card.update(play);
   requestAnimationFrame(frame);
 }
 

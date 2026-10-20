@@ -64,11 +64,6 @@ export const BARN_COUNT = 3;
 export const OAK_COUNT = 6;
 export const DATACENTER_COUNT = 1;
 
-/**
- * Horses spawned until milestone 5 brings the level table: all three breeds, no look-alikes.
- */
-export const SANDBOX_HORSE_COUNT = 30;
-
 /** Closest two animals may spawn, center to center, in world units. (tune) */
 export const ANIMAL_MIN_SPACING = 36;
 
@@ -116,3 +111,6 @@ export const LEVEL_COUNT = 3;
 
 /** Non-horses that end the game. Rule from DESIGN.md. */
 export const MAX_STRIKES = 5;
+
+/** Seconds the "Level n complete" card shows before the next level. (tune) */
+export const LEVEL_CARD_S = 2.5;

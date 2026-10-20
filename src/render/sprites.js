@@ -18,12 +18,22 @@ import {
 import { drawBarn } from './art/barn.js';
 import { drawDatacenter } from './art/datacenter.js';
 import { HORSE } from './art/horse.js';
+import {
+  CENTAUR,
+  GOAT,
+  HORSE_SUIT,
+  REVERSE_CENTAUR,
+  ROBOT_HORSE,
+  SHEEP,
+} from './art/lookalikes.js';
 import { drawOak } from './art/oak.js';
 import {
   BARN_PALETTE,
   BREED_PALETTES,
   DATACENTER_PALETTE,
+  LOOKALIKE_KEYS,
   MARKER_HORSE,
+  MARKER_NON_HORSE,
   OAK_PALETTE,
 } from './palette.js';
 
@@ -31,7 +41,8 @@ import {
  * @typedef {'dot' | 'far' | 'mid' | 'near'} Tier
  * @typedef {'far' | 'mid' | 'near'} GridTier
  * @typedef {'barn' | 'oak' | 'datacenter'} SceneryKind
- * @typedef {'A' | 'B' | 'C'} Breed
+ * @typedef {import('../game/levels.js').Breed} Breed
+ * @typedef {import('../game/levels.js').AnimalKind} AnimalKind
  */
 
 /**
@@ -42,6 +53,34 @@ import {
  * @property {string[]} near
  * @property {{x: number, y: number, w: number, h: number}} headBox fractions of the sprite box
  */
+
+/** Every creature's art. Look-alikes are placeholders until milestone 8. */
+/** @type {Record<AnimalKind, CreatureArt>} */
+export const CREATURES = {
+  horse: HORSE,
+  goat: GOAT,
+  sheep: SHEEP,
+  centaur: CENTAUR,
+  reverseCentaur: REVERSE_CENTAUR,
+  robotHorse: ROBOT_HORSE,
+  horseSuit: HORSE_SUIT,
+};
+
+/** @type {AnimalKind[]} */
+export const ANIMAL_KINDS = /** @type {AnimalKind[]} */ (Object.keys(CREATURES));
+
+/** Head boxes by kind, for the visible-head rule. */
+export const HEAD_BOXES = /** @type {Record<AnimalKind, CreatureArt['headBox']>} */ (
+  Object.fromEntries(ANIMAL_KINDS.map((k) => [k, CREATURES[k].headBox]))
+);
+
+/**
+ * Colors for a creature in a breed's coat: the breed palette plus the look-alikes' extra keys.
+ * @param {Breed} breed
+ */
+export function creaturePalette(breed) {
+  return { ...BREED_PALETTES[breed], ...LOOKALIKE_KEYS };
+}
 
 /** Grid pixels per world unit at each tier. Every sprite at a tier shares this density. */
 export const TIER_DENSITY = { far: 0.5, mid: 1, near: 2 };
@@ -107,10 +146,10 @@ export function validateGrid(rows, width, height, palette) {
 /**
  * @typedef {HTMLCanvasElement | OffscreenCanvas} SpriteImage
  * @typedef {object} SpriteSet
- * @property {Record<Breed, Record<GridTier, SpriteImage>>} horses
+ * @property {Record<AnimalKind, Record<Breed, Record<GridTier, SpriteImage>>>} creatures
  * @property {Record<SceneryKind, Record<GridTier, SpriteImage>>} scenery
- * @property {Record<GridTier, SpriteImage>} horseMarker looked-at outline, one grid pixel bigger
- *   than the horse sprite on every side
+ * @property {Record<AnimalKind, Record<GridTier, SpriteImage>>} markers looked-at outlines, one
+ *   grid pixel bigger than the sprite on every side: blue for horses, red for everything else
  */
 
 /**
@@ -173,8 +212,27 @@ export function gridToCanvas(rows, palette) {
 export function createSpriteSet() {
   /** @param {(tier: GridTier) => SpriteImage} make */
   const perTier = (make) => ({ far: make('far'), mid: make('mid'), near: make('near') });
-  /** @param {Breed} breed */
-  const horse = (breed) => perTier((tier) => gridToCanvas(HORSE[tier], BREED_PALETTES[breed]));
+  /** @param {AnimalKind} kind */
+  const creature = (kind) => {
+    /** @param {Breed} breed */
+    const coat = (breed) =>
+      perTier((tier) => gridToCanvas(CREATURES[kind][tier], creaturePalette(breed)));
+    return { A: coat('A'), B: coat('B'), C: coat('C') };
+  };
+  /** @param {AnimalKind} kind */
+  const marker = (kind) => {
+    const color = markerColor(kind);
+    return perTier((tier) => gridToCanvas(outlineGrid(CREATURES[kind][tier]), { x: color }));
+  };
+  /**
+   * @template T
+   * @param {(kind: AnimalKind) => T} make
+   * @returns {Record<AnimalKind, T>}
+   */
+  const perKind = (make) =>
+    /** @type {Record<AnimalKind, T>} */ (
+      Object.fromEntries(ANIMAL_KINDS.map((k) => [k, make(k)]))
+    );
   /** @param {SceneryKind} kind */
   const scenery = (kind) =>
     perTier((tier) => {
@@ -183,55 +241,65 @@ export function createSpriteSet() {
       return gridToCanvas(s.draw(width, height), s.palette);
     });
   return {
-    horses: { A: horse('A'), B: horse('B'), C: horse('C') },
+    creatures: perKind(creature),
     scenery: { barn: scenery('barn'), oak: scenery('oak'), datacenter: scenery('datacenter') },
-    horseMarker: perTier((tier) => gridToCanvas(outlineGrid(HORSE[tier]), { x: MARKER_HORSE })),
+    markers: perKind(marker),
   };
 }
 
 /**
- * Draw a horse standing at world (x, y), its feet at the bottom center of the sprite. A looked-at
- * horse gets its marker: an outline traced around the sprite, or a ring around the dot.
+ * Looked-at marker color: blue for horses, red for non-horses.
+ * @param {AnimalKind} kind
+ */
+export function markerColor(kind) {
+  return kind === 'horse' ? MARKER_HORSE : MARKER_NON_HORSE;
+}
+
+/**
+ * Draw an animal standing at world (x, y), its feet at the bottom center of the sprite. A
+ * looked-at animal gets its marker: an outline traced around the sprite, or a ring around the dot.
  * @param {CanvasRenderingContext2D} ctx
  * @param {import('../game/camera.js').Camera} cam
  * @param {SpriteSet} sprites
- * @param {{x: number, y: number, breed: Breed, facing: 1 | -1, lookedAt?: boolean}} horse
+ * @param {{kind: AnimalKind, x: number, y: number, breed: Breed, facing: 1 | -1, lookedAt?: boolean}} animal
  */
-export function drawHorse(ctx, cam, sprites, horse) {
+export function drawAnimal(ctx, cam, sprites, animal) {
   const tier = spriteTier(cam.zoom);
   if (tier === 'dot') {
     // Too small for a sprite: a blob of coat color, body-shaped.
-    const p = worldToScreen(cam, horse.x, horse.y - HORSE_HEIGHT * 0.55);
+    const p = worldToScreen(cam, animal.x, animal.y - HORSE_HEIGHT * 0.55);
     const w = Math.max(1, Math.round(HORSE_WIDTH * cam.zoom * 0.8));
     const h = Math.max(1, Math.round(HORSE_HEIGHT * cam.zoom * 0.45));
-    ctx.fillStyle = BREED_PALETTES[horse.breed].B;
+    ctx.fillStyle = BREED_PALETTES[animal.breed].B;
     ctx.fillRect(Math.round(p.x - w / 2), Math.round(p.y - h / 2), w, h);
-    if (horse.lookedAt) drawRing(ctx, p.x, p.y, Math.max(DOT_RING_MIN_PX, w), MARKER_HORSE);
+    if (animal.lookedAt) {
+      drawRing(ctx, p.x, p.y, Math.max(DOT_RING_MIN_PX, w), markerColor(animal.kind));
+    }
     return;
   }
-  if (horse.lookedAt) {
+  if (animal.lookedAt) {
     // The outline grid has one extra grid pixel on each side.
     const pad = 1 / TIER_DENSITY[tier];
     drawImageAt(
       ctx,
       cam,
-      sprites.horseMarker[tier],
-      horse.x,
-      horse.y + pad,
+      sprites.markers[animal.kind][tier],
+      animal.x,
+      animal.y + pad,
       HORSE_WIDTH + 2 * pad,
       HORSE_HEIGHT + 2 * pad,
-      horse.facing,
+      animal.facing,
     );
   }
   drawImageAt(
     ctx,
     cam,
-    sprites.horses[horse.breed][tier],
-    horse.x,
-    horse.y,
+    sprites.creatures[animal.kind][animal.breed][tier],
+    animal.x,
+    animal.y,
     HORSE_WIDTH,
     HORSE_HEIGHT,
-    horse.facing,
+    animal.facing,
   );
 }
 
