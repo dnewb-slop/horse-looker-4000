@@ -19,7 +19,7 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 - [x] **5. Rules and levels:** level table (replacing milestone 4's sandbox of 30 horses), look-alike placeholders as plain shapes, strikes, level-complete card.
 - [ ] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
 - [ ] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
-- [ ] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier.
+- [ ] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier. Goats, sheep and centaurs were settled during milestone 5; for each remaining creature, Claude shows a few alternatives beside the reference horse and the owner picks and refines.
 - [ ] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. Comes after the full game is playable, so it can't delay it; a static frame is the fallback. **Play it:** does the pasture feel alive?
 - [ ] **10. Music:** Claude shortlists licensed, calming tracks for each level; the owner picks by ear; then Claude adds playback, crossfades, the mute button and credits. **Play it:** does each level sound right?
 - [ ] **11. Tuning pass:** adjust every _(tune)_ value from playtest notes. **Play it:** MVP done.
