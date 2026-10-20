@@ -20,7 +20,9 @@ import { drawDatacenter } from './art/datacenter.js';
 import { HORSE } from './art/horse.js';
 import { CENTAUR } from './art/centaur.js';
 import { GOAT } from './art/goat.js';
-import { HORSE_SUIT, REVERSE_CENTAUR, ROBOT_HORSE } from './art/lookalikes.js';
+import { HORSE_SUIT } from './art/horse-suit.js';
+import { REVERSE_CENTAUR } from './art/reverse-centaur.js';
+import { ROBOT_HORSE } from './art/robot-horse.js';
 import { SHEEP } from './art/sheep.js';
 import { drawOak } from './art/oak.js';
 import {
@@ -50,7 +52,7 @@ import {
  * @property {{x: number, y: number, w: number, h: number}} headBox fractions of the sprite box
  */
 
-/** Every creature's art. Some look-alikes are placeholders until milestone 8. */
+/** Every creature's art. */
 /** @type {Record<AnimalKind, CreatureArt>} */
 export const CREATURES = {
   horse: HORSE,
