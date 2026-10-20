@@ -12,7 +12,7 @@ export const WORLD_HEIGHT = 2500;
 /**
  * Deepest zoom, as a multiple of the zoom that fits the whole pasture on screen. (tune)
  * 64 makes a horse a ~5 px dot at ×1 and ~40% of an 800 px tall view at the maximum, so the
- * 15–30% look threshold is reachable.
+ * look threshold is reachable.
  */
 export const MAX_ZOOM_FACTOR = 64;
 
@@ -58,3 +58,61 @@ export const DATACENTER_HEIGHT = 70;
 export const DOT_MAX_PX = 8;
 export const FAR_MAX_PX = 32;
 export const MID_MAX_PX = 128;
+
+/** Scenery per level. (tune) */
+export const BARN_COUNT = 3;
+export const OAK_COUNT = 6;
+export const DATACENTER_COUNT = 1;
+
+/**
+ * Horses spawned until milestone 5 brings the level table: all three breeds, no look-alikes.
+ */
+export const SANDBOX_HORSE_COUNT = 30;
+
+/** Closest two animals may spawn, center to center, in world units. (tune) */
+export const ANIMAL_MIN_SPACING = 36;
+
+/**
+ * How far an animal's feet stay from the ridge above (its own hill's crest) and below (the next
+ * hill's crest, which would hide it), in world units. Keeps every animal fully visible until
+ * milestone 7 adds valleys.
+ */
+export const SLOPE_MARGIN_TOP = 4;
+export const SLOPE_MARGIN_BOTTOM = 2;
+
+/**
+ * Depth of the ground strip at a scenery object's base that animals don't walk through, in world
+ * units. Animals pass behind scenery (further up the slope) or in front of it, never through it.
+ */
+export const SCENERY_FOOTPRINT_DEPTH = 10;
+
+/** Grazing: seconds an animal stands still between walks. (tune) */
+export const GRAZE_IDLE_MIN_S = 2;
+export const GRAZE_IDLE_MAX_S = 7;
+
+/** Grazing: how far one walk goes, in world units, and how fast. (tune) */
+export const GRAZE_WALK_MIN = 10;
+export const GRAZE_WALK_MAX = 60;
+export const GRAZE_WALK_SPEED = 8;
+
+/** Walks are mostly sideways: up-or-down-slope movement is scaled by this. (tune) */
+export const GRAZE_DEPTH_SCALE = 0.4;
+
+/**
+ * Look threshold: how tall an animal must be on screen, as a fraction of the viewport height.
+ * Each animal draws its own from a triangular distribution with this range and peak. (tune)
+ */
+export const LOOK_THRESHOLD_MIN = 0.08;
+export const LOOK_THRESHOLD_PEAK = 0.1;
+export const LOOK_THRESHOLD_MAX = 0.15;
+
+/** Seconds of qualifying view to fill a look meter, and how much faster it drains. (tune) */
+export const LOOK_FILL_S = 0.5;
+export const LOOK_DRAIN_MULTIPLIER = 2;
+
+/** Horses to look at to finish a level, and levels to win. Rules from DESIGN.md. */
+export const HORSES_PER_LEVEL = 10;
+export const LEVEL_COUNT = 3;
+
+/** Non-horses that end the game. Rule from DESIGN.md. */
+export const MAX_STRIKES = 5;

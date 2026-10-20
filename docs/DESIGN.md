@@ -41,7 +41,7 @@ The game displays rolling fields of grass from a great distance, as if the playe
 Once the player has zoomed in far enough on an animal, it becomes "looked at":
 
 - Each animal has its own zoom threshold, so some are looked at sooner than others.
-- A look meter above the animal fills over about a second while the player stays zoomed in. Zooming out before it fills drains it, which gives the player a moment to notice a goat and back off.
+- A look meter above the animal fills over about half a second while the player stays zoomed in. Zooming out before it fills drains it, which gives the player a brief moment to notice a goat and back off. Looks start at middling zoom, before the animal fills the screen, so the player has to decide quickly whether it's a horse.
 - Every animal on screen that meets its threshold fills its own meter, not just the one under the cursor.
 - An animal only counts if its head is visible. A horse whose head is hidden behind a barn can't be looked at.
 

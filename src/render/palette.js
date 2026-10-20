@@ -88,3 +88,10 @@ export const DATACENTER_PALETTE = {
   U: '#8e959e',
   A: '#4fa3e0',
 };
+
+/** Looked-at marker for horses: blue, not green, so it stands out from the grass. */
+export const MARKER_HORSE = '#2f8cff';
+
+/** Look meter: neutral white, so it doesn't give away what the animal is. */
+export const LOOK_METER = '#ffffff';
+export const LOOK_METER_BACK = 'rgba(0, 0, 0, 0.55)';

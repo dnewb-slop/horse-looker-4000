@@ -10,11 +10,12 @@ import {
   zoomFactor,
 } from './game/camera.js';
 import { TICK_HZ } from './game/config.js';
-import { createRng } from './game/rng.js';
-import { generateHills } from './game/world.js';
+import { createPlay, stepPlay } from './game/play.js';
 import { createInput } from './input.js';
+import { HORSE } from './render/art/horse.js';
 import { renderPasture } from './render/renderer.js';
-import { createZoomReadout } from './ui/hud.js';
+import { createSpriteSet } from './render/sprites.js';
+import { createStrip, createZoomReadout } from './ui/hud.js';
 
 const STEP = 1 / TICK_HZ;
 /** Don't try to catch up more than this after a stall (e.g. a background tab). */
@@ -25,6 +26,10 @@ const ctx = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
 const readout = createZoomReadout(
   /** @type {HTMLElement} */ (document.getElementById('zoom-readout')),
 );
+const sprites = createSpriteSet();
+const strip = createStrip(/** @type {HTMLElement} */ (document.getElementById('strip')), sprites);
+/** Head boxes by animal kind, for the visible-head rule. */
+const HEAD_BOXES = { horse: HORSE.headBox };
 
 /** A `?seed=123` URL reproduces a pasture exactly; otherwise pick one at random. */
 function readSeed() {
@@ -34,7 +39,7 @@ function readSeed() {
 }
 
 const seed = readSeed();
-const hills = generateHills(createRng(seed));
+let play = createPlay(seed);
 const input = createInput(canvas);
 let camera = createCamera(canvas.clientWidth, canvas.clientHeight);
 
@@ -53,6 +58,7 @@ function update() {
   for (const w of frame.wheels) camera = applyWheel(camera, w.deltaY, w.x, w.y);
   if (frame.dragX || frame.dragY) camera = applyDrag(camera, frame.dragX, frame.dragY);
   camera = stepCamera(camera, STEP);
+  play = stepPlay(play, camera, HEAD_BOXES, STEP);
 }
 
 let last = performance.now();
@@ -66,8 +72,9 @@ function frame(now) {
     update();
     accumulator -= STEP;
   }
-  renderPasture(ctx, camera, hills, seed);
+  renderPasture(ctx, camera, play, seed, sprites);
   readout.update(zoomFactor(camera));
+  strip.update(play);
   requestAnimationFrame(frame);
 }
 
@@ -81,6 +88,9 @@ Object.defineProperty(window, '__horseLooker', {
     seed,
     get camera() {
       return camera;
+    },
+    get play() {
+      return play;
     },
   }),
 });
