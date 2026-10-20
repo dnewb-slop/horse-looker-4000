@@ -2,7 +2,7 @@
 // The opening sequence (DESIGN.md): three lines, each fading in, holding and fading out on black.
 // A click skips to the next line. Pure: the play state carries which line and how far into it.
 
-import { INTRO_FADE_S, INTRO_HOLD_S } from './config.js';
+import { INTRO_FADE_S, INTRO_HOLDS_S } from './config.js';
 
 /** The opening lines, verbatim from DESIGN.md. */
 export const INTRO_LINES = [
@@ -11,8 +11,13 @@ export const INTRO_LINES = [
   "It's you. The Horse Looker.",
 ];
 
-/** Seconds each line is on screen: fade in, hold, fade out. */
-export const INTRO_LINE_S = INTRO_FADE_S * 2 + INTRO_HOLD_S;
+/**
+ * Seconds a line is on screen: fade in, hold, fade out.
+ * @param {number} line
+ */
+export function introLineSeconds(line) {
+  return INTRO_FADE_S * 2 + INTRO_HOLDS_S[line];
+}
 
 /**
  * Advance the intro by dt seconds and any clicks. Returns null once the last line is done.
@@ -28,9 +33,10 @@ export function stepIntro(intro, dt, clicks) {
     time = 0;
   } else {
     time += dt;
-    if (time >= INTRO_LINE_S) {
+    if (time >= introLineSeconds(line)) {
+      // Carry the leftover into the next line, so the intro's length doesn't drift with ticks.
+      time -= introLineSeconds(line);
       line += 1;
-      time = 0;
     }
   }
   return line >= INTRO_LINES.length ? null : { line, time };
@@ -42,10 +48,9 @@ export function stepIntro(intro, dt, clicks) {
  */
 export function introView(intro) {
   const { time } = intro;
+  const fadeOutAt = INTRO_FADE_S + INTRO_HOLDS_S[intro.line];
   let opacity = 1;
   if (time < INTRO_FADE_S) opacity = time / INTRO_FADE_S;
-  else if (time > INTRO_FADE_S + INTRO_HOLD_S) {
-    opacity = Math.max(0, 1 - (time - INTRO_FADE_S - INTRO_HOLD_S) / INTRO_FADE_S);
-  }
+  else if (time > fadeOutAt) opacity = Math.max(0, 1 - (time - fadeOutAt) / INTRO_FADE_S);
   return { text: INTRO_LINES[intro.line], opacity };
 }

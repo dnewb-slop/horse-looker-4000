@@ -1,9 +1,9 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { INTRO_FADE_S, INTRO_HOLD_S } from '../src/game/config.js';
-import { INTRO_LINES, INTRO_LINE_S, introView, stepIntro } from '../src/game/intro.js';
-import { createPlay, stepPlay } from '../src/game/play.js';
+import { INTRO_FADE_S, INTRO_HOLDS_S } from '../src/game/config.js';
+import { INTRO_LINES, introLineSeconds, introView, stepIntro } from '../src/game/intro.js';
+import { createEndPreview, createPlay, stepPlay } from '../src/game/play.js';
 import { createCamera } from '../src/game/camera.js';
 import { HEAD_BOXES } from '../src/render/sprites.js';
 import { LOSE_TEXT, WIN_TEXT, endModel } from '../src/ui/screens.js';
@@ -22,8 +22,10 @@ test('the opening lines match DESIGN.md', () => {
 test('each intro line fades in, holds, then fades out', () => {
   assert.equal(introView({ line: 0, time: 0 }).opacity, 0);
   assert.ok(Math.abs(introView({ line: 0, time: INTRO_FADE_S / 2 }).opacity - 0.5) < 1e-9);
-  assert.equal(introView({ line: 0, time: INTRO_FADE_S + INTRO_HOLD_S / 2 }).opacity, 1);
-  assert.ok(introView({ line: 0, time: INTRO_LINE_S - 1e-6 }).opacity < 0.01);
+  assert.equal(introView({ line: 0, time: INTRO_FADE_S + INTRO_HOLDS_S[0] / 2 }).opacity, 1);
+  assert.ok(introView({ line: 0, time: introLineSeconds(0) - 1e-6 }).opacity < 0.01);
+  // The middle line holds longer, so it is still fully shown when the first would be fading.
+  assert.equal(introView({ line: 1, time: introLineSeconds(0) - 0.1 }).opacity, 1);
   assert.equal(introView({ line: 1, time: 1 }).text, INTRO_LINES[1]);
 });
 
@@ -38,7 +40,14 @@ test('the intro plays its lines in order, then ends', () => {
     ticks++;
   }
   assert.deepEqual([...seen], [0, 1, 2]);
-  assert.ok(Math.abs(ticks * DT - INTRO_LINES.length * INTRO_LINE_S) < 0.05);
+  const total = INTRO_LINES.reduce((sum, _, i) => sum + introLineSeconds(i), 0);
+  assert.ok(Math.abs(ticks * DT - total) < 0.05);
+});
+
+test('the first line is the quickest; the middle and last lines hold longer', () => {
+  assert.equal(INTRO_HOLDS_S.length, INTRO_LINES.length);
+  assert.ok(INTRO_HOLDS_S[0] < INTRO_HOLDS_S[1]);
+  assert.ok(INTRO_HOLDS_S[0] < INTRO_HOLDS_S[2]);
 });
 
 test('a click skips to the next line; a click on the last line ends the intro', () => {
@@ -93,4 +102,16 @@ test('the win screen shows the DESIGN.md line', () => {
   const model = endModel({ ...createPlay(5, 3), phase: 'won' });
   assert.equal(model.title, WIN_TEXT);
   assert.equal(WIN_TEXT, "That's some damn fine horse looking!");
+});
+
+test('end-screen previews are lost or won games with a sample log', () => {
+  const lost = createEndPreview(5, 'lost');
+  assert.equal(lost.phase, 'lost');
+  assert.equal(lost.nonHorsesTotal, 5);
+  assert.equal(endModel(lost).chips.length, 8);
+  const won = createEndPreview(5, 'won');
+  assert.equal(won.phase, 'won');
+  assert.equal(won.level, 3);
+  // A finished game stays finished.
+  assert.equal(stepPlay(lost, CAMERA, HEAD_BOXES, DT).phase, 'lost');
 });

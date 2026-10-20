@@ -10,7 +10,7 @@ import {
   zoomFactor,
 } from './game/camera.js';
 import { LEVEL_COUNT, TICK_HZ } from './game/config.js';
-import { createPlay, stepPlay } from './game/play.js';
+import { createEndPreview, createPlay, stepPlay } from './game/play.js';
 import { createInput } from './input.js';
 import { renderPasture } from './render/renderer.js';
 import { HEAD_BOXES, createSpriteSet } from './render/sprites.js';
@@ -59,7 +59,13 @@ const parsedLevel = readIntParam('level');
 const startLevel = parsedLevel >= 1 && parsedLevel <= LEVEL_COUNT ? parsedLevel : 1;
 /** `?intro=off` skips the opening sequence, for tests. */
 const showIntro = startLevel === 1 && new URLSearchParams(location.search).get('intro') !== 'off';
-let play = createPlay(newSeed(), startLevel, { intro: showIntro });
+/** `?screen=win` or `?screen=lose` opens straight on an end screen, for testing them. */
+const endScreen = { win: 'won', lose: 'lost' }[
+  new URLSearchParams(location.search).get('screen') ?? ''
+];
+let play = endScreen
+  ? createEndPreview(newSeed(), /** @type {'won' | 'lost'} */ (endScreen))
+  : createPlay(newSeed(), startLevel, { intro: showIntro });
 const input = createInput(canvas);
 let camera = createCamera(canvas.clientWidth, canvas.clientHeight);
 

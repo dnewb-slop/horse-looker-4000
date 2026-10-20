@@ -44,3 +44,13 @@ test('five imposters lose the game, and "Horse again" starts over at level 1', a
   await expect(page.locator('#strip')).toContainText('Imposters 0/5');
   await expect(page.locator('#zoom-readout')).toHaveText('×1.0');
 });
+
+test('?screen=win and ?screen=lose open straight on the end screens', async ({ page }) => {
+  await page.goto('/?seed=4000&screen=win');
+  await expect(page.locator('#screen')).toContainText("That's some damn fine horse looking!");
+  await page.goto('/?seed=4000&screen=lose');
+  await expect(page.locator('#screen')).toContainText('Sorry kid');
+  await expect(page.locator('#screen .chip')).toHaveCount(8);
+  await page.getByRole('button', { name: 'Horse again' }).click();
+  await expect.poll(() => phase(page)).toBe('playing');
+});

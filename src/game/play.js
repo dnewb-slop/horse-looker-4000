@@ -2,7 +2,7 @@
 // The game in progress: the current level's pasture, what the player has looked at, and the
 // phase (intro, playing, level complete, won or lost).
 
-import { LEVEL_CARD_S } from './config.js';
+import { LEVEL_CARD_S, MAX_STRIKES } from './config.js';
 import { stepLooks } from './detect.js';
 import { stepIntro } from './intro.js';
 import { LEVELS, levelRoster, levelSeed } from './levels.js';
@@ -43,6 +43,28 @@ export function createPlay(seed, level = 1, { intro = false } = {}) {
     nonHorsesTotal: 0,
     log: [],
     ...createLevel(seed, level),
+  };
+}
+
+/**
+ * A game already won or lost, with a sample of looks in its log, so the end screens can be
+ * checked without playing a whole game (`?screen=win` or `?screen=lose`).
+ * @param {number} seed
+ * @param {'won' | 'lost'} outcome
+ * @returns {Play}
+ */
+export function createEndPreview(seed, outcome) {
+  const level = outcome === 'won' ? LEVELS.length : 2;
+  const play = createPlay(seed, level);
+  const horses = play.animals.filter((a) => a.kind === 'horse').slice(0, 7);
+  const others = play.animals.filter((a) => a.kind !== 'horse').slice(0, MAX_STRIKES);
+  const looked = outcome === 'won' ? horses : [...horses.slice(0, 3), ...others];
+  const log = looked.map((a) => ({ kind: a.kind, breed: a.breed }));
+  return {
+    ...play,
+    phase: outcome,
+    log,
+    nonHorsesTotal: log.filter((e) => e.kind !== 'horse').length,
   };
 }
 
