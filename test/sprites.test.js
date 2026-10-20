@@ -8,6 +8,7 @@ import {
   creaturePalette,
   gridSize,
   outlineGrid,
+  poseGrid,
   spriteTier,
   validateGrid,
 } from '../src/render/sprites.js';
@@ -106,6 +107,67 @@ test('the reverse centaur wears the horse’s own head', () => {
   for (let gy = Math.floor(y * rows); gy < Math.ceil((y + h) * rows) - 3; gy++) {
     const span = [Math.ceil((x + 0.05) * cols), Math.floor((x + w) * cols)];
     assert.equal(near[gy].slice(...span), HORSE.near[gy].slice(...span), `row ${gy}`);
+  }
+});
+
+test('every creature’s walk and graze frames have the right size and only palette keys', () => {
+  for (const [kind, art] of Object.entries(CREATURES)) {
+    for (const pose of /** @type {const} */ (['walk', 'graze'])) {
+      for (const tier of /** @type {const} */ (['mid', 'near'])) {
+        const { width, height } = gridSize(HORSE_WIDTH, HORSE_HEIGHT, tier);
+        const rows = poseGrid(art, pose, tier);
+        assert.deepEqual(validateGrid(rows, width, height, creaturePalette('A')), [], `${kind}`);
+        assert.notDeepEqual(rows, art[tier], `${kind} ${pose} ${tier} is the standing frame`);
+      }
+    }
+  }
+});
+
+test('walk frames only move the legs', () => {
+  for (const [kind, art] of Object.entries(CREATURES)) {
+    for (const tier of /** @type {const} */ (['mid', 'near'])) {
+      const legTop = Math.floor(art.walk.legTop * (tier === 'mid' ? 1 : 2));
+      const walk = poseGrid(art, 'walk', tier);
+      assert.deepEqual(walk.slice(0, legTop), art[tier].slice(0, legTop), `${kind} ${tier}`);
+    }
+  }
+});
+
+test('Far has no walk or graze frame', () => {
+  for (const art of Object.values(CREATURES)) {
+    for (const pose of /** @type {const} */ (['walk', 'graze'])) {
+      assert.equal(poseGrid(art, pose, 'far'), art.far);
+    }
+  }
+});
+
+test('every graze head box sits inside the sprite and covers head pixels', () => {
+  for (const [kind, art] of Object.entries(CREATURES)) {
+    const { x, y, w, h } = art.graze.headBox;
+    assert.ok(x >= 0 && y >= 0 && x + w <= 1 && y + h <= 1, kind);
+    const near = art.graze.near;
+    let filled = 0;
+    for (let gy = Math.floor(y * near.length); gy < Math.ceil((y + h) * near.length); gy++) {
+      for (
+        let gx = Math.floor(x * near[0].length);
+        gx < Math.ceil((x + w) * near[0].length);
+        gx++
+      ) {
+        if (near[gy][gx] !== '.' && near[gy][gx] !== 'o') filled++;
+      }
+    }
+    assert.ok(filled > 15, `${kind}: graze head box covers only ${filled} head pixels`);
+  }
+});
+
+test('a grazing horse’s head is lower than a standing one’s, its muzzle in the grass', () => {
+  assert.ok(HORSE.graze.headBox.y > HORSE.headBox.y + HORSE.headBox.h / 2);
+  for (const tier of /** @type {const} */ (['mid', 'near'])) {
+    const rows = HORSE.graze[tier];
+    const front = Math.floor(rows[0].length * 0.8);
+    // Head pixels in the bottom two rows, in front of the front legs.
+    const low = rows.slice(-2).some((row) => /[^.]/.test(row.slice(front)));
+    assert.ok(low, tier);
   }
 });
 

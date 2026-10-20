@@ -43,7 +43,7 @@ Once the player has zoomed in far enough on an animal, it becomes "looked at":
 - Looking starts as soon as the player zooms in far enough to see an animal's mid-distance detail, the same zoom at which look-alikes' telltales first show. The player has to judge quickly.
 - A look meter above the animal fills over about half a second while the player stays zoomed in. Zooming out before it fills drains it, which gives the player a brief moment to notice a goat and back off. Looks start at middling zoom, before the animal fills the screen, so the player has to decide quickly whether it's a horse.
 - Every animal on screen that is zoomed in that far fills its own meter, not just the one under the cursor.
-- An animal only counts if its head is visible. A horse whose head is hidden behind a barn can't be looked at.
+- An animal only counts if its head is visible. A horse whose head is hidden behind a barn can't be looked at. A grazing animal holds its head down in the grass, so a crest or a barn hides it more easily until it looks up.
 
 A looked-at animal stays in the game but is marked with a bright outline traced around its sprite: blue for horses, red for non-horses. When zoomed far out, a small ring of the same color circles it. If the sprite outline causes performance issues or needs complex code, it becomes a simple rectangular border instead.
 

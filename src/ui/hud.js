@@ -154,7 +154,7 @@ export function createStrip(root, sprites) {
 export function chipElement(chip, sprites) {
   const li = document.createElement('li');
   li.className = chip.horse ? 'chip horse' : 'chip non-horse';
-  const icon = sprites.creatures[chip.kind][chip.breed].near;
+  const icon = sprites.creatures[chip.kind][chip.breed].stand.near;
   const canvas = document.createElement('canvas');
   canvas.width = icon.width;
   canvas.height = icon.height;

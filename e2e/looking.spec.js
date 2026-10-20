@@ -25,9 +25,26 @@ test('zooming in on a horse looks at it', async ({ page }) => {
   await page.goto('/?seed=4000&intro=off');
   await zoomOnto(page, await pickAnimal(page, true));
 
-  await expect(page.locator('#strip')).toContainText('Horses 1/5');
-  await expect(page.locator('.chip.horse')).toHaveCount(1);
-  await expect(page.locator('.horse-meter .slot.filled')).toHaveCount(1);
+  // Every horse on screen gets looked at, not just the one under the cursor, so a neighbor may
+  // count too. The strip has to match the game exactly either way; poll both together, since
+  // another meter may still be filling.
+  const shown = () =>
+    page.evaluate(() => {
+      const win = /** @type {any} */ (globalThis);
+      const play = win.__horseLooker.play;
+      const horses = play.animals.filter(
+        (/** @type {any} */ a) => a.lookedAt && a.kind === 'horse',
+      ).length;
+      const strip = win.document.querySelector('#strip')?.textContent ?? '';
+      return {
+        horses,
+        strip: strip.includes(`Horses ${horses}/5`),
+        chips: win.document.querySelectorAll('.chip.horse').length === horses,
+        slots: win.document.querySelectorAll('.horse-meter .slot.filled').length === horses,
+      };
+    });
+  await expect.poll(shown).toMatchObject({ strip: true, chips: true, slots: true });
+  expect((await shown()).horses).toBeGreaterThanOrEqual(1);
   await page.screenshot({ path: 'e2e/screenshots/looked-horse.png' });
 });
 

@@ -23,6 +23,7 @@ import { GOAT } from './art/goat.js';
 import { HORSE_SUIT } from './art/horse-suit.js';
 import { REVERSE_CENTAUR } from './art/reverse-centaur.js';
 import { ROBOT_HORSE } from './art/robot-horse.js';
+import { walkFrame } from './art/motion.js';
 import { SHEEP } from './art/sheep.js';
 import { drawOak } from './art/oak.js';
 import {
@@ -44,12 +45,16 @@ import {
  */
 
 /**
- * Hand-made creature art: one grid per tier, plus where the head is.
+ * Creature art: a standing grid per tier plus where the head is, and at Mid and Near a walk frame
+ * (made from the standing grid by swinging the legs) and a graze frame with the head down.
+ * @typedef {{x: number, y: number, w: number, h: number}} Box fractions of the sprite box
  * @typedef {object} CreatureArt
  * @property {string[]} far
  * @property {string[]} mid
  * @property {string[]} near
- * @property {{x: number, y: number, w: number, h: number}} headBox fractions of the sprite box
+ * @property {Box} headBox
+ * @property {import('./art/motion.js').WalkRig} walk
+ * @property {{mid: string[], near: string[], headBox: Box}} graze
  */
 
 /** Every creature's art. */
@@ -67,10 +72,28 @@ export const CREATURES = {
 /** @type {AnimalKind[]} */
 export const ANIMAL_KINDS = /** @type {AnimalKind[]} */ (Object.keys(CREATURES));
 
-/** Head boxes by kind, for the visible-head rule. */
-export const HEAD_BOXES = /** @type {Record<AnimalKind, CreatureArt['headBox']>} */ (
-  Object.fromEntries(ANIMAL_KINDS.map((k) => [k, CREATURES[k].headBox]))
-);
+/** Head boxes by kind, standing and grazing, for the visible-head rule. */
+export const HEAD_BOXES =
+  /** @type {Record<AnimalKind, import('../game/pose.js').PoseHeadBoxes>} */ (
+    Object.fromEntries(
+      ANIMAL_KINDS.map((k) => [
+        k,
+        { stand: CREATURES[k].headBox, graze: CREATURES[k].graze.headBox },
+      ]),
+    )
+  );
+
+/**
+ * The grid a creature shows in a pose at a tier. Far has no walk or graze frame: it stays still.
+ * @param {CreatureArt} art
+ * @param {import('../game/pose.js').Pose} pose
+ * @param {GridTier} tier
+ */
+export function poseGrid(art, pose, tier) {
+  if (tier === 'far' || pose === 'stand') return art[tier];
+  if (pose === 'graze') return art.graze[tier];
+  return walkFrame(art[tier], tier, art.walk);
+}
 
 /**
  * Colors for a creature in a breed's coat: the breed palette plus the look-alikes' extra keys.
@@ -143,10 +166,11 @@ export function validateGrid(rows, width, height, palette) {
 
 /**
  * @typedef {HTMLCanvasElement | OffscreenCanvas} SpriteImage
+ * @typedef {import('../game/pose.js').Pose} Pose
  * @typedef {object} SpriteSet
- * @property {Record<AnimalKind, Record<Breed, Record<GridTier, SpriteImage>>>} creatures
+ * @property {Record<AnimalKind, Record<Breed, Record<Pose, Record<GridTier, SpriteImage>>>>} creatures
  * @property {Record<SceneryKind, Record<GridTier, SpriteImage>>} scenery
- * @property {Record<AnimalKind, Record<GridTier, SpriteImage>>} markers looked-at outlines, one
+ * @property {Record<AnimalKind, Record<Pose, Record<GridTier, SpriteImage>>>} markers looked-at outlines, one
  *   grid pixel bigger than the sprite on every side: blue for horses, red for everything else
  */
 
@@ -210,17 +234,27 @@ export function gridToCanvas(rows, palette) {
 export function createSpriteSet() {
   /** @param {(tier: GridTier) => SpriteImage} make */
   const perTier = (make) => ({ far: make('far'), mid: make('mid'), near: make('near') });
+  /** @param {(pose: Pose) => Record<GridTier, SpriteImage>} make */
+  const perPose = (make) => ({ stand: make('stand'), walk: make('walk'), graze: make('graze') });
   /** @param {AnimalKind} kind */
   const creature = (kind) => {
     /** @param {Breed} breed */
     const coat = (breed) =>
-      perTier((tier) => gridToCanvas(CREATURES[kind][tier], creaturePalette(breed)));
+      perPose((pose) =>
+        perTier((tier) =>
+          gridToCanvas(poseGrid(CREATURES[kind], pose, tier), creaturePalette(breed)),
+        ),
+      );
     return { A: coat('A'), B: coat('B'), C: coat('C') };
   };
   /** @param {AnimalKind} kind */
   const marker = (kind) => {
     const color = markerColor(kind);
-    return perTier((tier) => gridToCanvas(outlineGrid(CREATURES[kind][tier]), { x: color }));
+    return perPose((pose) =>
+      perTier((tier) =>
+        gridToCanvas(outlineGrid(poseGrid(CREATURES[kind], pose, tier)), { x: color }),
+      ),
+    );
   };
   /**
    * @template T
@@ -260,8 +294,9 @@ export function markerColor(kind) {
  * @param {import('../game/camera.js').Camera} cam
  * @param {SpriteSet} sprites
  * @param {{kind: AnimalKind, x: number, y: number, breed: Breed, facing: 1 | -1, lookedAt?: boolean}} animal
+ * @param {Pose} [pose]
  */
-export function drawAnimal(ctx, cam, sprites, animal) {
+export function drawAnimal(ctx, cam, sprites, animal, pose = 'stand') {
   const tier = spriteTier(cam.zoom);
   if (tier === 'dot') {
     // Too small for a sprite: a blob of coat color, body-shaped.
@@ -281,7 +316,7 @@ export function drawAnimal(ctx, cam, sprites, animal) {
     drawImageAt(
       ctx,
       cam,
-      sprites.markers[animal.kind][tier],
+      sprites.markers[animal.kind][pose][tier],
       animal.x,
       animal.y + pad,
       HORSE_WIDTH + 2 * pad,
@@ -292,7 +327,7 @@ export function drawAnimal(ctx, cam, sprites, animal) {
   drawImageAt(
     ctx,
     cam,
-    sprites.creatures[animal.kind][animal.breed][tier],
+    sprites.creatures[animal.kind][animal.breed][pose][tier],
     animal.x,
     animal.y,
     HORSE_WIDTH,

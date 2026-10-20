@@ -4,6 +4,8 @@
 //
 // Keys: o outline, B coat, b coat shade, w coat highlight, M mane and tail, h hooves, e eye.
 // The Near horse smiles: a mouth line along the muzzle that curls up at the corner.
+// Besides standing, it walks (the standing grid with its legs swung, see ./motion.js) and grazes
+// with its head down (hand-drawn), at Mid and Near. Far stays still.
 
 /** @type {import('../sprites.js').CreatureArt} */
 export const HORSE = {
@@ -71,4 +73,69 @@ export const HORSE = {
   ],
   // Where the head is, as fractions of the sprite box. Detection checks this is visible.
   headBox: { x: 0.74, y: 0, w: 0.26, h: 0.37 },
+  // The walk frame swings the back legs back and the front legs forward.
+  walk: {
+    legTop: 11,
+    groups: [
+      { x0: 3, x1: 9.6, swing: -1 },
+      { x0: 13.6, x1: 20.4, swing: 1 },
+    ],
+  },
+  // Head down in the grass: the neck slopes from the withers and the muzzle reaches the ground in
+  // front of the front legs.
+  graze: {
+    mid: [
+      '........................',
+      '........................',
+      '........................',
+      '.....ooo................',
+      '....oBBwooooooo.........',
+      '...oMBBBBBBBBBMMoo......',
+      '..oMMBBBBBBBBBBBMMoo....',
+      '.oMMBBBBBBBBBBBBBBMMoo.o',
+      '.oMMBBBBBBBBBBBBBBBBMMBo',
+      '.oMobbbbbbbbbbbbbbbBBBBo',
+      '.oMobbobbbbbbbobobbBBeBo',
+      'oMMobbobooooooobobboBBBo',
+      '.ooobbobo.....obobbooBBo',
+      '...obbobo.....obobbooBBo',
+      '...obbobo.....obobbo.oBo',
+      '....ohoho.....ohoho..ooo',
+    ],
+    near: [
+      '................................................',
+      '................................................',
+      '................................................',
+      '................................................',
+      '................................................',
+      '................................................',
+      '................................................',
+      '...........ooo..................................',
+      '.........ooBBBoo................................',
+      '........oBBBBBwwooooooooooooooo.................',
+      '.......oMBBBBBwwwwwwwwwwwwwBwwMMMoo.............',
+      '......oMMBBBBBBBBBBBBBBBBBBBBBBMMMMoo...........',
+      '.....oMMMBBBBBBBBBBBBBBBBBBBBBBBBMMMMoo.........',
+      '....oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBMMMMoo.......',
+      '....oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBMMMMoo.....',
+      '....oMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBMMMMoo.o.',
+      '...oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBMMMMoBo',
+      '...oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBMMMBo',
+      '...oMMMobbbbbbbbbbbbbbbbbbbbbbbbbbbbbBBBBBBBBBBo',
+      '...oMMMoobbbbbbbbbbbbbbbbbbbbbbbbbbbbBBBBBBBeBBo',
+      '..oMMMo.obbbbbbbbbbbbbbbbbbbbbbbbobbboBBBBBBBBBo',
+      '..oMMMo.obbbobbbboooooooooooobbbbobbbo.oBBBBBBBo',
+      '..oMMMo.obbbobbbbo..........obbbbobbbo.oBBBBBBBo',
+      '..oMMMo.obbbobbbbo..........obbbbobbbo.oBBBBBBBo',
+      '...ooo..obbbobbbbo..........obbbbobbbo..oBBBBBBo',
+      '........obbbobbbbo..........obbbbobbbo..oBBBBBBo',
+      '........obbbobbbbo..........obbbbobbbo..oBBBBBBo',
+      '........obbbobbbbo..........obbbbobbbo...oBBBBBo',
+      '........obbbobbbbo..........obbbbobbbo...oBBBBoo',
+      '........ohhhohhhho..........ohhhhohhho...oBBBBBo',
+      '........ohhhohhhho..........ohhhhohhho...oBoooBo',
+      '.........ooo.oooo............oooo.ooo.....ooooo.',
+    ],
+    headBox: { x: 0.8, y: 0.45, w: 0.2, h: 0.55 },
+  },
 };

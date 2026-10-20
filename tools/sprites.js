@@ -23,6 +23,41 @@ const sprites = createSpriteSet();
 const BREEDS = ['A', 'B', 'C'];
 /** On-screen horse heights to show each tier at: inside that tier's range. */
 const SHOW_PX = { dot: 6, far: 24, mid: 96, near: 220 };
+/**
+ * The standing sprite at every tier, then the walk and graze frames at Mid and Near.
+ * @type {{pose: import('../src/game/pose.js').Pose, px: number, caption: string}[]}
+ */
+const SHOTS = [
+  ...Object.entries(SHOW_PX).map(([tier, px]) => ({
+    pose: /** @type {const} */ ('stand'),
+    px,
+    caption: `${tier} (${px} px tall)`,
+  })),
+  .../** @type {const} */ (['walk', 'graze']).flatMap((pose) =>
+    /** @type {const} */ (['mid', 'near']).map((tier) => ({
+      pose,
+      px: SHOW_PX[tier],
+      caption: `${pose} · ${tier}`,
+    })),
+  ),
+];
+
+/**
+ * One row of SHOTS for a creature.
+ * @param {HTMLElement} row
+ * @param {string} label
+ * @param {{kind: import('../src/render/sprites.js').AnimalKind, breed: import('../src/render/sprites.js').Breed}} who
+ */
+function creatureRow(row, label, who) {
+  for (const { pose, px, caption } of SHOTS) {
+    const zoom = px / HORSE_HEIGHT;
+    const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
+    const h = Math.ceil(px) + 12;
+    const ctx = figure(row, w, h, `${label} · ${caption}`);
+    const animal = { ...who, x: 0, y: 0, facing: /** @type {1} */ (1) };
+    drawAnimal(ctx, stageCamera(w, h, zoom), sprites, animal, pose);
+  }
+}
 
 /**
  * @param {HTMLElement} parent
@@ -61,19 +96,7 @@ for (const breed of BREEDS) {
   const row = document.createElement('div');
   row.className = 'row';
   horsesEl.append(row);
-  for (const [tier, px] of Object.entries(SHOW_PX)) {
-    const zoom = px / HORSE_HEIGHT;
-    const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
-    const h = Math.ceil(px) + 12;
-    const ctx = figure(row, w, h, `${BREED_NAMES[breed]} · ${tier} (${px} px tall)`);
-    drawAnimal(ctx, stageCamera(w, h, zoom), sprites, {
-      kind: 'horse',
-      x: 0,
-      y: 0,
-      breed,
-      facing: 1,
-    });
-  }
+  creatureRow(row, BREED_NAMES[breed], { kind: 'horse', breed });
 }
 
 const lookalikesEl = /** @type {HTMLElement} */ (document.getElementById('lookalikes'));
@@ -81,14 +104,7 @@ for (const kind of /** @type {(keyof typeof LOOKALIKE_COAT)[]} */ (Object.keys(L
   const row = document.createElement('div');
   row.className = 'row';
   lookalikesEl.append(row);
-  for (const [tier, px] of Object.entries(SHOW_PX)) {
-    const zoom = px / HORSE_HEIGHT;
-    const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
-    const h = Math.ceil(px) + 12;
-    const ctx = figure(row, w, h, `${KIND_NAMES[kind]} · ${tier}`);
-    const breed = LOOKALIKE_COAT[kind];
-    drawAnimal(ctx, stageCamera(w, h, zoom), sprites, { kind, x: 0, y: 0, breed, facing: 1 });
-  }
+  creatureRow(row, KIND_NAMES[kind], { kind, breed: LOOKALIKE_COAT[kind] });
 }
 
 const sceneryEl = /** @type {HTMLElement} */ (document.getElementById('scenery'));

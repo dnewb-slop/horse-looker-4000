@@ -8,6 +8,7 @@
 import { screenToWorld, worldToScreen } from '../game/camera.js';
 import { HORSE_HEIGHT, HORSE_WIDTH, WORLD_HEIGHT, WORLD_WIDTH } from '../game/config.js';
 import { headCenter } from '../game/detect.js';
+import { animalPose, headBoxFor } from '../game/pose.js';
 import { ridgeY } from '../game/world.js';
 import {
   HILL_COLORS,
@@ -17,7 +18,7 @@ import {
   RIDGE_HIGHLIGHT,
   TUFT_COLOR,
 } from './palette.js';
-import { CREATURES, drawAnimal, drawScenery } from './sprites.js';
+import { HEAD_BOXES, drawAnimal, drawScenery } from './sprites.js';
 
 /** Screen pixels between sampled points along a ridge. */
 const RIDGE_STEP_PX = 6;
@@ -76,7 +77,9 @@ export function renderPasture(ctx, cam, pasture, seed, sprites) {
       if (s.hill === i) items.push({ y: s.y, draw: () => drawScenery(ctx, cam, sprites, s) });
     }
     for (const a of animals) {
-      if (a.hill === i) items.push({ y: a.y, draw: () => drawAnimal(ctx, cam, sprites, a) });
+      if (a.hill === i) {
+        items.push({ y: a.y, draw: () => drawAnimal(ctx, cam, sprites, a, animalPose(a)) });
+      }
     }
     items.sort((p, q) => p.y - q.y);
     for (const item of items) item.draw();
@@ -97,7 +100,7 @@ function drawLookMeter(ctx, cam, animal) {
   if (animal.lookedAt || animal.lookMeter <= 0) return;
   const top = worldToScreen(
     cam,
-    headCenter(animal, CREATURES[animal.kind].headBox).x,
+    headCenter(animal, headBoxFor(animal, HEAD_BOXES[animal.kind])).x,
     animal.y - HORSE_HEIGHT,
   );
   const width = Math.round(

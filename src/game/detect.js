@@ -10,6 +10,7 @@ import {
   LOOK_FILL_S,
   LOOK_MIN_PX,
 } from './config.js';
+import { headBoxFor } from './pose.js';
 import { SCENERY_SIZE, ridgeY } from './world.js';
 
 /**
@@ -71,7 +72,7 @@ export function isLooking(animal, cam, box, hills, scenery) {
  * Fill or drain every look meter by dt seconds. A full meter marks the animal looked at, once.
  * @param {import('./world.js').Animal[]} animals
  * @param {import('./camera.js').Camera} cam
- * @param {Record<import('./world.js').Animal['kind'], HeadBox>} headBoxes
+ * @param {Record<import('./world.js').Animal['kind'], import('./pose.js').PoseHeadBoxes>} headBoxes
  * @param {import('./world.js').Hill[]} hills
  * @param {import('./world.js').Scenery[]} scenery
  * @param {number} dt
@@ -84,7 +85,7 @@ export function stepLooks(animals, cam, headBoxes, hills, scenery, dt) {
   const fill = dt / LOOK_FILL_S;
   const next = animals.map((a) => {
     if (a.lookedAt) return a;
-    const looking = isLooking(a, cam, headBoxes[a.kind], hills, scenery);
+    const looking = isLooking(a, cam, headBoxFor(a, headBoxes[a.kind]), hills, scenery);
     const lookMeter = looking
       ? Math.min(1, a.lookMeter + fill)
       : Math.max(0, a.lookMeter - fill * LOOK_DRAIN_MULTIPLIER);
