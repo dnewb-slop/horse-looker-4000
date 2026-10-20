@@ -15,3 +15,5 @@ npm run check     # lint, typecheck, unit and browser tests
 ```
 
 Found something off while playing? Open a [playtest issue](../../issues/new?template=playtest.md).
+
+Code is [MIT licensed](LICENSE). Third-party assets, such as music, are listed with their own licenses in `CREDITS.md`.

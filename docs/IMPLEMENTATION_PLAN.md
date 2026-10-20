@@ -214,7 +214,7 @@ A dev-only page, `tools/sprites.html`, shows every sprite at every tier on the g
 Each level gets its own simple, calming track that loops while playing.
 
 - **Choosing tracks:** Claude finds 3–4 candidates per level and posts links on the PR. The owner listens and picks, since Claude can't hear audio. Claude then adds the picks with credits.
-- **Allowed licenses:** CC0 / public domain (e.g. OpenGameArt filtered to CC0), CC BY 4.0 (e.g. Kevin MacLeod at incompetech), or the Pixabay Content License. Check each track's license before committing it.
+- **Allowed licenses:** CC0 / public domain (e.g. OpenGameArt filtered to CC0), or CC BY 4.0 (e.g. Kevin MacLeod at incompetech). Not the Pixabay Content License, which restricts redistributing files as-is from a public repo. Check each track's license before committing it.
 - **Credits:** a "Music by…" line on the win and lose screens, and a `CREDITS.md` listing each track, artist, source link and license.
 - **Playback:** one looping `<audio>` element per level, with a 2 s crossfade between levels _(tune)_. Sound starts after the player's first click, because browsers block autoplay; the intro's click-to-skip covers this.
 - **Mute:** a speaker button in the bottom strip. The setting is remembered between visits.

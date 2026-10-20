@@ -2,6 +2,15 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Going public (2026-10-20)
+
+| Decision                        | Choice                                       | Why                                                                                        |
+| ------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Repo visibility                 | Public                                       | Free GitHub Pages and unlimited Actions minutes; friends can follow along                  |
+| License                         | MIT                                          | Clear terms for a public repo                                                              |
+| Who Claude takes direction from | Owner and collaborators only (see CLAUDE.md) | Anyone can open issues on a public repo                                                    |
+| Music licenses                  | CC0 or CC BY 4.0 only; Pixabay dropped       | The Pixabay Content License restricts redistributing files as-is, which a public repo does |
+
 ## Tooling (milestone 1, 2026-10-20)
 
 | Decision           | Choice                                                              | Why                                                                                                                     |

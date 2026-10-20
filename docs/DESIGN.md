@@ -80,7 +80,7 @@ Each look-alike's telltale (upright torso, robot legs, sneakers) first becomes v
 
 ### Music
 
-Each level has its own simple, calming music track, used under a license that allows it (CC0, CC BY 4.0 or the Pixabay Content License). The player can mute it.
+Each level has its own simple, calming music track, used under a license that allows it (CC0 or CC BY 4.0). The player can mute it.
 
 ### Losing screen
 

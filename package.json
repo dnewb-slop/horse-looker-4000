@@ -2,6 +2,7 @@
   "name": "horse-looker-4000",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "A game for horse lovers and utopians alike.",
   "type": "module",
   "scripts": {
