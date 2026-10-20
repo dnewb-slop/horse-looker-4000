@@ -66,11 +66,46 @@ test('every head box sits inside the sprite and covers head pixels', () => {
   }
 });
 
-test('horse-shaped look-alikes match the horse at Far, so their telltales first show at Mid', () => {
-  for (const kind of ['centaur', 'reverseCentaur', 'robotHorse', 'horseSuit']) {
-    const art = CREATURES[/** @type {keyof typeof CREATURES} */ (kind)];
-    assert.deepEqual(art.far, HORSE.far, kind);
+/**
+ * How many cells of a grid differ from another of the same size.
+ * @param {string[]} a
+ * @param {string[]} b
+ */
+function cellsDiffering(a, b) {
+  let n = 0;
+  a.forEach((row, y) => [...row].forEach((k, x) => (k !== b[y][x] ? n++ : 0)));
+  return n;
+}
+
+test('subtle look-alikes differ from the horse at Far by only a few pixels', () => {
+  for (const kind of /** @type {const} */ (['goat', 'sheep', 'centaur', 'robotHorse'])) {
+    const n = cellsDiffering(CREATURES[kind].far, HORSE.far);
+    assert.ok(n > 0 && n <= 12, `${kind}: ${n} pixels differ`);
+  }
+});
+
+test('joke look-alikes are easy to spot from Far', () => {
+  for (const kind of /** @type {const} */ (['reverseCentaur', 'horseSuit'])) {
+    const n = cellsDiffering(CREATURES[kind].far, HORSE.far);
+    assert.ok(n > 20, `${kind}: only ${n} pixels differ`);
+  }
+});
+
+test('every look-alike differs from the horse at Mid and Near', () => {
+  for (const [kind, art] of Object.entries(CREATURES)) {
+    if (kind === 'horse') continue;
     assert.notDeepEqual(art.mid, HORSE.mid, kind);
+    assert.notDeepEqual(art.near, HORSE.near, kind);
+  }
+});
+
+test('the reverse centaur wears the horse’s own head', () => {
+  const { x, y, w, h } = HORSE.headBox;
+  const near = CREATURES.reverseCentaur.near;
+  const [cols, rows] = [near[0].length, near.length];
+  for (let gy = Math.floor(y * rows); gy < Math.ceil((y + h) * rows) - 3; gy++) {
+    const span = [Math.ceil((x + 0.05) * cols), Math.floor((x + w) * cols)];
+    assert.equal(near[gy].slice(...span), HORSE.near[gy].slice(...span), `row ${gy}`);
   }
 });
 

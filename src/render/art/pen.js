@@ -80,3 +80,78 @@ export function drawOnHorseBody(draw, tier, drop) {
   r.outline('o');
   return r.rows();
 }
+
+/**
+ * Change a grid cell by cell, by world position: `change` gets each cell's world-unit center and
+ * key and returns a new key, or undefined to keep it. Used to restyle the horse into look-alikes.
+ * @param {string[]} rows
+ * @param {GridTier} tier
+ * @param {(wx: number, wy: number, key: string) => string | undefined} change
+ */
+export function editGrid(rows, tier, change) {
+  const d = DENSITY[tier];
+  return rows.map((row, y) =>
+    [...row].map((k, x) => change((x + 0.5) / d, (y + 0.5) / d, k) ?? k).join(''),
+  );
+}
+
+/**
+ * Draw shapes on top of a grid, then trace the outline again. Far grids have no outline.
+ * @param {string[]} rows
+ * @param {GridTier} tier
+ * @param {(pen: Pen) => void} draw
+ */
+export function drawOnGrid(rows, tier, draw) {
+  const r = createRaster(rows[0].length, rows.length);
+  rows.forEach((row, y) => [...row].forEach((k, x) => r.set(x, y, k)));
+  draw(penFor(r, DENSITY[tier]));
+  if (tier !== 'far') r.outline('o');
+  return r.rows();
+}
+
+/**
+ * Cut cells out of a grid, then re-trace the outline and drop outline cells left touching
+ * nothing, so the cut edge looks drawn rather than torn.
+ * @param {string[]} rows
+ * @param {GridTier} tier
+ * @param {(wx: number, wy: number, key: string) => boolean} cut
+ */
+export function eraseFromGrid(rows, tier, cut) {
+  const kept = drawOnGrid(
+    editGrid(rows, tier, (wx, wy, k) => (cut(wx, wy, k) ? '.' : undefined)),
+    tier,
+    () => {},
+  );
+  /** @param {number} x @param {number} y */
+  const solid = (x, y) => {
+    const k = kept[y]?.[x] ?? '.';
+    return k !== '.' && k !== 'o';
+  };
+  return kept.map((row, y) =>
+    [...row]
+      .map((k, x) =>
+        k === 'o' && !(solid(x + 1, y) || solid(x - 1, y) || solid(x, y + 1) || solid(x, y - 1))
+          ? '.'
+          : k,
+      )
+      .join(''),
+  );
+}
+
+/**
+ * Paste a small grid over a grid with its top-left cell at (x, y); '.' cells leave what's below.
+ * For details too small to draw as shapes, like a one-pixel eye.
+ * @param {string[]} rows
+ * @param {number} x
+ * @param {number} y
+ * @param {string[]} art
+ */
+export function stampGrid(rows, x, y, art) {
+  return rows.map((row, ry) => {
+    const line = art[ry - y];
+    if (!line) return row;
+    return [...row]
+      .map((k, rx) => (line[rx - x] && line[rx - x] !== '.' ? line[rx - x] : k))
+      .join('');
+  });
+}

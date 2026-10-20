@@ -65,14 +65,16 @@ The pasture is a series of rolling hills, one behind another. Each animal stands
   - **A — Friesian:** jet black coat, thick flowing mane and tail, bold silhouette.
   - **B — Haflinger:** golden chestnut coat with a blond mane and tail.
   - **C — Camarillo White:** pure white coat with dark eyes and hooves.
-- **Goats and sheep:** goats share horse breed B's color. Sheep share horse breed C's color.
+- **Goats and sheep:** both copy a horse's shape closely.
+  - **Goats:** horse breed B's color, blond mane and tail included, but with horns, a beard and a short tail.
+  - **Sheep:** horse breed C's color, with a dark face and dark lower legs, a lumpy wool back and a puff of a tail.
 - **Other creatures:**
-  - **Centaurs:** the horse body shares horse breed A's color.
-  - **Reverse centaurs:** a human body with a long horse neck and horse head, in horse breed B's color.
-  - **Robot horses:** look like horse breed C but have robot legs.
-  - **Humans in a horse suit:** horse breed A's color, but actually two humans in a horse suit, distinguishable from a distance by their colorful sneakers.
+  - **Centaurs:** the horse body shares horse breed A's color; the human torso wears a black waistcoat.
+  - **Reverse centaurs:** a human standing upright under breed B's horse neck and head, in a mustard shirt that nearly matches the coat.
+  - **Robot horses:** look like horse breed C but have metal robot legs, a red eye, an antenna light and a charging bolt on the rump.
+  - **Humans in a horse suit:** horse breed A's color, but actually two humans in a horse suit: too short for a horse, with the head held stiffly too high, legs lighter than the body and big black shoes.
 
-Each look-alike's telltale (upright torso, robot legs, sneakers) first becomes visible at the middle zoom levels, so the player has to zoom partway in to check before committing.
+From far away, goats, sheep, centaurs and robot horses look almost exactly like the horse breed they copy: only a few pixels of shape or color give them away, so the player has to zoom to the middle zoom levels to be sure. Reverse centaurs and horse suits are jokes, easy to spot even from far away.
 
 ### Animals for each level
 

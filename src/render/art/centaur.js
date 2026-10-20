@@ -1,10 +1,10 @@
 // @ts-check
-// A centaur, facing right: the horse's body with a bare-chested human torso rising from the
-// withers, long black hair down the back and arms at the sides. Centaurs wear breed A's
-// (Friesian) colors.
+// A centaur, facing right: the horse's body with a human torso rising from the withers, in a
+// black waistcoat that blends into the coat, so only the arms, face and collar show skin. Long
+// black hair runs down the back. Centaurs wear breed A's (Friesian) colors.
 //
-// Far is the plain horse grid: DESIGN.md says the upright torso first shows at Mid. Mid and Near
-// slim the horse's barrel so the torso has room above the back.
+// Far is the horse with its head a shade lighter, the only hint of the face. Mid and Near slim
+// the horse's barrel so the torso has room above the back.
 // Keys: the horse's, plus S skin.
 
 import { HORSE } from './horse.js';
@@ -17,7 +17,8 @@ const DROP = 2;
 function drawRider(p) {
   p.rect(15.1, 3.4, 15.9, 7.4, 'S'); // back arm
   p.rect(18.9, 3.4, 19.7, 7.4, 'S'); // front arm
-  p.rect(15.9, 3, 18.9, 7.8, 'S'); // torso
+  p.rect(15.9, 3, 18.9, 7.8, 'B'); // waistcoat
+  p.rect(17.1, 3, 17.7, 5, 'S'); // open collar
   p.ellipse(17.4, 1.6, 1.3, 1.4, 'S'); // head
   p.polygon(
     [
@@ -35,7 +36,8 @@ function drawRider(p) {
 
 /** @type {import('../sprites.js').CreatureArt} */
 export const CENTAUR = {
-  far: HORSE.far,
+  // The horse with the head in the coat highlight instead of black.
+  far: HORSE.far.map((row, y) => (y < 3 ? row.slice(0, 9) + row.slice(9).replace(/B/g, 'w') : row)),
   mid: drawOnHorseBody(drawRider, 'mid', DROP),
   near: drawOnHorseBody(drawRider, 'near', DROP),
   headBox: { x: 0.66, y: 0, w: 0.13, h: 0.2 },

@@ -19,7 +19,7 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 - [x] **5. Rules and levels:** level table (replacing milestone 4's sandbox of 30 horses), look-alike placeholders as plain shapes, strikes, level-complete card.
 - [x] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
 - [x] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
-- [ ] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier. Goats, sheep and centaurs were settled during milestone 5; for each remaining creature, Claude shows a few alternatives beside the reference horse and the owner picks and refines.
+- [x] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits. The owner picked and refined each from alternatives shown beside the horse breed it copies. Goats, sheep, centaurs and robot horses differ from their horse by a few pixels at Far; reverse centaurs and horse suits are jokes you can spot from Far. **Play it:** are the look-alikes hard enough, and are the jokes funny?
 - [ ] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. Comes after the full game is playable, so it can't delay it; a static frame is the fallback. **Play it:** does the pasture feel alive?
 - [ ] **10. Music:** Claude shortlists licensed, calming tracks for each level; the owner picks by ear; then Claude adds playback, crossfades, the mute button and credits. **Play it:** does each level sound right?
 - [ ] **11. Tuning pass:** adjust every _(tune)_ value from playtest notes. **Play it:** MVP done.
@@ -200,11 +200,11 @@ The renderer picks a tier by how tall a horse is on screen, then scales the spri
 | Tier | On-screen size | Sprite                     | What the player can tell                                               |
 | ---- | -------------- | -------------------------- | ---------------------------------------------------------------------- |
 | Dot  | under 8 px     | 1–3 px blob, drawn in code | Color only. Breed B and a goat look identical                          |
-| Far  | 8–32 px        | 12 × 8 grid                | Body shape: four legs and a long neck vs a round sheep                 |
-| Mid  | 32–128 px      | 24 × 16 grid               | Telltales: upright centaur torso, robot legs, colorful sneakers        |
+| Far  | 8–32 px        | 12 × 8 grid                | Body shape, plus a few pixels of difference: a horn, metal legs        |
+| Mid  | 32–128 px      | 24 × 16 grid               | Telltales: horns and beard, a centaur torso, robot joints and LED eye  |
 | Near | over 128 px    | 48 × 32 grid               | Full detail: mane, face, hooves. Most looks finish before this, in Mid |
 
-Each look-alike's telltale must first appear at Mid, so the player has to zoom partway in to check before committing. Cutoffs are _(tune)_.
+Goats, sheep, centaurs and robot horses differ from their horse by only a few pixels of shape or color at Far, so the player has to zoom to Mid to be sure. Reverse centaurs and horse suits are jokes that show from Far. Cutoffs are _(tune)_.
 
 ### Palette
 
@@ -294,6 +294,12 @@ Claude does all the coding, code review and merging; the owner plays the live bu
 - Visible changes include a screenshot in the PR
 - `docs/IMPLEMENTATION_PLAN.md` and `docs/DECISIONS.md` are updated when relevant
 
+## Post-MVP ideas
+
+Not in the MVP. Each needs the owner's go-ahead and a DESIGN.md change before it's built.
+
+- **Horse suit reveal:** looking at a horse suit plays an animation: the two humans take the suit off and run off in different directions.
+
 ## Post-MVP creature images
 
 Recommendation: a scripted pipeline in the repo. A script calls an image API to make one large master image per creature, using the MVP sprite as the reference for pose and colors. It then shrinks that master to each zoom tier and snaps it to the palette. Claude can't draw images itself, but it can write and run this script, look at the results, and redo weak ones.
@@ -307,7 +313,7 @@ Recommendation: a scripted pipeline in the repo. A script calls an image API to 
 
 - **One master per creature, shrunk by code.** Every tier comes from the same image, so shapes and colors match. A script using `sharp` or ImageMagick resizes and snaps colors to the palette.
 - **Keep code grids for Dot and Far.** At 12 × 8 pixels, a shrunk image turns to mush.
-- **Lock the gameplay telltales.** Coat colors and telltales (sneakers, robot legs) are checked against DESIGN.md, so new art can't make a look-alike too easy or too hard.
+- **Lock the gameplay telltales.** Coat colors and telltales (horns, robot legs, black shoes) are checked against DESIGN.md, so new art can't make a look-alike too easy or too hard.
 - **Review the same way as MVP art,** on the sprite review page with screenshots in the PR.
 
 Vendor names come from general knowledge. Check current features, pricing and image licensing before choosing one.

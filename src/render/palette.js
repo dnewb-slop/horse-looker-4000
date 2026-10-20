@@ -96,16 +96,17 @@ export const MARKER_NON_HORSE = '#ff3b30';
 
 /**
  * Extra keys for look-alike art, on top of the breed palette that gives their coat:
- * S skin, T shirt, P trousers, R robot metal, r robot joints, K sneakers.
+ * S skin, T shirt, P trousers, R robot metal, r robot joints, L robot LED.
  * @type {Record<string, string>}
  */
 export const LOOKALIKE_KEYS = {
   S: '#d9a37a',
-  T: '#d6417a',
+  // Mustard: a little yellower and lighter than the Haflinger coat, so it nearly matches.
+  T: '#d9a531',
   P: '#3d4f73',
   R: '#a3acb6',
   r: '#59616b',
-  K: '#ff2fa8',
+  L: '#ff3b30',
 };
 
 /** Look meter: neutral white, so it doesn't give away what the animal is. */
