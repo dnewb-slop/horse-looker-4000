@@ -4,7 +4,7 @@
 import { HORSES_PER_LEVEL, LEVEL_COUNT, MAX_STRIKES } from './config.js';
 
 /**
- * @typedef {'playing' | 'levelComplete' | 'won' | 'lost'} Phase
+ * @typedef {'intro' | 'playing' | 'levelComplete' | 'won' | 'lost'} Phase
  * @typedef {{kind: import('./levels.js').AnimalKind, breed: import('./levels.js').Breed}} LogEntry
  */
 

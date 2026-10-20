@@ -90,7 +90,7 @@ Each level has its own simple, calming music track, used under a license that al
 
 The main game loop fades away, and the player sees the words:
 
-> "Sorry mate, but you don't have what it takes to be an American horse looker."
+> "Sorry kid, but you don't have what it takes to be an American horse looker."
 
 The screen displays all horses and non-horses the player has looked at. It also shows the total horses looked at, total non-horses looked at, and the level reached before the game ended.
 

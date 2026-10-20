@@ -114,3 +114,12 @@ export const MAX_STRIKES = 5;
 
 /** Seconds the "Level n complete" card shows before the next level. (tune) */
 export const LEVEL_CARD_S = 2.5;
+
+/** Opening sequence: seconds each line fades in (and out). (tune) */
+export const INTRO_FADE_S = 0.6;
+
+/**
+ * Seconds each opening line holds between its fades, in order. (tune)
+ * The first is a quick setup; the joke needs time to land in the other two.
+ */
+export const INTRO_HOLDS_S = [1.2, 3.2, 3];

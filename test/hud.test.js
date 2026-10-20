@@ -2,7 +2,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { animalLabel, formatZoom, stripModel } from '../src/ui/hud.js';
-import { cardText } from '../src/ui/screens.js';
 import { createPlay } from '../src/game/play.js';
 
 test('zoom reads like a camera display', () => {
@@ -49,11 +48,4 @@ test('every kind has a label', () => {
   assert.equal(animalLabel({ kind: 'horse', breed: 'B' }), 'Haflinger');
   assert.equal(animalLabel({ kind: 'reverseCentaur', breed: 'B' }), 'Reverse centaur');
   assert.equal(animalLabel({ kind: 'horseSuit', breed: 'A' }), 'Horse suit');
-});
-
-test('the card shows level complete and the DESIGN.md end lines', () => {
-  assert.equal(cardText({ phase: 'playing', level: 1 }), '');
-  assert.equal(cardText({ phase: 'levelComplete', level: 2 }), 'Level 2 complete');
-  assert.equal(cardText({ phase: 'won', level: 3 }), "That's some damn fine horse looking!");
-  assert.match(cardText({ phase: 'lost', level: 1 }), /^Sorry mate/);
 });

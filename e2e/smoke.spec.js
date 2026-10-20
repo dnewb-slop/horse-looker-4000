@@ -7,7 +7,7 @@ test('the game loads with a full-width canvas above the strip and no errors', as
   page.on('pageerror', (err) => errors.push(err.message));
   page.on('console', (msg) => msg.type() === 'error' && errors.push(msg.text()));
 
-  await page.goto('/?seed=4000');
+  await page.goto('/?seed=4000&intro=off');
   await expect(page).toHaveTitle('Horse Looker 4000');
 
   const canvas = page.locator('#pasture');
