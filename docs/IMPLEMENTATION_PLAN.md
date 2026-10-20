@@ -104,10 +104,10 @@ e2e/                  Playwright smoke and screenshot tests
 stateDiagram-v2
   [*] --> Intro
   Intro --> Playing
-  Playing --> LevelComplete: 10 horses
+  Playing --> LevelComplete: 5 horses
   LevelComplete --> Playing: levels 1–2, next level
   LevelComplete --> Win: after level 3
-  Playing --> Lose: 5th non-horse
+  Playing --> Lose: 3rd non-horse
   Win --> Playing: "Horse again" (level 1)
   Lose --> Playing: "Horse again" (level 1)
 ```
@@ -120,7 +120,7 @@ stateDiagram-v2
 ### World and animals
 
 - The pasture is a fixed world rectangle, 4000 × 2500 world units. Hills and grass are drawn procedurally from a seed.
-- Each animal has `kind` (horse, goat, sheep, centaur, reverseCentaur, robotHorse, horseSuit), `breed` (A, B, C, or none), `color`, `x`, `y`, `facing`, `lookThreshold`, `lookMeter` and `lookedAt`.
+- Each animal has `kind` (horse, goat, sheep, centaur, reverseCentaur, robotHorse, horseSuit), `breed` (A, B, C, or none), `color`, `x`, `y`, `facing`, `lookMeter` and `lookedAt`.
 - Animals spawn at random positions with a minimum spacing, so two never overlap at close zoom.
 - Animals graze: they idle, then walk a short distance in a random direction and stop. Walking alternates two frames about 4 times a second, and grazing holds a head-down frame _(tune)_. They stay inside the pasture and walk around scenery.
 - **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 3.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Each level gets roughly 3 barns, 6 live oaks and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
@@ -148,8 +148,8 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 
 ### Looked-at detection
 
-- Each animal gets its own look threshold at spawn: between 8% and 15% of the viewport height, peaking at 10%, drawn from the seeded generator _(tune)_. The viewport is the canvas area, not counting the bottom strip.
-- An animal's look meter fills while all three of these hold: its sprite is at least its threshold tall on screen, its center is on screen, and its head is visible.
+- A look starts at the Mid tier: as soon as an animal is drawn with its Mid sprite (32 px tall on screen), the zoom where look-alike telltales first show _(tune)_. Every animal shares this threshold. (Until the 2026-10-20 tuning, each animal had its own threshold of 8–15% of the viewport height.)
+- An animal's look meter fills while all three of these hold: it is drawn at the Mid tier or closer, its center is on screen, and its head is visible.
 - The meter fills over 0.5 s and drains at twice that speed when any condition stops _(tune)_. A full meter means looked at.
 - Every qualifying animal on screen fills its own meter at once, not just the one under the cursor. That is the risk the player manages near goats and look-alikes.
 - **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is. Meters are drawn on top of everything.
@@ -165,12 +165,12 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 | 2     | 80      | 20% (16) | 80%, split at random | 0%                   | A, B, C at random |
 | 3     | 80      | 20% (16) | 60%, split at random | 20%, kinds at random | A, B, C at random |
 
-Each level needs at least 10 horses to be winnable. Levels 2 and 3 have 6 spare horses, which keeps the hunt for the last horse short _(tune)_.
+Each level needs at least 5 horses to be winnable. Levels 2 and 3 have 11 spare horses, which keeps the hunt for the last horse short _(tune)_.
 
 ### Scoring, winning and losing
 
-- `horsesThisLevel` reaches 10 → level complete. After level 3 → Win. Levels have no time limit.
-- `nonHorsesTotal` counts across the whole game. It reaching 5 → Lose immediately.
+- `horsesThisLevel` reaches 5 → level complete. After level 3 → Win. Levels have no time limit.
+- `nonHorsesTotal` counts across the whole game. It reaching 3 → Lose immediately.
 - The bottom strip's list resets each level. A game log keeps every looked-at animal for the end screens.
 
 ### Frame loop
@@ -246,15 +246,15 @@ The pasture fills the window, and a 96 px strip along the bottom tracks progress
 |                     o(blue)          .                            |
 | Pasture canvas · crosshair · drag to pan · vignette edges          |
 +--------------------------------------------------------------------+
-| Level 2 / 3          Imposters 2/5    Looked at (newest first)  [M]|
-| Horses 7/10          (*)(*)( )( )( )  [Haflinger][Goat][Friesian]  |
-| [#][#][#][#][#][#][#][ ][ ][ ]                                     |
+| Level 2 / 3          Imposters 2/3    Looked at (newest first)  [M]|
+| Horses 4/5           (*)(*)( )        [Haflinger][Goat][Friesian]  |
+| [#][#][#][#][ ]                                                    |
 +--------------------------------------------------------------------+
 ```
 
 - **Viewport (canvas):** crosshair cursor, a soft dark vignette at the edges to suggest a telephoto lens, and a camera-style zoom readout ("×12") in a corner. Look meters appear above animals as they fill.
-- **Level and progress:** "Level 2 / 3" and a 10-slot horse meter that fills as horses are looked at.
-- **Imposters (strikes):** five slots labeled "Imposters" that turn red per non-horse, visible from the start. The game ends on the fifth.
+- **Level and progress:** "Level 2 / 3" and a 5-slot horse meter that fills as horses are looked at.
+- **Imposters (strikes):** three slots labeled "Imposters" that turn red per non-horse, visible from the start. The game ends on the third.
 - **Looked-at list:** a horizontal row with the newest on the left. Each chip shows the Near sprite as an icon plus a label ("Haflinger", "Goat"), with a blue or red edge to match the field marker.
 - **Mute button:** at the right end of the strip.
 - **Text screens:** intro, level complete, win and lose are full-window HTML overlays with bold white text on black, fading with CSS transitions.

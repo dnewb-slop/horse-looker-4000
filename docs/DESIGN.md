@@ -30,9 +30,9 @@ After the text above displays, the main game loop begins.
 
 - **Players:** single player.
 - **Turns or time:** real-time. Levels have no time limit.
-- **Scoring:** once the player looks at 10 horses in a level, they progress to the next level.
+- **Scoring:** once the player looks at 5 horses in a level, they progress to the next level.
 - **Winning:** for the MVP, the player wins upon finishing level 3.
-- **Losing:** the player loses as soon as they have looked at 5 non-horses over the course of the game.
+- **Losing:** the player loses as soon as they have looked at 3 non-horses over the course of the game.
 
 ### Main game loop
 
@@ -40,9 +40,9 @@ The game displays rolling fields of grass from a great distance, as if the playe
 
 Once the player has zoomed in far enough on an animal, it becomes "looked at":
 
-- Each animal has its own zoom threshold, so some are looked at sooner than others.
+- Looking starts as soon as the player zooms in far enough to see an animal's mid-distance detail, the same zoom at which look-alikes' telltales first show. The player has to judge quickly.
 - A look meter above the animal fills over about half a second while the player stays zoomed in. Zooming out before it fills drains it, which gives the player a brief moment to notice a goat and back off. Looks start at middling zoom, before the animal fills the screen, so the player has to decide quickly whether it's a horse.
-- Every animal on screen that meets its threshold fills its own meter, not just the one under the cursor.
+- Every animal on screen that is zoomed in that far fills its own meter, not just the one under the cursor.
 - An animal only counts if its head is visible. A horse whose head is hidden behind a barn can't be looked at.
 
 A looked-at animal stays in the game but is marked with a bright outline traced around its sprite: blue for horses, red for non-horses. When zoomed far out, a small ring of the same color circles it. If the sprite outline causes performance issues or needs complex code, it becomes a simple rectangular border instead.

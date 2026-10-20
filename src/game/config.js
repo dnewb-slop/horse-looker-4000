@@ -108,23 +108,21 @@ export const GRAZE_WALK_SPEED = 8;
 export const GRAZE_DEPTH_SCALE = 0.4;
 
 /**
- * Look threshold: how tall an animal must be on screen, as a fraction of the viewport height.
- * Each animal draws its own from a triangular distribution with this range and peak. (tune)
+ * A look starts as soon as an animal is drawn with its Mid sprite, the tier where look-alike
+ * telltales first show, so the player has to judge it quickly. (tune)
  */
-export const LOOK_THRESHOLD_MIN = 0.08;
-export const LOOK_THRESHOLD_PEAK = 0.1;
-export const LOOK_THRESHOLD_MAX = 0.15;
+export const LOOK_MIN_PX = FAR_MAX_PX;
 
 /** Seconds of qualifying view to fill a look meter, and how much faster it drains. (tune) */
 export const LOOK_FILL_S = 0.5;
 export const LOOK_DRAIN_MULTIPLIER = 2;
 
 /** Horses to look at to finish a level, and levels to win. Rules from DESIGN.md. */
-export const HORSES_PER_LEVEL = 10;
+export const HORSES_PER_LEVEL = 5;
 export const LEVEL_COUNT = 3;
 
 /** Non-horses that end the game. Rule from DESIGN.md. */
-export const MAX_STRIKES = 5;
+export const MAX_STRIKES = 3;
 
 /** Seconds the "Level n complete" card shows before the next level. (tune) */
 export const LEVEL_CARD_S = 2.5;

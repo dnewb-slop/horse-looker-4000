@@ -14,8 +14,8 @@ test('level 1 has scenery, 40 animals and an empty bottom strip', async ({ page 
   });
   expect(counts).toEqual({ scenery: 10, animals: 40 });
   await expect(page.locator('#strip')).toContainText('Level 1 / 3');
-  await expect(page.locator('#strip')).toContainText('Horses 0/10');
-  await expect(page.locator('#strip')).toContainText('Imposters 0/5');
+  await expect(page.locator('#strip')).toContainText('Horses 0/5');
+  await expect(page.locator('#strip')).toContainText('Imposters 0/3');
   await expect(page.locator('.chip')).toHaveCount(0);
   await page.screenshot({ path: 'e2e/screenshots/pasture.png' });
   expect(errors).toEqual([]);
@@ -25,7 +25,7 @@ test('zooming in on a horse looks at it', async ({ page }) => {
   await page.goto('/?seed=4000&intro=off');
   await zoomOnto(page, await pickAnimal(page, true));
 
-  await expect(page.locator('#strip')).toContainText('Horses 1/10');
+  await expect(page.locator('#strip')).toContainText('Horses 1/5');
   await expect(page.locator('.chip.horse')).toHaveCount(1);
   await expect(page.locator('.horse-meter .slot.filled')).toHaveCount(1);
   await page.screenshot({ path: 'e2e/screenshots/looked-horse.png' });
@@ -40,7 +40,7 @@ test('looking at a non-horse counts an imposter', async ({ page }) => {
   await zoomOnto(page, await pickAnimal(page, false));
 
   await expect(page.locator('#strip')).toContainText('Level 3 / 3');
-  await expect(page.locator('#strip')).toContainText('Imposters 1/5');
+  await expect(page.locator('#strip')).toContainText('Imposters 1/3');
   await expect(page.locator('.chip.non-horse')).toHaveCount(1);
   await expect(page.locator('.strike-meter .slot.filled')).toHaveCount(1);
   await page.screenshot({ path: 'e2e/screenshots/looked-imposter.png' });

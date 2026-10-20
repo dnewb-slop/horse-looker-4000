@@ -30,7 +30,8 @@ export function countLooks(play, looked) {
 
 /**
  * What happens next after the counts change. Losing wins ties: the game ends as soon as the
- * fifth non-horse is looked at, even if a tenth horse was looked at in the same instant.
+ * last allowed non-horse is looked at, even if the level's last horse was looked at in the same
+ * instant.
  * @param {{level: number, horsesThisLevel: number, nonHorsesTotal: number}} play
  * @returns {Phase}
  */
