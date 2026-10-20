@@ -14,14 +14,15 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 
 - [x] **1. Scaffolding:** the repo files listed under [AI-first workflow](#ai-first-workflow), CI, the Pages deploy, and a blank canvas live at the Pages URL.
 - [x] **2. Pasture and zoom:** procedural hills and grass, cursor-centered eased zoom, drag to pan, vignette and zoom readout. **Play it:** does zooming feel good?
-- [ ] **3. Sprites:** three horse breeds at all four tiers, barns, redwoods and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
-- [ ] **4. Looking at horses:** animals spawn and graze, look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
+- [ ] **3. Sprites:** three horse breeds at all four tiers, barns, California live oaks and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
+- [ ] **4. Looking at horses:** animals spawn and graze on their own hill (each belongs to one hill layer and never crosses a ridge yet), look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
 - [ ] **5. Rules and levels:** level table, look-alike placeholders as plain shapes, strikes, level-complete card.
 - [ ] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
-- [ ] **7. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier.
-- [ ] **8. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. Comes after the full game is playable, so it can't delay it; a static frame is the fallback. **Play it:** does the pasture feel alive?
-- [ ] **9. Music:** Claude shortlists licensed, calming tracks for each level; the owner picks by ear; then Claude adds playback, crossfades, the mute button and credits. **Play it:** does each level sound right?
-- [ ] **10. Tuning pass:** adjust every _(tune)_ value from playtest notes. **Play it:** MVP done.
+- [ ] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
+- [ ] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier.
+- [ ] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. Comes after the full game is playable, so it can't delay it; a static frame is the fallback. **Play it:** does the pasture feel alive?
+- [ ] **10. Music:** Claude shortlists licensed, calming tracks for each level; the owner picks by ear; then Claude adds playback, crossfades, the mute button and credits. **Play it:** does each level sound right?
+- [ ] **11. Tuning pass:** adjust every _(tune)_ value from playtest notes. **Play it:** MVP done.
 
 ## Technology stack
 
@@ -122,8 +123,20 @@ stateDiagram-v2
 - Each animal has `kind` (horse, goat, sheep, centaur, reverseCentaur, robotHorse, horseSuit), `breed` (A, B, C, or none), `color`, `x`, `y`, `facing`, `lookThreshold`, `lookMeter` and `lookedAt`.
 - Animals spawn at random positions with a minimum spacing, so two never overlap at close zoom.
 - Animals graze: they idle, then walk a short distance in a random direction and stop. Walking alternates two frames about 4 times a second, and grazing holds a head-down frame _(tune)_. They stay inside the pasture and walk around scenery.
-- **Scenery:** barns, big redwoods and datacenters are placed at level start, before animals, and never overlap each other. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a redwood about 1.5 horses wide and 6 tall, a datacenter about 10 horses wide. Each level gets roughly 3 barns, 8 redwoods and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
+- **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 2.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Each level gets roughly 3 barns, 6 live oaks and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
 - All randomness comes from a seeded generator (mulberry32). A fixed seed makes tests and bug reports reproducible.
+
+### Hills with depth
+
+Each hill is a layer. Everything on the pasture (animals and scenery) belongs to exactly one hill and is drawn after that hill and before the next one in front. That ordering does the hiding: the hill in front covers anything behind its crest. Milestone 4 builds the layers with animals staying on their own hill; milestone 7 adds valleys and crossings.
+
+- **Terrain:** generation keeps a minimum gap between neighboring ridges at every x (about 150 world units _(tune)_), so slopes never pinch shut or cross.
+- **Valleys:** behind each crest is a hidden strip of ground (about 1.5 horse-heights deep _(tune)_). An animal there belongs to the hill behind and sits below the crest of the hill in front, so it is partly or fully hidden.
+- **Crossing toward the viewer:** walk down into the valley behind the next hill (sinking out of sight), rise behind its crest head first, then switch to the front hill's layer at the crest and walk down its slope. **Away from the viewer:** the same steps in reverse. Each crossing is a small scripted sequence of states, so it is easy to unit-test.
+- **How often:** grazing animals sometimes head over a ridge _(tune)_. Some animals start each level in a valley _(tune)_.
+- **Head visibility:** a head counts as visible only if the head box is above every crest in front of the animal's hill and not covered by scenery. A horse peeking over a crest can be looked at; one fully behind it can't.
+- **Scenery** never sits in a valley, so barns and trees always stand on a visible slope.
+- **Cost:** hiding comes from draw order, not extra drawing. Per tick, each animal checks a few nearby ridges (three sine waves each), which is negligible.
 
 ### Camera and zoom
 
@@ -311,7 +324,7 @@ Settled while planning (2026-10-20). The running log, including later decisions,
 | Looked-at marker  | Sprite outline, blue for horses, red for non-horses; rectangle fallback                                                             |
 | Lose condition    | 5 non-horses over the whole game                                                                                                    |
 | Animation         | Two-frame walk and graze, as its own milestone after the game is playable                                                           |
-| Scenery           | Barns, redwoods and datacenters (largest, at least twice a barn)                                                                    |
+| Scenery           | Barns, California live oaks and datacenters (largest, at least twice a barn)                                                        |
 | Zoom tiers        | Four tiers (Dot, Far, Mid, Near) with cutoffs as written; telltales first show at Mid                                               |
 | Looked-at trigger | Per-animal threshold of 15–30% of viewport height, a 1 s look meter, every qualifying animal on screen counts, head must be visible |
 | UI layout         | Bottom strip; strikes visible from the start; drag to pan                                                                           |

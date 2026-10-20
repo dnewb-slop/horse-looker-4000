@@ -53,7 +53,11 @@ The challenge is that the pasture is also populated with creatures that are not 
 
 ### Scenery
 
-The pasture contains barns, big trees (redwoods), and datacenters. Datacenters are the largest objects, small by datacenter standards but at least twice the size of a barn. Animals walk around scenery and can pass behind it, which can hide them.
+The pasture contains barns, big trees (California live oaks, with broad, rounded, low-spreading canopies), and datacenters. Datacenters are the largest objects, small by datacenter standards but at least twice the size of a barn. Animals walk around scenery and can pass behind it, which can hide them.
+
+### Hills
+
+The pasture is a series of rolling hills, one behind another. Each animal stands on one hill. When an animal walks over a ridge, it disappears into the valley behind the next hill and then appears over that hill's crest, head first. An animal partly behind a crest can still be looked at if its head is visible; one fully hidden in a valley can't.
 
 ### Animal details
 

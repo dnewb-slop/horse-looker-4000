@@ -2,6 +2,14 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Hills and trees (2026-10-20)
+
+| Decision         | Choice                                                                                                                            | Why                                                                                                                                |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Hills with depth | Added to the MVP as milestone 7: valleys hide animals, animals cross ridges by sinking and rising, peeking heads can be looked at | The ridge lines promise depth; making it real adds gameplay. Hiding comes from draw order, so the computational cost is negligible |
+| Milestone 4      | Animals stay on their own hill (one layer each), with no ridge crossing                                                           | Fully playable before milestone 7, and the fallback if hill depth goes badly                                                       |
+| Trees            | California live oaks instead of redwoods                                                                                          | Fit the rolling-pasture setting                                                                                                    |
+
 ## Pasture and zoom (milestone 2, 2026-10-20)
 
 | Decision    | Choice                                                                                                         | Why                                                                                             |
@@ -45,7 +53,7 @@ Settled choices and why, newest first within each section. Check here before re-
 | Looked-at marker  | Sprite outline, blue for horses, red for non-horses; rectangle fallback                                                             |
 | Lose condition    | 5 non-horses over the whole game                                                                                                    |
 | Animation         | Two-frame walk and graze, as its own milestone after the game is playable                                                           |
-| Scenery           | Barns, redwoods and datacenters (largest, at least twice a barn)                                                                    |
+| Scenery           | Barns, California live oaks and datacenters (largest, at least twice a barn)                                                        |
 | Zoom tiers        | Four tiers (Dot, Far, Mid, Near) with cutoffs as written; telltales first show at Mid                                               |
 | Looked-at trigger | Per-animal threshold of 15–30% of viewport height, a 1 s look meter, every qualifying animal on screen counts, head must be visible |
 | UI layout         | Bottom strip; strikes visible from the start; drag to pan                                                                           |
