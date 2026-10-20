@@ -6,9 +6,10 @@ import { HORSE_HEIGHT, LOOK_FILL_S } from '../src/game/config.js';
 import { headCenter, headVisible, isLooking, stepLooks } from '../src/game/detect.js';
 import { createPlay, stepPlay } from '../src/game/play.js';
 import { HORSE } from '../src/render/art/horse.js';
+import { HEAD_BOXES } from '../src/render/sprites.js';
 
 const BOX = HORSE.headBox;
-const HEAD_BOXES = { horse: BOX };
+
 const DT = 1 / 60;
 
 /** Three flat hills: ridges at y = -100, 500 and 1000. */
@@ -143,7 +144,7 @@ test('every qualifying horse on screen fills its own meter', () => {
   assert.deepEqual(looked, [0, 1]);
 });
 
-test('a looked-at horse counts toward the level', () => {
+test('looked-at animals are counted by stepPlay', () => {
   let play = createPlay(4000);
   const target = play.animals.find((a) => headVisible(a, BOX, play.hills, play.scenery));
   assert.ok(target);
@@ -157,6 +158,7 @@ test('a looked-at horse counts toward the level', () => {
     [...play.lookedAt].sort((a, b) => a - b),
     looked,
   );
-  assert.equal(play.horsesThisLevel, looked.length);
-  assert.equal(play.nonHorsesTotal, 0);
+  const horses = play.animals.filter((a) => a.lookedAt && a.kind === 'horse').length;
+  assert.equal(play.horsesThisLevel, horses);
+  assert.equal(play.nonHorsesTotal, looked.length - horses);
 });

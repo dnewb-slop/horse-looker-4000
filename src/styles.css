@@ -142,8 +142,36 @@ body {
   border-color: #2f8cff;
 }
 
+.chip.non-horse {
+  border-color: #ff3b30;
+}
+
 .chip canvas {
   width: 36px;
   height: 24px;
   image-rendering: pixelated;
+}
+
+/* Full-window text cards: level complete, and for now the end of the game. */
+.card {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10vw;
+  color: #fff;
+  background: #000;
+  font:
+    700 36px/1.3 system-ui,
+    sans-serif;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.card.shown {
+  opacity: 1;
+  pointer-events: auto;
 }

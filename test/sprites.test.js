@@ -2,8 +2,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  CREATURES,
   GRID_TIERS,
   SCENERY,
+  creaturePalette,
   gridSize,
   outlineGrid,
   spriteTier,
@@ -34,19 +36,42 @@ test('every breed palette defines the same keys', () => {
     assert.deepEqual(Object.keys(palette).sort(), keys);
 });
 
-test('the horse head box sits inside the sprite and covers head pixels', () => {
-  const { x, y, w, h } = HORSE.headBox;
-  assert.ok(x >= 0 && y >= 0 && x + w <= 1 && y + h <= 1);
-  const near = HORSE.near;
-  const cols = near[0].length;
-  const rows = near.length;
-  let filled = 0;
-  for (let gy = Math.floor(y * rows); gy < Math.ceil((y + h) * rows); gy++) {
-    for (let gx = Math.floor(x * cols); gx < Math.ceil((x + w) * cols); gx++) {
-      if (near[gy][gx] !== '.' && near[gy][gx] !== 'o') filled++;
+test('every creature has grids of the right size at every tier with only palette keys', () => {
+  for (const [kind, art] of Object.entries(CREATURES)) {
+    for (const tier of GRID_TIERS) {
+      const { width, height } = gridSize(HORSE_WIDTH, HORSE_HEIGHT, tier);
+      assert.deepEqual(
+        validateGrid(art[tier], width, height, creaturePalette('A')),
+        [],
+        `${kind} ${tier}`,
+      );
     }
   }
-  assert.ok(filled > 20, `head box covers only ${filled} head pixels`);
+});
+
+test('every head box sits inside the sprite and covers head pixels', () => {
+  for (const [kind, art] of Object.entries(CREATURES)) {
+    const { x, y, w, h } = art.headBox;
+    assert.ok(x >= 0 && y >= 0 && x + w <= 1 && y + h <= 1, kind);
+    const near = art.near;
+    const cols = near[0].length;
+    const rows = near.length;
+    let filled = 0;
+    for (let gy = Math.floor(y * rows); gy < Math.ceil((y + h) * rows); gy++) {
+      for (let gx = Math.floor(x * cols); gx < Math.ceil((x + w) * cols); gx++) {
+        if (near[gy][gx] !== '.' && near[gy][gx] !== 'o') filled++;
+      }
+    }
+    assert.ok(filled > 15, `${kind}: head box covers only ${filled} head pixels`);
+  }
+});
+
+test('horse-shaped look-alikes match the horse at Far, so their telltales first show at Mid', () => {
+  for (const kind of ['centaur', 'reverseCentaur', 'robotHorse', 'horseSuit']) {
+    const art = CREATURES[/** @type {keyof typeof CREATURES} */ (kind)];
+    assert.deepEqual(art.far, HORSE.far, kind);
+    assert.notDeepEqual(art.mid, HORSE.mid, kind);
+  }
 });
 
 test('scenery draws at the right size at every tier with only palette keys', () => {

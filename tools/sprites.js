@@ -5,21 +5,22 @@
 import { clampCenter, createCamera } from '../src/game/camera.js';
 import { HORSE_HEIGHT, HORSE_WIDTH } from '../src/game/config.js';
 import { createRng } from '../src/game/rng.js';
+import { LOOKALIKE_COAT } from '../src/game/levels.js';
 import { generateHills } from '../src/game/world.js';
 import { renderPasture } from '../src/render/renderer.js';
 import { HILL_COLORS } from '../src/render/palette.js';
+import { BREED_NAMES, KIND_NAMES } from '../src/ui/hud.js';
 import {
   SCENERY,
   TIER_DENSITY,
   createSpriteSet,
-  drawHorse,
+  drawAnimal,
   drawScenery,
 } from '../src/render/sprites.js';
 
 const sprites = createSpriteSet();
 /** @type {import('../src/render/sprites.js').Breed[]} */
 const BREEDS = ['A', 'B', 'C'];
-const BREED_NAMES = { A: 'Friesian', B: 'Haflinger', C: 'Camarillo White' };
 /** On-screen horse heights to show each tier at: inside that tier's range. */
 const SHOW_PX = { dot: 6, far: 24, mid: 96, near: 220 };
 
@@ -65,7 +66,28 @@ for (const breed of BREEDS) {
     const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
     const h = Math.ceil(px) + 12;
     const ctx = figure(row, w, h, `${BREED_NAMES[breed]} · ${tier} (${px} px tall)`);
-    drawHorse(ctx, stageCamera(w, h, zoom), sprites, { x: 0, y: 0, breed, facing: 1 });
+    drawAnimal(ctx, stageCamera(w, h, zoom), sprites, {
+      kind: 'horse',
+      x: 0,
+      y: 0,
+      breed,
+      facing: 1,
+    });
+  }
+}
+
+const lookalikesEl = /** @type {HTMLElement} */ (document.getElementById('lookalikes'));
+for (const kind of /** @type {(keyof typeof LOOKALIKE_COAT)[]} */ (Object.keys(LOOKALIKE_COAT))) {
+  const row = document.createElement('div');
+  row.className = 'row';
+  lookalikesEl.append(row);
+  for (const [tier, px] of Object.entries(SHOW_PX)) {
+    const zoom = px / HORSE_HEIGHT;
+    const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
+    const h = Math.ceil(px) + 12;
+    const ctx = figure(row, w, h, `${KIND_NAMES[kind]} · ${tier}`);
+    const breed = LOOKALIKE_COAT[kind];
+    drawAnimal(ctx, stageCamera(w, h, zoom), sprites, { kind, x: 0, y: 0, breed, facing: 1 });
   }
 }
 
@@ -128,7 +150,7 @@ for (const factor of [1, 5, 16, 45]) {
   });
   renderPasture(ctx, cam, { hills }, seed);
   for (const t of things) {
-    if (t.type === 'horse') drawHorse(ctx, cam, sprites, t);
+    if (t.type === 'horse') drawAnimal(ctx, cam, sprites, { ...t, kind: 'horse' });
     else drawScenery(ctx, cam, sprites, t);
   }
 }

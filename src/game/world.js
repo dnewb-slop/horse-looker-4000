@@ -91,7 +91,8 @@ export function ridgeY(hill, x) {
 
 /**
  * @typedef {'barn' | 'oak' | 'datacenter'} SceneryKind
- * @typedef {'A' | 'B' | 'C'} Breed
+ * @typedef {import('./levels.js').Breed} Breed
+ * @typedef {import('./levels.js').AnimalKind} AnimalKind
  */
 
 /**
@@ -107,8 +108,8 @@ export function ridgeY(hill, x) {
  * An animal. (x, y) is where its feet meet the ground: the bottom center of its sprite.
  * @typedef {object} Animal
  * @property {number} id
- * @property {'horse'} kind
- * @property {Breed} breed
+ * @property {AnimalKind} kind
+ * @property {Breed} breed coat colors: the horse's breed, or the breed a look-alike imitates
  * @property {number} x
  * @property {number} y
  * @property {number} hill index of the hill it stands on
@@ -238,18 +239,17 @@ export function lookThresholdFrom(u) {
 }
 
 /**
- * Spawn horses at random spots on the hills, spaced apart and clear of scenery bases.
+ * Spawn animals at random spots on the hills, spaced apart and clear of scenery bases.
  * @param {() => number} rng
  * @param {Hill[]} hills
  * @param {Scenery[]} scenery
- * @param {number} count
- * @param {Breed[]} breeds chosen from at random
+ * @param {{kind: AnimalKind, breed: Breed}[]} roster one entry per animal
  * @returns {Animal[]}
  */
-export function spawnAnimals(rng, hills, scenery, count, breeds) {
+export function spawnAnimals(rng, hills, scenery, roster) {
   /** @type {Animal[]} */
   const animals = [];
-  for (let id = 0; id < count; id++) {
+  for (let id = 0; id < roster.length; id++) {
     for (let i = 0; i < PLACEMENT_TRIES; i++) {
       const hill = Math.floor(rng() * hills.length);
       const x = randomBetween(rng, HORSE_WIDTH / 2, WORLD_WIDTH - HORSE_WIDTH / 2);
@@ -259,8 +259,8 @@ export function spawnAnimals(rng, hills, scenery, count, breeds) {
       if (animals.some((a) => Math.hypot(a.x - x, a.y - y) < ANIMAL_MIN_SPACING)) continue;
       animals.push({
         id,
-        kind: 'horse',
-        breed: breeds[Math.floor(rng() * breeds.length)],
+        kind: roster[id].kind,
+        breed: roster[id].breed,
         x,
         y,
         hill,

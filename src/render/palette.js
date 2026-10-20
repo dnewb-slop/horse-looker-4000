@@ -91,6 +91,22 @@ export const DATACENTER_PALETTE = {
 
 /** Looked-at marker for horses: blue, not green, so it stands out from the grass. */
 export const MARKER_HORSE = '#2f8cff';
+/** Looked-at marker for everything else. */
+export const MARKER_NON_HORSE = '#ff3b30';
+
+/**
+ * Extra keys for look-alike art, on top of the breed palette that gives their coat:
+ * S skin, T shirt, P trousers, R robot metal, r robot joints, K sneakers.
+ * @type {Record<string, string>}
+ */
+export const LOOKALIKE_KEYS = {
+  S: '#d9a37a',
+  T: '#d6417a',
+  P: '#3d4f73',
+  R: '#a3acb6',
+  r: '#59616b',
+  K: '#ff2fa8',
+};
 
 /** Look meter: neutral white, so it doesn't give away what the animal is. */
 export const LOOK_METER = '#ffffff';
