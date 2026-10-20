@@ -15,7 +15,8 @@ export const animalOnScreen = (page, id) =>
     return {
       x: (a.x - cam.x) * cam.zoom + cam.viewWidth / 2,
       y: (a.y - 8 - cam.y) * cam.zoom + cam.viewHeight / 2,
-      lookedAt: a.lookedAt,
+      // Done once it's looked at, or once the game stops counting looks (e.g. it was lost).
+      lookedAt: a.lookedAt || hook.play.phase !== 'playing',
     };
   }, id);
 

@@ -2,6 +2,14 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Tuning: a harder game (2026-10-20)
+
+| Decision          | Choice                                                                                                                                                          | Why                                                                                                       |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| When looks start  | As soon as an animal is drawn at the Mid tier (32 px tall on screen), the same for every animal; replaces per-animal thresholds of 8–15% of the viewport height | Owner: harder. Looks now start right where look-alike telltales first show, so the player must judge fast |
+| Horses per level  | 5 (was 10)                                                                                                                                                      | Owner's tuning; DESIGN.md updated                                                                         |
+| Imposters to lose | 3 (was 5)                                                                                                                                                       | Owner's tuning; DESIGN.md updated                                                                         |
+
 ## Hills with depth (milestone 7, 2026-10-20)
 
 | Decision             | Choice                                                                                                                                                                                        | Why                                                                                       |

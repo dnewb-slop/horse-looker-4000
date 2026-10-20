@@ -5,7 +5,6 @@ import {
   SCENERY_SIZE,
   generateHills,
   inSceneryFootprint,
-  lookThresholdFrom,
   placeScenery,
   ridgeY,
   slopeRange,
@@ -29,9 +28,6 @@ import {
   BARN_COUNT,
   DATACENTER_COUNT,
   HILL_COUNT,
-  LOOK_THRESHOLD_MAX,
-  LOOK_THRESHOLD_MIN,
-  LOOK_THRESHOLD_PEAK,
   OAK_COUNT,
   WORLD_HEIGHT,
   WORLD_WIDTH,
@@ -132,7 +128,6 @@ test('animals spawn spaced apart, on their ground and clear of scenery; some sta
     for (const a of animals) {
       assert.ok(onGround(hills, a), `seed ${seed}: animal ${a.id}`);
       assert.ok(!inSceneryFootprint(scenery, a.x, a.y));
-      assert.ok(a.lookThreshold >= LOOK_THRESHOLD_MIN && a.lookThreshold <= LOOK_THRESHOLD_MAX);
       assert.equal(a.lookMeter, 0);
       assert.equal(a.lookedAt, false);
     }
@@ -144,15 +139,6 @@ test('animals spawn spaced apart, on their ground and clear of scenery; some sta
     }
   }
   assert.ok(inValleys > SEEDS.length, `only ${inValleys} animals started in a valley`);
-});
-
-test('look thresholds span the configured range and peak where configured', () => {
-  assert.equal(lookThresholdFrom(0), LOOK_THRESHOLD_MIN);
-  assert.ok(Math.abs(lookThresholdFrom(1 - 1e-12) - LOOK_THRESHOLD_MAX) < 1e-6);
-  // The peak splits the range in proportion to where it sits.
-  const split =
-    (LOOK_THRESHOLD_PEAK - LOOK_THRESHOLD_MIN) / (LOOK_THRESHOLD_MAX - LOOK_THRESHOLD_MIN);
-  assert.ok(Math.abs(lookThresholdFrom(split) - LOOK_THRESHOLD_PEAK) < 1e-9);
 });
 
 test('grazing animals stay on their ground, avoid scenery, and change hills only at a crest', () => {

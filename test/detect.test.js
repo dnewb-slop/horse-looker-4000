@@ -2,11 +2,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createCamera } from '../src/game/camera.js';
-import { HORSE_HEIGHT, LOOK_FILL_S } from '../src/game/config.js';
+import { FAR_MAX_PX, HORSE_HEIGHT, LOOK_FILL_S } from '../src/game/config.js';
 import { headCenter, headVisible, isLooking, stepLooks } from '../src/game/detect.js';
 import { createPlay, stepPlay } from '../src/game/play.js';
 import { HORSE } from '../src/render/art/horse.js';
-import { HEAD_BOXES } from '../src/render/sprites.js';
+import { HEAD_BOXES, spriteTier } from '../src/render/sprites.js';
 
 const BOX = HORSE.headBox;
 
@@ -28,7 +28,6 @@ function horse(over = {}) {
     y: 400,
     hill: 0,
     facing: 1,
-    lookThreshold: 0.2,
     lookMeter: 0,
     lookedAt: false,
     rng: 1,
@@ -76,14 +75,15 @@ test('the head is mirrored when the horse faces left', () => {
   assert.equal(right.y, left.y);
 });
 
-test('a big enough, centered horse is being looked at; a small one is not', () => {
-  assert.equal(isLooking(horse(), cameraShowing(0.25), BOX, HILLS, []), true);
-  assert.equal(isLooking(horse(), cameraShowing(0.15), BOX, HILLS, []), false);
-  // Its own threshold decides.
-  assert.equal(
-    isLooking(horse({ lookThreshold: 0.15 }), cameraShowing(0.16), BOX, HILLS, []),
-    true,
-  );
+test('a look starts as soon as the horse is drawn at the Mid tier', () => {
+  // cameraShowing takes a fraction of an 800 px view; Mid starts at FAR_MAX_PX on screen.
+  const atMid = (FAR_MAX_PX + 0.5) / 800;
+  const atFar = (FAR_MAX_PX - 0.5) / 800;
+  assert.equal(spriteTier(cameraShowing(atMid).zoom), 'mid');
+  assert.equal(isLooking(horse(), cameraShowing(atMid), BOX, HILLS, []), true);
+  assert.equal(spriteTier(cameraShowing(atFar).zoom), 'far');
+  assert.equal(isLooking(horse(), cameraShowing(atFar), BOX, HILLS, []), false);
+  assert.equal(isLooking(horse(), cameraShowing(0.3), BOX, HILLS, []), true);
 });
 
 test('a horse whose center is off screen is not being looked at', () => {
@@ -138,16 +138,18 @@ test('the meter fills in its fill time, then marks the horse looked at once', ()
 
 test('zooming out drains the meter at twice the fill speed', () => {
   const half = look([horse()], cameraShowing(0.3), LOOK_FILL_S / 2).animals;
-  const drained = look(half, cameraShowing(0.05), LOOK_FILL_S / 8).animals;
+  // Back to the Far tier.
+  const drained = look(half, cameraShowing(0.02), LOOK_FILL_S / 8).animals;
   assert.ok(Math.abs(drained[0].lookMeter - 0.25) < 0.02);
-  assert.equal(look(half, cameraShowing(0.05), LOOK_FILL_S).animals[0].lookMeter, 0);
+  assert.equal(look(half, cameraShowing(0.02), LOOK_FILL_S).animals[0].lookMeter, 0);
 });
 
 test('every qualifying horse on screen fills its own meter', () => {
   const animals = [
     horse(),
     horse({ id: 1, x: 1010 }),
-    horse({ id: 2, x: 1010, lookThreshold: 0.3 }),
+    // Deep in the valley behind hill 1's crest: its head is hidden, so it doesn't count.
+    horse({ id: 2, x: 1010, y: 524 }),
   ];
   const { looked } = look(animals, cameraShowing(0.25), LOOK_FILL_S + 0.1);
   assert.deepEqual(looked, [0, 1]);

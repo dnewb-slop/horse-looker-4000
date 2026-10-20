@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { LEVEL_CARD_S } from '../src/game/config.js';
+import { HORSES_PER_LEVEL, LEVEL_CARD_S, MAX_STRIKES } from '../src/game/config.js';
 import { createPlay, stepPlay } from '../src/game/play.js';
 import { countLooks, nextPhase } from '../src/game/rules.js';
 import { createCamera } from '../src/game/camera.js';
@@ -41,11 +41,18 @@ test('looks count horses per level and non-horses per game, and are logged', () 
   assert.equal(play.log.filter((e) => e.kind === 'horse').length, 3);
 });
 
-test('ten horses complete a level; five non-horses lose; losing wins a tie', () => {
-  assert.equal(nextPhase({ level: 1, horsesThisLevel: 9, nonHorsesTotal: 4 }), 'playing');
-  assert.equal(nextPhase({ level: 1, horsesThisLevel: 10, nonHorsesTotal: 4 }), 'levelComplete');
-  assert.equal(nextPhase({ level: 2, horsesThisLevel: 3, nonHorsesTotal: 5 }), 'lost');
-  assert.equal(nextPhase({ level: 2, horsesThisLevel: 10, nonHorsesTotal: 5 }), 'lost');
+test('the rules match DESIGN.md: 5 horses complete a level, 3 non-horses lose', () => {
+  assert.equal(HORSES_PER_LEVEL, 5);
+  assert.equal(MAX_STRIKES, 3);
+});
+
+test('enough horses complete a level; enough non-horses lose; losing wins a tie', () => {
+  const h = HORSES_PER_LEVEL;
+  const n = MAX_STRIKES;
+  assert.equal(nextPhase({ level: 1, horsesThisLevel: h - 1, nonHorsesTotal: n - 1 }), 'playing');
+  assert.equal(nextPhase({ level: 1, horsesThisLevel: h, nonHorsesTotal: n - 1 }), 'levelComplete');
+  assert.equal(nextPhase({ level: 2, horsesThisLevel: 1, nonHorsesTotal: n }), 'lost');
+  assert.equal(nextPhase({ level: 2, horsesThisLevel: h, nonHorsesTotal: n }), 'lost');
 });
 
 /**
@@ -53,7 +60,7 @@ test('ten horses complete a level; five non-horses lose; losing wins a tie', () 
  * @param {import('../src/game/play.js').Play} play
  */
 function finishLevel(play) {
-  const done = lookAt(play, isHorse, 10);
+  const done = lookAt(play, isHorse, HORSES_PER_LEVEL);
   return stepPlay({ ...done, phase: 'playing' }, FAR_CAMERA, HEAD_BOXES, DT);
 }
 
@@ -72,7 +79,7 @@ test('a finished level shows its card, then the next level starts fresh', () => 
   assert.deepEqual(play.lookedAt, []);
   // Imposters and the game log carry over.
   assert.equal(play.nonHorsesTotal, 2);
-  assert.equal(play.log.length, 12);
+  assert.equal(play.log.length, 2 + HORSES_PER_LEVEL);
   assert.deepEqual(play.hills, createPlay(7, 2).hills);
 });
 
@@ -86,11 +93,11 @@ test('finishing level 3 wins the game after its card', () => {
   assert.equal(play.level, 3);
 });
 
-test('the fifth non-horse ends the game at once, and nothing counts after', () => {
-  let play = lookAt(createPlay(7, 2), notHorse, 5);
+test('the last allowed non-horse ends the game at once, and nothing counts after', () => {
+  let play = lookAt(createPlay(7, 2), notHorse, MAX_STRIKES);
   play = stepPlay(play, FAR_CAMERA, HEAD_BOXES, DT);
   assert.equal(play.phase, 'lost');
   const after = stepPlay(play, FAR_CAMERA, HEAD_BOXES, DT);
   assert.equal(after.phase, 'lost');
-  assert.equal(after.nonHorsesTotal, 5);
+  assert.equal(after.nonHorsesTotal, MAX_STRIKES);
 });

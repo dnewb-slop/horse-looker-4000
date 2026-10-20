@@ -3,7 +3,13 @@
 // Pure functions: they take the camera and animals and return new animals.
 
 import { worldToScreen } from './camera.js';
-import { HORSE_HEIGHT, HORSE_WIDTH, LOOK_DRAIN_MULTIPLIER, LOOK_FILL_S } from './config.js';
+import {
+  HORSE_HEIGHT,
+  HORSE_WIDTH,
+  LOOK_DRAIN_MULTIPLIER,
+  LOOK_FILL_S,
+  LOOK_MIN_PX,
+} from './config.js';
 import { SCENERY_SIZE, ridgeY } from './world.js';
 
 /**
@@ -46,8 +52,8 @@ export function headVisible(animal, box, hills, scenery) {
 }
 
 /**
- * Whether an animal's meter should fill right now: tall enough on screen, its center on screen,
- * and its head visible.
+ * Whether an animal's meter should fill right now: drawn at the Mid tier or closer, its center
+ * on screen, and its head visible.
  * @param {import('./world.js').Animal} animal
  * @param {import('./camera.js').Camera} cam
  * @param {HeadBox} box
@@ -55,7 +61,7 @@ export function headVisible(animal, box, hills, scenery) {
  * @param {import('./world.js').Scenery[]} scenery
  */
 export function isLooking(animal, cam, box, hills, scenery) {
-  if (HORSE_HEIGHT * cam.zoom < animal.lookThreshold * cam.viewHeight) return false;
+  if (HORSE_HEIGHT * cam.zoom < LOOK_MIN_PX) return false;
   const c = worldToScreen(cam, animal.x, animal.y - HORSE_HEIGHT / 2);
   if (c.x < 0 || c.x >= cam.viewWidth || c.y < 0 || c.y >= cam.viewHeight) return false;
   return headVisible(animal, box, hills, scenery);

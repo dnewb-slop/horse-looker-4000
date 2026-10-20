@@ -28,9 +28,6 @@ import {
   HILL_COUNT,
   HORSE_HEIGHT,
   HORSE_WIDTH,
-  LOOK_THRESHOLD_MAX,
-  LOOK_THRESHOLD_MIN,
-  LOOK_THRESHOLD_PEAK,
   OAK_COUNT,
   OAK_HEIGHT,
   OAK_WIDTH,
@@ -166,8 +163,6 @@ export function ridgeY(hill, x) {
  * @property {number} hill index of the hill it stands on. Its feet can be anywhere from that hill's
  *   crest down into the valley behind the next crest, where the next hill hides it.
  * @property {1 | -1} facing 1 faces right
- * @property {number} lookThreshold on-screen height needed to look at it, as a fraction of the
- *   viewport height
  * @property {number} lookMeter 0 to 1
  * @property {boolean} lookedAt
  * @property {number} rng this animal's own generator state, so grazing stays pure and seeded
@@ -310,20 +305,6 @@ export function placeScenery(rng, hills) {
 }
 
 /**
- * Draw a look threshold from a triangular distribution over the configured range.
- * @param {number} u uniform in [0, 1)
- */
-export function lookThresholdFrom(u) {
-  const lo = LOOK_THRESHOLD_MIN;
-  const hi = LOOK_THRESHOLD_MAX;
-  const peak = LOOK_THRESHOLD_PEAK;
-  const split = (peak - lo) / (hi - lo);
-  return u < split
-    ? lo + Math.sqrt(u * (hi - lo) * (peak - lo))
-    : hi - Math.sqrt((1 - u) * (hi - lo) * (hi - peak));
-}
-
-/**
  * Spawn animals at random spots on the hills, spaced apart and clear of scenery bases.
  * @param {() => number} rng
  * @param {Hill[]} hills
@@ -351,7 +332,6 @@ export function spawnAnimals(rng, hills, scenery, roster) {
         y,
         hill,
         facing: rng() < 0.5 ? 1 : -1,
-        lookThreshold: lookThresholdFrom(rng()),
         lookMeter: 0,
         lookedAt: false,
         rng: Math.floor(rng() * 2 ** 32),

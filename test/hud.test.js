@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { animalLabel, formatZoom, stripModel } from '../src/ui/hud.js';
 import { createPlay } from '../src/game/play.js';
+import { HORSES_PER_LEVEL, MAX_STRIKES } from '../src/game/config.js';
 
 test('zoom reads like a camera display', () => {
   assert.equal(formatZoom(1), '×1.0');
@@ -15,16 +16,16 @@ test('the strip starts empty and lists looked-at animals newest first', () => {
   const play = createPlay(1);
   assert.deepEqual(stripModel(play), {
     level: 'Level 1 / 3',
-    horses: 'Horses 0/10',
+    horses: `Horses 0/${HORSES_PER_LEVEL}`,
     horseSlots: 0,
-    strikes: 'Imposters 0/5',
+    strikes: `Imposters 0/${MAX_STRIKES}`,
     strikeSlots: 0,
     chips: [],
   });
 
   const [first, second] = play.animals;
   const model = stripModel({ ...play, lookedAt: [first.id, second.id], horsesThisLevel: 2 });
-  assert.equal(model.horses, 'Horses 2/10');
+  assert.equal(model.horses, `Horses 2/${HORSES_PER_LEVEL}`);
   assert.equal(model.horseSlots, 2);
   assert.deepEqual(
     model.chips.map((c) => c.id),
@@ -38,7 +39,7 @@ test('non-horses are labeled by kind and marked as imposters', () => {
   const goat = play.animals.find((a) => a.kind === 'goat' || a.kind === 'sheep');
   assert.ok(goat);
   const model = stripModel({ ...play, lookedAt: [goat.id], nonHorsesTotal: 1 });
-  assert.equal(model.strikes, 'Imposters 1/5');
+  assert.equal(model.strikes, `Imposters 1/${MAX_STRIKES}`);
   assert.equal(model.strikeSlots, 1);
   assert.deepEqual(model.chips[0].horse, false);
   assert.equal(model.chips[0].label, goat.kind === 'goat' ? 'Goat' : 'Sheep');

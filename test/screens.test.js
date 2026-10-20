@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { INTRO_FADE_S, INTRO_HOLDS_S } from '../src/game/config.js';
+import { INTRO_FADE_S, INTRO_HOLDS_S, MAX_STRIKES } from '../src/game/config.js';
 import { INTRO_LINES, introLineSeconds, introView, stepIntro } from '../src/game/intro.js';
 import { createEndPreview, createPlay, stepPlay } from '../src/game/play.js';
 import { createCamera } from '../src/game/camera.js';
@@ -107,8 +107,8 @@ test('the win screen shows the DESIGN.md line', () => {
 test('end-screen previews are lost or won games with a sample log', () => {
   const lost = createEndPreview(5, 'lost');
   assert.equal(lost.phase, 'lost');
-  assert.equal(lost.nonHorsesTotal, 5);
-  assert.equal(endModel(lost).chips.length, 8);
+  assert.equal(lost.nonHorsesTotal, MAX_STRIKES);
+  assert.equal(endModel(lost).chips.length, 3 + MAX_STRIKES);
   const won = createEndPreview(5, 'won');
   assert.equal(won.phase, 'won');
   assert.equal(won.level, 3);
