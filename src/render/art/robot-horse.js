@@ -16,11 +16,22 @@ const CHARGE_BOLT = {
 };
 
 /**
+ * The antenna, standing and grazing: it sits where the ear was, lit red at the tip.
+ * @type {Record<'stand' | 'graze', {x0: number, x1: number, top: number, bottom: number, light: number}>}
+ */
+const ANTENNA = {
+  stand: { x0: 19.1, x1: 19.6, top: -1, bottom: 1, light: 0.6 },
+  graze: { x0: 23, x1: 23.5, top: 5.4, bottom: 7.6, light: 6 },
+};
+
+/**
+ * @param {'stand' | 'graze'} pose
  * @param {'mid' | 'near'} tier
  * @returns {string[]}
  */
-function robotHorseAt(tier) {
-  let g = editGrid(HORSE[tier], tier, (wx, wy, k) => {
+function robotHorseAt(pose, tier) {
+  const horse = pose === 'stand' ? HORSE[tier] : HORSE.graze[tier];
+  let g = editGrid(horse, tier, (wx, wy, k) => {
     if (k === 'e') return 'L';
     if (wy < 10.5) return undefined;
     if (k === 'h') return 'r'; // flat feet
@@ -29,9 +40,10 @@ function robotHorseAt(tier) {
   });
   const bolt = CHARGE_BOLT[tier];
   g = stampGrid(g, bolt.x, bolt.y, bolt.art);
-  g = drawOnGrid(g, tier, (p) => p.rect(19.1, -1, 19.6, 1, 'r')); // antenna
+  const a = ANTENNA[pose];
+  g = drawOnGrid(g, tier, (p) => p.rect(a.x0, a.top, a.x1, a.bottom, 'r'));
   return editGrid(g, tier, (wx, wy, k) =>
-    wy < 0.6 && Math.abs(wx - 19.35) < 0.6 && k !== '.' ? 'L' : undefined,
+    wy < a.light && wx > a.x0 - 0.35 && wx < a.x1 + 0.35 && k !== '.' ? 'L' : undefined,
   ); // its light
 }
 
@@ -47,7 +59,13 @@ export const ROBOT_HORSE = {
     '..RR...RR...',
     '..rr...rr...',
   ],
-  mid: robotHorseAt('mid'),
-  near: robotHorseAt('near'),
+  mid: robotHorseAt('stand', 'mid'),
+  near: robotHorseAt('stand', 'near'),
   headBox: HORSE.headBox,
+  walk: HORSE.walk,
+  graze: {
+    mid: robotHorseAt('graze', 'mid'),
+    near: robotHorseAt('graze', 'near'),
+    headBox: HORSE.graze.headBox,
+  },
 };

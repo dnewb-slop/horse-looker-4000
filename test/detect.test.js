@@ -5,6 +5,7 @@ import { createCamera } from '../src/game/camera.js';
 import { FAR_MAX_PX, HORSE_HEIGHT, LOOK_FILL_S } from '../src/game/config.js';
 import { headCenter, headVisible, isLooking, stepLooks } from '../src/game/detect.js';
 import { createPlay, stepPlay } from '../src/game/play.js';
+import { headBoxFor } from '../src/game/pose.js';
 import { HORSE } from '../src/render/art/horse.js';
 import { HEAD_BOXES, spriteTier } from '../src/render/sprites.js';
 
@@ -33,6 +34,8 @@ function horse(over = {}) {
     rng: 1,
     mode: 'idle',
     idleTime: 5,
+    grazing: false,
+    walkTime: 0,
     route: [],
     ...over,
   };
@@ -161,7 +164,7 @@ test('looked-at animals are counted by stepPlay', () => {
   assert.ok(target);
   const cam = cameraShowing(0.35, { x: target.x, y: target.y - HORSE_HEIGHT / 2 });
   // Freeze grazing for the test: everyone stands still for a long while.
-  play = { ...play, animals: play.animals.map((a) => ({ ...a, idleTime: 100 })) };
+  play = { ...play, animals: play.animals.map((a) => ({ ...a, idleTime: 100, grazing: false })) };
   for (let t = 0; t < 90; t++) play = stepPlay(play, cam, HEAD_BOXES, DT);
   const looked = play.animals.filter((a) => a.lookedAt).map((a) => a.id);
   assert.ok(looked.includes(target.id));
@@ -172,4 +175,13 @@ test('looked-at animals are counted by stepPlay', () => {
   const horses = play.animals.filter((a) => a.lookedAt && a.kind === 'horse').length;
   assert.equal(play.horsesThisLevel, horses);
   assert.equal(play.nonHorsesTotal, looked.length - horses);
+});
+
+test('a grazing head is low, so it can drop behind a crest the standing head clears', () => {
+  // Just behind hill 1's crest (y = 500): standing, the head shows above it; grazing, it doesn't.
+  const peeking = horse({ y: 510 });
+  const boxes = HEAD_BOXES.horse;
+  assert.ok(headVisible(peeking, headBoxFor(peeking, boxes), HILLS, []));
+  const grazing = { ...peeking, grazing: true, idleTime: 5 };
+  assert.ok(!headVisible(grazing, headBoxFor(grazing, boxes), HILLS, []));
 });

@@ -29,8 +29,10 @@ export const animalOnScreen = (page, id) =>
 export const pickAnimal = (page, horse) =>
   page.evaluate(async (horse) => {
     // Served paths, imported in the browser; kept out of TypeScript's module resolution.
-    const urls = ['/src/game/detect.js', '/src/render/sprites.js'];
-    const [{ headVisible }, { HEAD_BOXES }] = await Promise.all(urls.map((u) => import(u)));
+    const urls = ['/src/game/detect.js', '/src/game/pose.js', '/src/render/sprites.js'];
+    const [{ headVisible }, { headBoxFor }, { HEAD_BOXES }] = await Promise.all(
+      urls.map((u) => import(u)),
+    );
     const play = /** @type {any} */ (globalThis).__horseLooker.play;
     // Prefer one that will stand still for a while, so it can't wander over a ridge mid-zoom.
     const candidates = [...play.animals].sort(
@@ -45,7 +47,7 @@ export const pickAnimal = (page, horse) =>
         a.x < 3700 &&
         a.y > 300 &&
         a.y < 2200 &&
-        headVisible(a, HEAD_BOXES[a.kind], play.hills, play.scenery),
+        headVisible(a, headBoxFor(a, HEAD_BOXES[a.kind]), play.hills, play.scenery),
     );
     return a.id;
   }, horse);

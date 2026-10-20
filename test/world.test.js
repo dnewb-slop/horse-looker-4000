@@ -22,6 +22,7 @@ import { headVisible } from '../src/game/detect.js';
 import { HORSE } from '../src/render/art/horse.js';
 import {
   ANIMAL_MIN_SPACING,
+  GRAZE_CHANCE,
   CROSS_OVERSHOOT,
   MIN_RIDGE_GAP,
   VALLEY_DEPTH,
@@ -238,4 +239,30 @@ test('grazing is deterministic and faces the way it walks', () => {
   for (const a of run(animals)) {
     if (a.mode === 'walk') assert.equal(a.facing, a.route[0].x < a.x ? -1 : 1);
   }
+});
+
+test('most rests are spent grazing, and walk time only runs while walking', () => {
+  const dt = 1 / 60;
+  let rests = 0;
+  let grazing = 0;
+  for (const seed of SEEDS.slice(0, 5)) {
+    const { hills, scenery, animals: start } = level(seed);
+    let animals = start;
+    for (let tick = 0; tick < 60 * 30; tick++) {
+      const before = animals;
+      animals = stepAnimals(animals, hills, scenery, dt);
+      animals.forEach((a, i) => {
+        const b = before[i];
+        if (a.mode === 'idle' && b.mode === 'walk') {
+          rests++;
+          if (a.grazing) grazing++;
+        }
+        if (b.mode === 'idle') assert.equal(a.walkTime, b.walkTime);
+        else assert.ok(a.walkTime > b.walkTime);
+      });
+    }
+  }
+  const share = grazing / rests;
+  assert.ok(rests > 100, `only ${rests} rests`);
+  assert.ok(Math.abs(share - GRAZE_CHANCE) < 0.1, `${Math.round(share * 100)}% of rests grazed`);
 });

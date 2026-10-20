@@ -107,6 +107,15 @@ export const GRAZE_WALK_SPEED = 8;
 /** Walks are mostly sideways: up-or-down-slope movement is scaled by this. (tune) */
 export const GRAZE_DEPTH_SCALE = 0.4;
 
+/** Walking swaps between two frames this many times a second. (tune) */
+export const WALK_FRAME_RATE = 4;
+
+/** Chance that an animal stopping for a rest puts its head down to graze. (tune) */
+export const GRAZE_CHANCE = 0.7;
+
+/** A grazing animal lifts its head this many seconds before it walks off. (tune) */
+export const GRAZE_LOOK_UP_S = 1;
+
 /**
  * A look starts as soon as an animal is drawn with its Mid sprite, the tier where look-alike
  * telltales first show, so the player has to judge it quickly. (tune)

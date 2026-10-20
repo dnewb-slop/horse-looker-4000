@@ -7,7 +7,9 @@
 // the horse's barrel so the torso has room above the back.
 // Keys: the horse's, plus S skin.
 
+import { HORSE_HEIGHT, HORSE_WIDTH } from '../../game/config.js';
 import { HORSE } from './horse.js';
+import { grazeFrame, grazeHeadBox } from './motion.js';
 import { drawOnHorseBody } from './pen.js';
 
 /** World units the back is lowered to make room for the torso. */
@@ -34,11 +36,27 @@ function drawRider(p) {
   p.rect(18, 1.3, 18.6, 1.9, 'e');
 }
 
+/**
+ * Grazing, the rider bows forward from the waist: the torso turns a quarter turn about the hips.
+ * @type {import('./motion.js').GrazeRig}
+ */
+const BOW = { head: (wx, wy) => wx >= 14.6 && wy < 8, pivot: [17, 8], shift: [0, 0] };
+
+const HEAD_BOX = { x: 0.66, y: 0, w: 0.13, h: 0.2 };
+const mid = drawOnHorseBody(drawRider, 'mid', DROP);
+const near = drawOnHorseBody(drawRider, 'near', DROP);
+
 /** @type {import('../sprites.js').CreatureArt} */
 export const CENTAUR = {
   // The horse with the head in the coat highlight instead of black.
   far: HORSE.far.map((row, y) => (y < 3 ? row.slice(0, 9) + row.slice(9).replace(/B/g, 'w') : row)),
-  mid: drawOnHorseBody(drawRider, 'mid', DROP),
-  near: drawOnHorseBody(drawRider, 'near', DROP),
-  headBox: { x: 0.66, y: 0, w: 0.13, h: 0.2 },
+  mid,
+  near,
+  headBox: HEAD_BOX,
+  walk: HORSE.walk,
+  graze: {
+    mid: grazeFrame(mid, 'mid', BOW),
+    near: grazeFrame(near, 'near', BOW),
+    headBox: grazeHeadBox(HEAD_BOX, BOW, HORSE_WIDTH, HORSE_HEIGHT),
+  },
 };

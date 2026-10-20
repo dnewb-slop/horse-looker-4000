@@ -20,7 +20,7 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 - [x] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
 - [x] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
 - [x] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits. The owner picked and refined each from alternatives shown beside the horse breed it copies. Goats, sheep, centaurs and robot horses differ from their horse by a few pixels at Far; reverse centaurs and horse suits are jokes you can spot from Far. **Play it:** are the look-alikes hard enough, and are the jokes funny?
-- [ ] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. Comes after the full game is playable, so it can't delay it; a static frame is the fallback. **Play it:** does the pasture feel alive?
+- [x] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. The walk frame swings each creature's own legs; the horse's graze frame is hand-drawn and the look-alikes built on the horse wear its lowered head. **Play it:** does the pasture feel alive?
 - [ ] **10. Music:** Claude shortlists licensed, calming tracks for each level; the owner picks by ear; then Claude adds playback, crossfades, the mute button and credits. **Play it:** does each level sound right?
 - [ ] **11. Tuning pass:** adjust every _(tune)_ value from playtest notes. **Play it:** MVP done.
 
@@ -122,7 +122,7 @@ stateDiagram-v2
 - The pasture is a fixed world rectangle, 4000 × 2500 world units. Hills and grass are drawn procedurally from a seed.
 - Each animal has `kind` (horse, goat, sheep, centaur, reverseCentaur, robotHorse, horseSuit), `breed` (A, B, C, or none), `color`, `x`, `y`, `facing`, `lookMeter` and `lookedAt`.
 - Animals spawn at random positions with a minimum spacing, so two never overlap at close zoom.
-- Animals graze: they idle, then walk a short distance in a random direction and stop. Walking alternates two frames about 4 times a second, and grazing holds a head-down frame _(tune)_. They stay inside the pasture and walk around scenery.
+- Animals graze: they idle, then walk a short distance in a random direction and stop. Walking alternates two frames 4 times a second (`WALK_FRAME_RATE`). 70% of rests are spent with the head down (`GRAZE_CHANCE`), lifting it 1 s before walking off (`GRAZE_LOOK_UP_S`) _(tune)_. The head box follows the pose, so a grazing head can drop behind a crest. They stay inside the pasture and walk around scenery.
 - **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 3.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Each level gets roughly 3 barns, 6 live oaks and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
 - All randomness comes from a seeded generator (mulberry32). A fixed seed makes tests and bug reports reproducible.
 
@@ -179,7 +179,7 @@ Each level needs at least 5 horses to be winnable. Levels 2 and 3 have 11 spare 
 
 ## Assets
 
-Every MVP sprite is a text grid in code, at three sizes per creature, plus a colored dot for far zoom: 7 creatures × 3 sizes = 21 grids, about 28 animation frames (walk and graze at Mid and Near), and 3 scenery objects × 3 sizes = 9 more grids. Scenery (barns, live oaks, datacenters) is far larger than an animal, so instead of hand-typed grids it is drawn by small functions in `src/render/art/` that output a grid at each tier's density. Those functions are pure, deterministic and unit-tested like the hand-made grids.
+Every MVP sprite is a text grid in code, at three sizes per creature, plus a colored dot for far zoom: 7 creatures × 3 sizes = 21 grids, 28 animation frames (walk and graze at Mid and Near: the walk frames are made in code by swinging each creature's legs, the horse's graze frames are hand-drawn grids), and 3 scenery objects × 3 sizes = 9 more grids. Scenery (barns, live oaks, datacenters) is far larger than an animal, so instead of hand-typed grids it is drawn by small functions in `src/render/art/` that output a grid at each tier's density. Those functions are pure, deterministic and unit-tested like the hand-made grids.
 
 A sprite grid looks like this, with `.` as transparent and each other character mapped to a palette color:
 

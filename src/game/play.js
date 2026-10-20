@@ -86,7 +86,7 @@ function createLevel(seed, level) {
  * Advance one logic step. Animals always graze; looks only count while playing.
  * @param {Play} play
  * @param {import('./camera.js').Camera} cam
- * @param {Record<import('./world.js').AnimalKind, import('./detect.js').HeadBox>} headBoxes
+ * @param {Record<import('./world.js').AnimalKind, import('./pose.js').PoseHeadBoxes>} headBoxes
  * @param {number} dt
  * @param {number} [clicks] clicks on the opening sequence since the last step
  * @returns {Play}

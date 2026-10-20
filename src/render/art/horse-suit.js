@@ -5,6 +5,8 @@
 // the reverse of a real horse. It's a joke rather than a challenge, so it shows from Far on.
 // Keys: the horse's (o outline, B coat, b shade, w legs, M mane, tail and shoes, e eye).
 
+import { HORSE_HEIGHT, HORSE_WIDTH } from '../../game/config.js';
+import { grazeFrame, grazeHeadBox } from './motion.js';
 import { drawShapes, stampGrid } from './pen.js';
 
 /** @param {import('./pen.js').Pen} p */
@@ -107,6 +109,16 @@ function suitAt(tier) {
   return stampGrid(drawShapes(drawSuit, tier), EYE[tier].x, EYE[tier].y, ['e']);
 }
 
+/**
+ * Grazing, the stiff costume neck tips forward and the head points at the grass.
+ * @type {import('./motion.js').GrazeRig}
+ */
+const NOD = { head: (wx, wy) => wx >= 15 && wy < 7, pivot: [17, 7], shift: [0, 1] };
+
+const HEAD_BOX = { x: 0.66, y: 0, w: 0.32, h: 0.33 };
+const mid = suitAt('mid');
+const near = suitAt('near');
+
 /** @type {import('../sprites.js').CreatureArt} */
 export const HORSE_SUIT = {
   far: [
@@ -119,7 +131,20 @@ export const HORSE_SUIT = {
     '...ww..ww...',
     '...MM..MM...',
   ],
-  mid: suitAt('mid'),
-  near: suitAt('near'),
-  headBox: { x: 0.66, y: 0, w: 0.32, h: 0.33 },
+  mid,
+  near,
+  headBox: HEAD_BOX,
+  // Two pairs of human legs.
+  walk: {
+    legTop: 11.6,
+    groups: [
+      { x0: 4.4, x1: 11.2, swing: -1 },
+      { x0: 12.8, x1: 20, swing: 1 },
+    ],
+  },
+  graze: {
+    mid: grazeFrame(mid, 'mid', NOD),
+    near: grazeFrame(near, 'near', NOD),
+    headBox: grazeHeadBox(HEAD_BOX, NOD, HORSE_WIDTH, HORSE_HEIGHT),
+  },
 };

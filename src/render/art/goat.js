@@ -11,12 +11,52 @@ import { HORSE } from './horse.js';
 import { drawOnGrid, editGrid, eraseFromGrid } from './pen.js';
 
 /**
+ * Where the horn and beard go, standing and grazing: they follow the head.
+ * @type {Record<'stand' | 'graze', {horn: [number, number][], beard: [number, number][]}>}
+ */
+const HEAD_PARTS = {
+  stand: {
+    horn: [
+      [19.4, 1.4],
+      [18.6, -0.2],
+      [16.6, -0.4],
+      [15.8, 0.8],
+      [16.8, 0.6],
+      [17.8, 1.6],
+    ],
+    beard: [
+      [19.6, 5.6],
+      [21.6, 5.4],
+      [20.4, 8.6],
+    ],
+  },
+  // Head down: the horn sweeps back from the poll and the beard hangs from the chin.
+  graze: {
+    horn: [
+      [21.4, 8.2],
+      [21, 6.4],
+      [19.2, 5.2],
+      [18.6, 5.8],
+      [19.8, 6.8],
+      [20.4, 8.4],
+    ],
+    beard: [
+      [20.2, 12.6],
+      [21, 12.8],
+      [19.6, 15.4],
+    ],
+  },
+};
+
+/**
+ * @param {'stand' | 'graze'} pose
  * @param {'mid' | 'near'} tier
  * @returns {string[]}
  */
-function goatAt(tier) {
+function goatAt(pose, tier) {
+  const horse = pose === 'stand' ? HORSE[tier] : HORSE.graze[tier];
   // The mane stays blond down the back of the neck but not between the horns.
-  let g = editGrid(HORSE[tier], tier, (wx, wy, k) =>
+  let g = editGrid(horse, tier, (wx, wy, k) =>
     k === 'M' && wx > 12 && wy < 1.2 ? 'B' : undefined,
   );
   // The long tail goes, leaving a stub drawn below.
@@ -31,25 +71,8 @@ function goatAt(tier) {
       ],
       'M',
     ); // upturned tail stub
-    p.polygon(
-      [
-        [19.4, 1.4],
-        [18.6, -0.2],
-        [16.6, -0.4],
-        [15.8, 0.8],
-        [16.8, 0.6],
-        [17.8, 1.6],
-      ],
-      'h',
-    ); // horn, curving back from where the ear was
-    p.polygon(
-      [
-        [19.6, 5.6],
-        [21.6, 5.4],
-        [20.4, 8.6],
-      ],
-      'M',
-    ); // beard
+    p.polygon(HEAD_PARTS[pose].horn, 'h'); // horn, curving back from where the ear was
+    p.polygon(HEAD_PARTS[pose].beard, 'M');
   });
 }
 
@@ -65,7 +88,13 @@ export const GOAT = {
     '..bb...bb...',
     '..hh...hh...',
   ],
-  mid: goatAt('mid'),
-  near: goatAt('near'),
+  mid: goatAt('stand', 'mid'),
+  near: goatAt('stand', 'near'),
   headBox: HORSE.headBox,
+  walk: HORSE.walk,
+  graze: {
+    mid: goatAt('graze', 'mid'),
+    near: goatAt('graze', 'near'),
+    headBox: HORSE.graze.headBox,
+  },
 };

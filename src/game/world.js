@@ -17,6 +17,7 @@ import {
   DATACENTER_COUNT,
   DATACENTER_HEIGHT,
   DATACENTER_WIDTH,
+  GRAZE_CHANCE,
   GRAZE_DEPTH_SCALE,
   GRAZE_IDLE_MAX_S,
   GRAZE_IDLE_MIN_S,
@@ -168,6 +169,9 @@ export function ridgeY(hill, x) {
  * @property {number} rng this animal's own generator state, so grazing stays pure and seeded
  * @property {'idle' | 'walk'} mode
  * @property {number} idleTime seconds left standing still, while idle
+ * @property {boolean} grazing whether it puts its head down while idle (DESIGN.md: a grazing
+ *   head is low, so it can drop behind a crest)
+ * @property {number} walkTime seconds spent walking, which picks the walk frame
  * @property {Waypoint[]} route where it is walking, while walking
  */
 
@@ -334,15 +338,26 @@ export function spawnAnimals(rng, hills, scenery, roster) {
         facing: rng() < 0.5 ? 1 : -1,
         lookMeter: 0,
         lookedAt: false,
-        rng: Math.floor(rng() * 2 ** 32),
+        ...firstRest(Math.floor(rng() * 2 ** 32)),
         mode: 'idle',
         idleTime: randomBetween(rng, 0, GRAZE_IDLE_MAX_S),
+        walkTime: 0,
         route: [],
       });
       break;
     }
   }
   return animals;
+}
+
+/**
+ * Whether an animal's first rest is spent grazing. Drawn from its own generator rather than the
+ * pasture's, so adding it didn't move any animal of an existing seed.
+ * @param {number} state the animal's generator state
+ */
+function firstRest(state) {
+  const [value, rng] = rngStep(state);
+  return { rng, grazing: value < GRAZE_CHANCE };
 }
 
 /**
@@ -450,6 +465,8 @@ function stepIdle(a, hills, scenery, dt) {
   const restAgain = randomBetween(next, GRAZE_IDLE_MIN_S, GRAZE_IDLE_MAX_S);
   const cross = next() < CROSS_CHANCE;
   const toward = next() < 0.5 ? 1 : -1;
+  // Decided now, for the rest that follows this walk.
+  const grazing = next() < GRAZE_CHANCE;
   const dx = Math.cos(angle) * distance;
 
   /** @type {Waypoint[] | null} */
@@ -467,12 +484,13 @@ function stepIdle(a, hills, scenery, dt) {
     if (routeClear(hills, scenery, a, walk)) route = walk;
   }
   // Blocked: stay put and try another direction after the next rest.
-  if (!route) return { ...a, rng: state, idleTime: restAgain };
+  if (!route) return { ...a, rng: state, idleTime: restAgain, grazing };
   return {
     ...a,
     rng: state,
     mode: 'walk',
     idleTime: restAgain,
+    grazing,
     route,
     facing: facingFor(a, route[0]),
   };
@@ -498,10 +516,16 @@ function stepWalk(a, dt) {
   const dy = target.y - a.y;
   const remaining = Math.hypot(dx, dy);
   const stride = GRAZE_WALK_SPEED * dt;
+  const walkTime = a.walkTime + dt;
   if (remaining > stride) {
-    return { ...a, x: a.x + (dx / remaining) * stride, y: a.y + (dy / remaining) * stride };
+    return {
+      ...a,
+      walkTime,
+      x: a.x + (dx / remaining) * stride,
+      y: a.y + (dy / remaining) * stride,
+    };
   }
-  const arrived = { ...a, x: target.x, y: target.y, hill: target.hill, route: rest };
+  const arrived = { ...a, walkTime, x: target.x, y: target.y, hill: target.hill, route: rest };
   if (rest.length === 0) return { ...arrived, mode: 'idle' };
   return { ...arrived, facing: facingFor(arrived, rest[0]) };
 }

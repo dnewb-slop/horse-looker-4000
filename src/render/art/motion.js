@@ -1,9 +1,10 @@
 // @ts-check
-// Animation frames made from a creature's standing grid, so every creature walks and grazes with
-// its own colors and details. A walk frame scissors the legs apart; a graze frame turns the head
-// and neck a quarter turn down from the withers, an exact pixel rotation that keeps the art crisp.
+// Animation frames made from a creature's standing grid, so it walks and grazes with its own
+// colors and details. A walk frame scissors the legs apart. A graze frame turns the head and
+// neck a quarter turn down, an exact pixel rotation that keeps the art crisp; the horse and the
+// look-alikes built on it use its hand-drawn graze frame instead.
 
-import { drawOnGrid, editGrid, eraseFromGrid } from './pen.js';
+import { editGrid, eraseFromGrid } from './pen.js';
 
 /** Grid pixels per world unit, matching TIER_DENSITY in ../sprites.js. */
 const DENSITY = { mid: 1, near: 2 };
@@ -20,14 +21,10 @@ const SWING_PX = { mid: 1, near: 2 };
  * @typedef {object} WalkRig
  * @property {number} legTop world y where the legs leave the body; they bend below it
  * @property {LegGroup[]} groups
- * @typedef {object} GrazeRig
+ * @typedef {object} GrazeRig turns a head and neck down, for creatures without a hand-drawn graze
  * @property {(wx: number, wy: number) => boolean} head the head and neck, in world units
  * @property {[number, number]} pivot whole world units, so the turn lands on whole pixels
  * @property {[number, number]} shift whole world units to move the turned head after turning
- * @property {(pen: import('./pen.js').Pen) => void} [close] fills the gap the neck leaves
- * @typedef {object} MotionRig
- * @property {WalkRig} walk
- * @property {GrazeRig} graze
  */
 
 /**
@@ -52,7 +49,8 @@ export function walkFrame(rows, tier, rig) {
     }
     for (const g of rig.groups) {
       const [from, to] = [Math.round(g.x0 * d), Math.round(g.x1 * d)];
-      const offset = Math.round(g.swing * t * SWING_PX[tier]);
+      // Round the size, not the signed offset, so both directions swing alike.
+      const offset = g.swing * Math.round(t * SWING_PX[tier]);
       for (let x = from; x < to; x++) {
         if (cells[x] !== '.' && x + offset >= 0 && x + offset < out.length)
           out[x + offset] = cells[x];
@@ -72,8 +70,7 @@ export function walkFrame(rows, tier, rig) {
 export function grazeFrame(rows, tier, rig) {
   const d = DENSITY[tier];
   const head = editGrid(rows, tier, (wx, wy) => (rig.head(wx, wy) ? undefined : '.'));
-  let body = eraseFromGrid(rows, tier, (wx, wy) => rig.head(wx, wy));
-  if (rig.close) body = drawOnGrid(body, tier, rig.close);
+  const body = eraseFromGrid(rows, tier, (wx, wy) => rig.head(wx, wy));
   const [px, py] = [rig.pivot[0] * d, rig.pivot[1] * d];
   const [sx, sy] = [rig.shift[0] * d, rig.shift[1] * d];
   const turned = body.map((row, y) =>
