@@ -34,8 +34,7 @@ function horse(over = {}) {
     rng: 1,
     mode: 'idle',
     idleTime: 5,
-    targetX: 1000,
-    targetY: 400,
+    route: [],
     ...over,
   };
 }
@@ -105,6 +104,16 @@ test('a head behind scenery in front is hidden; scenery behind the horse does no
   assert.equal(headVisible(horse(), BOX, HILLS, [barnOnHillInFront]), false);
   // A barn off to the side covers nothing.
   assert.equal(headVisible(horse(), BOX, HILLS, [{ ...barnInFront, x: head.x + 200 }]), true);
+});
+
+test('a horse in the valley can be looked at once its head peeks over the crest', () => {
+  // Feet 10 below hill 1's crest at 500: the body is hidden, the head shows.
+  const peeking = horse({ y: 510 });
+  assert.equal(headVisible(peeking, BOX, HILLS, []), true);
+  const cam = cameraShowing(0.3, { x: 1000, y: 502 });
+  assert.equal(isLooking(peeking, cam, BOX, HILLS, []), true);
+  // Deeper in the valley, the head is gone too.
+  assert.equal(headVisible(horse({ y: 524 }), BOX, HILLS, []), false);
 });
 
 test('a head below the crest of a hill in front is hidden', () => {
