@@ -33,15 +33,16 @@ Settled choices and why, newest first within each section. Check here before re-
 
 ## Tooling (milestone 1, 2026-10-20)
 
-| Decision           | Choice                                                              | Why                                                                                                                     |
-| ------------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Playwright version | `@playwright/test` pinned to 1.56.1                                 | Matches the Chromium preinstalled in Claude cloud sessions, so local runs need no browser download. CI installs its own |
-| TypeScript version | 5.9.3, JSDoc checking only (`tsc --noEmit`)                         | Stable `checkJs` support; no build step                                                                                 |
-| Unit tests         | Node's built-in `node --test`                                       | No test-framework dependency                                                                                            |
-| Dev server         | `tools/serve.js`, a small Node static server                        | Avoids a dependency just to serve files                                                                                 |
-| Pure-logic guard   | ESLint bans `Math.random` and `Date.now` in `src/game/`             | Keeps game logic seeded and testable                                                                                    |
-| Pages build        | The Pages workflow publishes only `index.html`, `src/` and `audio/` | Players never download tests or tools                                                                                   |
-| Screenshots        | Saved to `e2e/screenshots/`, not compared to baselines              | For Claude and the owner to look at; pixel baselines would be brittle while art changes                                 |
+| Decision           | Choice                                                                      | Why                                                                                                                                                                                 |
+| ------------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Install scripts    | `allowScripts` denies `fsevents` (Playwright's optional macOS file watcher) | Newer npm asks before running install scripts. `fsevents` only speeds up Playwright's watch mode; denying it keeps installs from compiling native code. Older npm ignores the field |
+| Playwright version | `@playwright/test` pinned to 1.56.1                                         | Matches the Chromium preinstalled in Claude cloud sessions, so local runs need no browser download. CI installs its own                                                             |
+| TypeScript version | 5.9.3, JSDoc checking only (`tsc --noEmit`)                                 | Stable `checkJs` support; no build step                                                                                                                                             |
+| Unit tests         | Node's built-in `node --test`                                               | No test-framework dependency                                                                                                                                                        |
+| Dev server         | `tools/serve.js`, a small Node static server                                | Avoids a dependency just to serve files                                                                                                                                             |
+| Pure-logic guard   | ESLint bans `Math.random` and `Date.now` in `src/game/`                     | Keeps game logic seeded and testable                                                                                                                                                |
+| Pages build        | The Pages workflow publishes only `index.html`, `src/` and `audio/`         | Players never download tests or tools                                                                                                                                               |
+| Screenshots        | Saved to `e2e/screenshots/`, not compared to baselines                      | For Claude and the owner to look at; pixel baselines would be brittle while art changes                                                                                             |
 
 ## Planning (2026-10-20)
 
