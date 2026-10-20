@@ -31,7 +31,7 @@ test('the pasture has scenery, horses and an empty bottom strip', async ({ page 
   expect(counts).toEqual({ scenery: 10, animals: 30 });
   await expect(page.locator('#strip')).toContainText('Level 1 / 3');
   await expect(page.locator('#strip')).toContainText('Horses 0/10');
-  await expect(page.locator('#strip')).toContainText('Strikes 0/5');
+  await expect(page.locator('#strip')).toContainText('Imposters 0/5');
   await expect(page.locator('.chip')).toHaveCount(0);
   await page.screenshot({ path: 'e2e/screenshots/pasture.png' });
   expect(errors).toEqual([]);

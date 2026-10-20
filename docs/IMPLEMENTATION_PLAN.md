@@ -148,9 +148,9 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 
 ### Looked-at detection
 
-- Each animal gets its own look threshold at spawn: between 15% and 30% of the viewport height, centered on 20%, drawn from the seeded generator _(tune)_. The viewport is the canvas area, not counting the bottom strip.
+- Each animal gets its own look threshold at spawn: between 8% and 15% of the viewport height, peaking at 10%, drawn from the seeded generator _(tune)_. The viewport is the canvas area, not counting the bottom strip.
 - An animal's look meter fills while all three of these hold: its sprite is at least its threshold tall on screen, its center is on screen, and its head is visible.
-- The meter fills over 1 s and drains at twice that speed when any condition stops _(tune)_. A full meter means looked at.
+- The meter fills over 0.5 s and drains at twice that speed when any condition stops _(tune)_. A full meter means looked at.
 - Every qualifying animal on screen fills its own meter at once, not just the one under the cursor. That is the risk the player manages near goats and look-alikes.
 - **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is. Meters are drawn on top of everything.
 - **Head visibility:** each sprite marks a head box. The head is hidden when any scenery drawn in front of the animal covers the box's center, or a hill in front rises above it.
@@ -197,12 +197,12 @@ The renderer turns grids into offscreen canvases at load. Breeds share shapes an
 
 The renderer picks a tier by how tall a horse is on screen, then scales the sprite to its exact size with smoothing off. (Snapping to whole-pixel multiples would make sprites jump in size during smooth zooming.) Each tier has a fixed density: 0.5, 1 and 2 grid pixels per world unit for Far, Mid and Near, so scenery and animals always share one pixel size.
 
-| Tier | On-screen size | Sprite                     | What the player can tell                                                                               |
-| ---- | -------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Dot  | under 8 px     | 1–3 px blob, drawn in code | Color only. Breed B and a goat look identical                                                          |
-| Far  | 8–32 px        | 12 × 8 grid                | Body shape: four legs and a long neck vs a round sheep                                                 |
-| Mid  | 32–128 px      | 24 × 16 grid               | Telltales: upright centaur torso, robot legs, colorful sneakers                                        |
-| Near | over 128 px    | 48 × 32 grid               | Full detail: mane, face, hooves. Most looks finish here; low-threshold animals can trigger late in Mid |
+| Tier | On-screen size | Sprite                     | What the player can tell                                               |
+| ---- | -------------- | -------------------------- | ---------------------------------------------------------------------- |
+| Dot  | under 8 px     | 1–3 px blob, drawn in code | Color only. Breed B and a goat look identical                          |
+| Far  | 8–32 px        | 12 × 8 grid                | Body shape: four legs and a long neck vs a round sheep                 |
+| Mid  | 32–128 px      | 24 × 16 grid               | Telltales: upright centaur torso, robot legs, colorful sneakers        |
+| Near | over 128 px    | 48 × 32 grid               | Full detail: mane, face, hooves. Most looks finish before this, in Mid |
 
 Each look-alike's telltale must first appear at Mid, so the player has to zoom partway in to check before committing. Cutoffs are _(tune)_.
 
@@ -246,7 +246,7 @@ The pasture fills the window, and a 96 px strip along the bottom tracks progress
 |                     o(blue)          .                            |
 | Pasture canvas · crosshair · drag to pan · vignette edges          |
 +--------------------------------------------------------------------+
-| Level 2 / 3          Strikes 2/5      Looked at (newest first)  [M]|
+| Level 2 / 3          Imposters 2/5    Looked at (newest first)  [M]|
 | Horses 7/10          (*)(*)( )( )( )  [Haflinger][Goat][Friesian]  |
 | [#][#][#][#][#][#][#][ ][ ][ ]                                     |
 +--------------------------------------------------------------------+
@@ -254,7 +254,7 @@ The pasture fills the window, and a 96 px strip along the bottom tracks progress
 
 - **Viewport (canvas):** crosshair cursor, a soft dark vignette at the edges to suggest a telephoto lens, and a camera-style zoom readout ("×12") in a corner. Look meters appear above animals as they fill.
 - **Level and progress:** "Level 2 / 3" and a 10-slot horse meter that fills as horses are looked at.
-- **Strikes:** five slots that turn red per non-horse, visible from the start. The game ends on the fifth.
+- **Imposters (strikes):** five slots labeled "Imposters" that turn red per non-horse, visible from the start. The game ends on the fifth.
 - **Looked-at list:** a horizontal row with the newest on the left. Each chip shows the Near sprite as an icon plus a label ("Haflinger", "Goat"), with a blue or red edge to match the field marker.
 - **Mute button:** at the right end of the strip.
 - **Text screens:** intro, level complete, win and lose are full-window HTML overlays with bold white text on black, fading with CSS transitions.

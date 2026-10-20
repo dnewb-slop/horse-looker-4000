@@ -17,7 +17,7 @@ test('the strip starts empty and lists looked-at animals newest first', () => {
     level: 'Level 1 / 3',
     horses: 'Horses 0/10',
     horseSlots: 0,
-    strikes: 'Strikes 0/5',
+    strikes: 'Imposters 0/5',
     strikeSlots: 0,
     chips: [],
   });

@@ -112,7 +112,7 @@ test('a head below the crest of a hill in front is hidden', () => {
   assert.equal(headVisible(horse({ y: 400 }), BOX, HILLS, []), true);
 });
 
-test('the meter fills in about a second, then marks the horse looked at once', () => {
+test('the meter fills in its fill time, then marks the horse looked at once', () => {
   const cam = cameraShowing(0.3);
   const half = look([horse()], cam, LOOK_FILL_S / 2);
   assert.ok(Math.abs(half.animals[0].lookMeter - 0.5) < 0.02);

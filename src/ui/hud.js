@@ -43,7 +43,7 @@ export function createZoomReadout(el) {
  * @property {string} level e.g. "Level 1 / 3"
  * @property {string} horses e.g. "Horses 7/10"
  * @property {number} horseSlots filled slots of the horse meter
- * @property {string} strikes e.g. "Strikes 2/5"
+ * @property {string} strikes e.g. "Imposters 2/5": non-horses looked at, which end the game
  * @property {number} strikeSlots
  * @property {Chip[]} chips looked-at animals, newest first
  */
@@ -67,7 +67,7 @@ export function stripModel(play) {
     level: `Level ${play.level} / ${LEVEL_COUNT}`,
     horses: `Horses ${horses}/${HORSES_PER_LEVEL}`,
     horseSlots: horses,
-    strikes: `Strikes ${strikes}/${MAX_STRIKES}`,
+    strikes: `Imposters ${strikes}/${MAX_STRIKES}`,
     strikeSlots: strikes,
     chips,
   };

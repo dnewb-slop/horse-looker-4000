@@ -12,7 +12,7 @@ export const WORLD_HEIGHT = 2500;
 /**
  * Deepest zoom, as a multiple of the zoom that fits the whole pasture on screen. (tune)
  * 64 makes a horse a ~5 px dot at ×1 and ~40% of an 800 px tall view at the maximum, so the
- * 15–30% look threshold is reachable.
+ * look threshold is reachable.
  */
 export const MAX_ZOOM_FACTOR = 64;
 
@@ -102,12 +102,12 @@ export const GRAZE_DEPTH_SCALE = 0.4;
  * Look threshold: how tall an animal must be on screen, as a fraction of the viewport height.
  * Each animal draws its own from a triangular distribution with this range and peak. (tune)
  */
-export const LOOK_THRESHOLD_MIN = 0.15;
-export const LOOK_THRESHOLD_PEAK = 0.2;
-export const LOOK_THRESHOLD_MAX = 0.3;
+export const LOOK_THRESHOLD_MIN = 0.08;
+export const LOOK_THRESHOLD_PEAK = 0.1;
+export const LOOK_THRESHOLD_MAX = 0.15;
 
 /** Seconds of qualifying view to fill a look meter, and how much faster it drains. (tune) */
-export const LOOK_FILL_S = 1;
+export const LOOK_FILL_S = 0.5;
 export const LOOK_DRAIN_MULTIPLIER = 2;
 
 /** Horses to look at to finish a level, and levels to win. Rules from DESIGN.md. */
