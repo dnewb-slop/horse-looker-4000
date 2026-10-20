@@ -2,6 +2,17 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Hills with depth (milestone 7, 2026-10-20)
+
+| Decision             | Choice                                                                                                                                                                                        | Why                                                                                       |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Valleys              | A hill's ground runs from its own crest down to 24 world units (1.5 horse-heights) below the next hill's crest. Animals there are drawn before the hill in front, which hides them            | Hiding comes from draw order alone, as planned                                            |
+| Grazing into valleys | Ordinary grazing walks may dip into the valley; spawns are spread over the whole ground, so some animals start hidden                                                                         | Valleys feel natural instead of being special places; no extra rule needed                |
+| Ridge crossings      | 20% of walks try a crossing: a three-waypoint route (valley floor, crest, past the crest) with the layer switch on arrival at the crest, where none of the animal is covered, so nothing pops | Scripted waypoints are simple to test: one hill at a time, switching exactly on the crest |
+| Ridge gap            | Each ridge is redrawn flatter (amplitude × 0.8, up to 12 times) until it stays 150 units below the ridge behind it everywhere; the last resort is a flat ridge                                | Keeps every valley open with deterministic, seeded terrain                                |
+| Walk checks          | Routes are checked every 2 world units against the ground and scenery bases (was 6 points per walk)                                                                                           | Long crossing legs could cut the corner of a barn's base between samples                  |
+| Peeking              | A head counts as visible when the center of its head box is above every crest in front (unchanged rule), so a horse peeking out of a valley can be looked at                                  | DESIGN.md, Hills                                                                          |
+
 ## Screens (milestone 6, 2026-10-20)
 
 | Decision            | Choice                                                                                                                                                          | Why                                                                                                                     |

@@ -20,8 +20,8 @@ export const animalOnScreen = (page, id) =>
   }, id);
 
 /**
- * Pick an animal away from the pasture edges whose head isn't hidden behind scenery and that
- * hasn't been looked at yet.
+ * Pick an animal away from the pasture edges whose head isn't hidden behind scenery or a crest
+ * and that hasn't been looked at yet.
  * @param {import('@playwright/test').Page} page
  * @param {boolean} horse
  */
@@ -31,7 +31,12 @@ export const pickAnimal = (page, horse) =>
     const urls = ['/src/game/detect.js', '/src/render/sprites.js'];
     const [{ headVisible }, { HEAD_BOXES }] = await Promise.all(urls.map((u) => import(u)));
     const play = /** @type {any} */ (globalThis).__horseLooker.play;
-    const a = play.animals.find(
+    // Prefer one that will stand still for a while, so it can't wander over a ridge mid-zoom.
+    const candidates = [...play.animals].sort(
+      (/** @type {any} */ p, /** @type {any} */ q) =>
+        Number(q.mode === 'idle' && q.idleTime > 3) - Number(p.mode === 'idle' && p.idleTime > 3),
+    );
+    const a = candidates.find(
       (/** @type {any} */ a) =>
         (a.kind === 'horse') === horse &&
         !a.lookedAt &&

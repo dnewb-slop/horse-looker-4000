@@ -68,12 +68,26 @@ export const DATACENTER_COUNT = 1;
 export const ANIMAL_MIN_SPACING = 36;
 
 /**
- * How far an animal's feet stay from the ridge above (its own hill's crest) and below (the next
- * hill's crest, which would hide it), in world units. Keeps every animal fully visible until
- * milestone 7 adds valleys.
+ * How far feet stay below their own hill's crest while grazing, and how far scenery stays above
+ * the next hill's crest so it is never in a valley, in world units.
  */
 export const SLOPE_MARGIN_TOP = 4;
 export const SLOPE_MARGIN_BOTTOM = 2;
+
+/** Closest two neighboring ridges may come at any x, in world units. (tune) */
+export const MIN_RIDGE_GAP = 150;
+
+/**
+ * Depth of the hidden valley behind each crest, in world units: about 1.5 horse-heights, so an
+ * animal at the bottom is fully out of sight. (tune)
+ */
+export const VALLEY_DEPTH = 24;
+
+/** Chance that a grazing animal's next walk heads over a ridge instead. (tune) */
+export const CROSS_CHANCE = 0.2;
+
+/** How far past the crest a crossing walks onto the new slope, in world units. (tune) */
+export const CROSS_OVERSHOOT = 10;
 
 /**
  * Depth of the ground strip at a scenery object's base that animals don't walk through, in world
