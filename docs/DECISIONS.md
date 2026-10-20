@@ -2,6 +2,18 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Sprites (milestone 3, 2026-10-20)
+
+| Decision                  | Choice                                                                                                                                                   | Why                                                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Horse size and zoom range | Horse is 24 × 16 world units; maximum zoom raised from 24× to 64×; wheel speed raised so the full range takes the same scrolling as before               | At 24× a horse could never reach the 15–30% look threshold while still being a dot at ×1   |
+| Tier density              | Far, Mid and Near grids hold 0.5, 1 and 2 pixels per world unit; tier picked by a horse's on-screen height (dot below 8 px, Far below 32, Mid below 128) | Animals and scenery always share one pixel size                                            |
+| Sprite scaling            | Exact scaling with smoothing off, not whole-pixel multiples                                                                                              | Whole-pixel snapping made sprites jump in size while zooming smoothly                      |
+| Scenery art               | Drawn by small pure functions that output text grids at each tier's density, not hand-typed grids                                                        | A datacenter at Near is 480 pixels wide; generated grids keep it consistent and reviewable |
+| Horse art                 | Grids generated from simple shapes, then reviewed on the sprite page                                                                                     | Consistent proportions across the three tiers                                              |
+| Live oak size             | 4 horses wide, 3.5 tall (was 2.5)                                                                                                                        | At 2.5 the canopy was flat and read as a savanna acacia                                    |
+| Sprite review page        | `tools/sprites.html`, dev-only, screenshotted by `e2e/sprites.spec.js`                                                                                   | Lets Claude and the owner judge art at real in-game sizes                                  |
+
 ## Hills and trees (2026-10-20)
 
 | Decision         | Choice                                                                                                                            | Why                                                                                                                                |
@@ -12,15 +24,15 @@ Settled choices and why, newest first within each section. Check here before re-
 
 ## Pasture and zoom (milestone 2, 2026-10-20)
 
-| Decision    | Choice                                                                                                         | Why                                                                                             |
-| ----------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Zoom easing | Eases `log(zoom)` rather than zoom                                                                             | A linear ease feels fast when zoomed out and sluggish when zoomed in                            |
-| Zoom range  | 1× fits the whole pasture; 24× maximum; a window with a different shape shows a dark border beside the pasture | The whole pasture is always reachable, and the camera never shows past its edges once zoomed in |
-| Wheel input | Lines and pages converted to pixels; each event capped at 240 px                                               | Mice and trackpads feel similar, and a hard flick can't jump the whole range                    |
-| Hills       | 7 bands from summed sine waves, generated from the seed; paler toward the back                                 | Cheap, deterministic, and reads as depth                                                        |
-| Grass tufts | Placed by a hash of world cell and seed, shown from about 3 px tall                                            | Gives a sense of scale at close zoom and stays put while zooming                                |
-| Seeds       | `?seed=123` reproduces a pasture; otherwise random                                                             | Reproducible bug reports and tests                                                              |
-| Test hook   | `window.__horseLooker` exposes the seed and camera read-only                                                   | Browser tests can check camera state without parsing pixels                                     |
+| Decision    | Choice                                                                                                                                          | Why                                                                                             |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Zoom easing | Eases `log(zoom)` rather than zoom                                                                                                              | A linear ease feels fast when zoomed out and sluggish when zoomed in                            |
+| Zoom range  | 1× fits the whole pasture; 64× maximum (raised from 24× in milestone 3); a window with a different shape shows a dark border beside the pasture | The whole pasture is always reachable, and the camera never shows past its edges once zoomed in |
+| Wheel input | Lines and pages converted to pixels; each event capped at 240 px                                                                                | Mice and trackpads feel similar, and a hard flick can't jump the whole range                    |
+| Hills       | 7 bands from summed sine waves, generated from the seed; paler toward the back                                                                  | Cheap, deterministic, and reads as depth                                                        |
+| Grass tufts | Placed by a hash of world cell and seed, shown from about 3 px tall                                                                             | Gives a sense of scale at close zoom and stays put while zooming                                |
+| Seeds       | `?seed=123` reproduces a pasture; otherwise random                                                                                              | Reproducible bug reports and tests                                                              |
+| Test hook   | `window.__horseLooker` exposes the seed and camera read-only                                                                                    | Browser tests can check camera state without parsing pixels                                     |
 
 ## Going public (2026-10-20)
 

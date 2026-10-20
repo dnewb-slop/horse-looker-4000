@@ -22,7 +22,12 @@ export default [
     },
   },
   {
-    files: ['test/**/*.js', 'e2e/**/*.js', 'tools/**/*.js', '*.config.js'],
+    // The sprite review page runs in the browser.
+    files: ['tools/sprites.js'],
+    languageOptions: { globals: globals.browser },
+  },
+  {
+    files: ['test/**/*.js', 'e2e/**/*.js', 'tools/serve.js', '*.config.js'],
     languageOptions: { globals: globals.node },
   },
 ];

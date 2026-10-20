@@ -1,0 +1,73 @@
+// @ts-check
+// A horse seen from the side, facing right. All three breeds share these shapes and swap
+// palettes (see BREED_PALETTES in ../palette.js).
+//
+// Keys: o outline, B coat, b coat shade, w coat highlight, M mane and tail, h hooves, e eye.
+
+/** @type {import('../sprites.js').CreatureArt} */
+export const HORSE = {
+  far: [
+    '.........B..',
+    '........MBB.',
+    '..BBBBBBMBBB',
+    '.MBBBBBBBB..',
+    '.MBBBBBBB...',
+    '.Mbb...bb...',
+    '..bb...bb...',
+    '..hh...hh...',
+  ],
+  mid: [
+    '.................ooBo...',
+    '................oMMBBo..',
+    '................oMMBeBo.',
+    '.....ooo.......oMMBBBBBo',
+    '....oBBwoooooooBMMBBBBBo',
+    '...oMBBBBBBBBBBBMBBBooo.',
+    '..oMMBBBBBBBBBBBBBBo....',
+    '.oMMBBBBBBBBBBBBBBBo....',
+    '.oMMBBBBBBBBBBBBBBo.....',
+    '.oMobbbbbbbbbbbbbbbo....',
+    '.oMobbobbbbbbbobobbo....',
+    'oMMobbobooooooobobbo....',
+    '.ooobbobo.....obobbo....',
+    '...obbobo.....obobbo....',
+    '...obbobo.....obobbo....',
+    '....ohoho.....ohoho.....',
+  ],
+  near: [
+    '....................................oBBo........',
+    '...................................oooBBo.......',
+    '..................................oMMBBBBo......',
+    '.................................oMMMMBBBBo.....',
+    '.................................oMMMBBBBBBo....',
+    '................................oMMMMBBBBeBBo...',
+    '................................oMMMBBBBBBBBBo..',
+    '...........ooo................ooMMMMBBBBBBBBBBo.',
+    '.........ooBBBoo.............oBBMMMBBBBBBBBBBBBo',
+    '........oBBBBBwwooooooooooooowBMMMMBBBBBoBBBBBBo',
+    '.......oMBBBBBwwwwwwwwwwwwwBwwBMMMBBBBBo.oBBBBo.',
+    '......oMMBBBBBBBBBBBBBBBBBBBBBBMMMBBBBBo..oooo..',
+    '.....oMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBo........',
+    '....oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBo.........',
+    '....oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBo.........',
+    '....oMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBo.........',
+    '...oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBoo..........',
+    '...oMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBo...........',
+    '...oMMMobbbbbbbbbbbbbbbbbbbbbbbbbbbbbo..........',
+    '...oMMMoobbbbbbbbbbbbbbbbbbbbbbbbbbbbo..........',
+    '..oMMMo.obbbbbbbbbbbbbbbbbbbbbbbbobbbo..........',
+    '..oMMMo.obbbobbbboooooooooooobbbbobbbo..........',
+    '..oMMMo.obbbobbbbo..........obbbbobbbo..........',
+    '..oMMMo.obbbobbbbo..........obbbbobbbo..........',
+    '...ooo..obbbobbbbo..........obbbbobbbo..........',
+    '........obbbobbbbo..........obbbbobbbo..........',
+    '........obbbobbbbo..........obbbbobbbo..........',
+    '........obbbobbbbo..........obbbbobbbo..........',
+    '........obbbobbbbo..........obbbbobbbo..........',
+    '........ohhhohhhho..........ohhhhohhho..........',
+    '........ohhhohhhho..........ohhhhohhho..........',
+    '.........ooo.oooo............oooo.ooo...........',
+  ],
+  // Where the head is, as fractions of the sprite box. Detection checks this is visible.
+  headBox: { x: 0.74, y: 0, w: 0.26, h: 0.37 },
+};

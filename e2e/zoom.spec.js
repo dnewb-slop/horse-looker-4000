@@ -38,7 +38,7 @@ test('wheel zooms toward the cursor and the readout follows', async ({ page }) =
 
   for (let i = 0; i < 20; i++) await page.mouse.wheel(0, -240);
   await waitForZoomToSettle(page);
-  await expect(page.locator('#zoom-readout')).toHaveText('×24');
+  await expect(page.locator('#zoom-readout')).toHaveText('×64');
   await page.screenshot({ path: 'e2e/screenshots/zoom-max.png' });
 
   for (let i = 0; i < 30; i++) await page.mouse.wheel(0, 240);

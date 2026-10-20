@@ -14,7 +14,7 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 
 - [x] **1. Scaffolding:** the repo files listed under [AI-first workflow](#ai-first-workflow), CI, the Pages deploy, and a blank canvas live at the Pages URL.
 - [x] **2. Pasture and zoom:** procedural hills and grass, cursor-centered eased zoom, drag to pan, vignette and zoom readout. **Play it:** does zooming feel good?
-- [ ] **3. Sprites:** three horse breeds at all four tiers, barns, California live oaks and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
+- [x] **3. Sprites:** three horse breeds at all four tiers, barns, California live oaks and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
 - [ ] **4. Looking at horses:** animals spawn and graze on their own hill (each belongs to one hill layer and never crosses a ridge yet), look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
 - [ ] **5. Rules and levels:** level table, look-alike placeholders as plain shapes, strikes, level-complete card.
 - [ ] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
@@ -123,7 +123,7 @@ stateDiagram-v2
 - Each animal has `kind` (horse, goat, sheep, centaur, reverseCentaur, robotHorse, horseSuit), `breed` (A, B, C, or none), `color`, `x`, `y`, `facing`, `lookThreshold`, `lookMeter` and `lookedAt`.
 - Animals spawn at random positions with a minimum spacing, so two never overlap at close zoom.
 - Animals graze: they idle, then walk a short distance in a random direction and stop. Walking alternates two frames about 4 times a second, and grazing holds a head-down frame _(tune)_. They stay inside the pasture and walk around scenery.
-- **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 2.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Each level gets roughly 3 barns, 6 live oaks and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
+- **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 3.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Each level gets roughly 3 barns, 6 live oaks and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
 - All randomness comes from a seeded generator (mulberry32). A fixed seed makes tests and bug reports reproducible.
 
 ### Hills with depth
@@ -140,7 +140,7 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 
 ### Camera and zoom
 
-- The camera is `{x, y, zoom}`. Zoom ranges from the whole pasture fitting the screen to 24× _(tune)_.
+- The camera is `{x, y, zoom}`. Zoom ranges from the whole pasture fitting the screen to 64× _(tune)_. A horse is 24 × 16 world units, so it is a ~5 px dot at ×1 and about 40% of an 800 px tall view at ×64.
 - Each wheel event sets a target zoom: `target *= exp(-deltaY × k)`. `deltaY` is normalized first, because mice and trackpads report very different amounts.
 - Zoom is centered on the cursor: the world point under the cursor stays under the cursor.
 - Each tick, zoom eases toward its target in log space: `log zoom += (log target − log zoom) × (1 − e^(−dt·12))`, so zooming feels equally smooth at every depth.
@@ -179,7 +179,7 @@ Each level needs at least 10 horses to be winnable. Levels 2 and 3 have 6 spare 
 
 ## Assets
 
-Every MVP sprite is a text grid in code, at three sizes per creature, plus a colored dot for far zoom: 7 creatures × 3 sizes = 21 grids, about 28 animation frames (walk and graze at Mid and Near), and 3 scenery objects × 3 sizes = 9 more grids.
+Every MVP sprite is a text grid in code, at three sizes per creature, plus a colored dot for far zoom: 7 creatures × 3 sizes = 21 grids, about 28 animation frames (walk and graze at Mid and Near), and 3 scenery objects × 3 sizes = 9 more grids. Scenery (barns, live oaks, datacenters) is far larger than an animal, so instead of hand-typed grids it is drawn by small functions in `src/render/art/` that output a grid at each tier's density. Those functions are pure, deterministic and unit-tested like the hand-made grids.
 
 A sprite grid looks like this, with `.` as transparent and each other character mapped to a palette color:
 
@@ -195,7 +195,7 @@ The renderer turns grids into offscreen canvases at load. Breeds share shapes an
 
 ### Zoom tiers
 
-The renderer picks a sprite by how big the animal is on screen, then scales it by whole pixels.
+The renderer picks a tier by how tall a horse is on screen, then scales the sprite to its exact size with smoothing off. (Snapping to whole-pixel multiples would make sprites jump in size during smooth zooming.) Each tier has a fixed density: 0.5, 1 and 2 grid pixels per world unit for Far, Mid and Near, so scenery and animals always share one pixel size.
 
 | Tier | On-screen size | Sprite                     | What the player can tell                                                                               |
 | ---- | -------------- | -------------------------- | ------------------------------------------------------------------------------------------------------ |

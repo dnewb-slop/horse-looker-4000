@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sprite review — Horse Looker 4000</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #1d2618;
+        color: #eef2e6;
+        font:
+          14px/1.4 system-ui,
+          sans-serif;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 20px;
+      }
+      h2 {
+        margin: 28px 0 8px;
+        font-size: 16px;
+      }
+      p {
+        margin: 0 0 12px;
+        color: #b9c4ad;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-end;
+      }
+      figure {
+        margin: 0;
+      }
+      figcaption {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #b9c4ad;
+      }
+      canvas {
+        display: block;
+        image-rendering: pixelated;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sprite review</h1>
+    <p>Dev-only page. Every sprite at every zoom tier, then a scene at several zoom levels.</p>
+    <h2>Horses by tier</h2>
+    <p>Each tier drawn at a size it actually appears in game. Dot is used below 8 px tall.</p>
+    <div id="horses"></div>
+    <h2>Scenery by tier</h2>
+    <div id="scenery"></div>
+    <h2>In the pasture</h2>
+    <p>The real renderer at ×1, ×5, ×16 and ×45 zoom (seed 4000).</p>
+    <div id="scenes" class="row"></div>
+    <script type="module" src="sprites.js"></script>
+  </body>
+</html>
