@@ -1,7 +1,14 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { GRID_TIERS, SCENERY, gridSize, spriteTier, validateGrid } from '../src/render/sprites.js';
+import {
+  GRID_TIERS,
+  SCENERY,
+  gridSize,
+  outlineGrid,
+  spriteTier,
+  validateGrid,
+} from '../src/render/sprites.js';
 import { HORSE } from '../src/render/art/horse.js';
 import { BREED_PALETTES } from '../src/render/palette.js';
 import {
@@ -74,4 +81,22 @@ test('the tier follows how tall a horse is on screen', () => {
 test('validateGrid reports bad shapes and unknown keys', () => {
   const problems = validateGrid(['..x', '...', '..'], 3, 2, { o: '#000' });
   assert.equal(problems.length, 3);
+});
+
+test('outlineGrid traces a one-pixel border outside the sprite', () => {
+  assert.deepEqual(outlineGrid(['B.', '..']), ['xxx.', 'x.x.', 'xxx.', '....']);
+});
+
+test('horse outlines are one grid pixel bigger on every side and never cover the horse', () => {
+  for (const tier of GRID_TIERS) {
+    const rows = HORSE[tier];
+    const outline = outlineGrid(rows);
+    assert.equal(outline.length, rows.length + 2);
+    assert.ok(outline.every((r) => r.length === rows[0].length + 2));
+    rows.forEach((row, y) => {
+      for (let x = 0; x < row.length; x++) {
+        if (row[x] !== '.') assert.equal(outline[y + 1][x + 1], '.', `${tier} ${x},${y}`);
+      }
+    });
+  }
 });

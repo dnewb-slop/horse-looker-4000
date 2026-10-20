@@ -15,8 +15,8 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 - [x] **1. Scaffolding:** the repo files listed under [AI-first workflow](#ai-first-workflow), CI, the Pages deploy, and a blank canvas live at the Pages URL.
 - [x] **2. Pasture and zoom:** procedural hills and grass, cursor-centered eased zoom, drag to pan, vignette and zoom readout. **Play it:** does zooming feel good?
 - [x] **3. Sprites:** three horse breeds at all four tiers, barns, California live oaks and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
-- [ ] **4. Looking at horses:** animals spawn and graze on their own hill (each belongs to one hill layer and never crosses a ridge yet), look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
-- [ ] **5. Rules and levels:** level table, look-alike placeholders as plain shapes, strikes, level-complete card.
+- [x] **4. Looking at horses:** animals spawn and graze on their own hill (each belongs to one hill layer and never crosses a ridge yet), look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
+- [ ] **5. Rules and levels:** level table (replacing milestone 4's sandbox of 30 horses), look-alike placeholders as plain shapes, strikes, level-complete card.
 - [ ] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
 - [ ] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
 - [ ] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier.
@@ -84,7 +84,7 @@ src/
   game/               pure logic, no DOM or canvas access
     config.js         every (tune) constant in one place
     rng.js            mulberry32 seeded generator
-    camera.js  world.js  detect.js  rules.js  levels.js  state.js
+    camera.js  world.js  detect.js  play.js  rules.js  levels.js  state.js
   render/
     renderer.js  sprites.js  palette.js
     art/              text-grid sprites, one file per creature or object
@@ -152,8 +152,8 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 - An animal's look meter fills while all three of these hold: its sprite is at least its threshold tall on screen, its center is on screen, and its head is visible.
 - The meter fills over 1 s and drains at twice that speed when any condition stops _(tune)_. A full meter means looked at.
 - Every qualifying animal on screen fills its own meter at once, not just the one under the cursor. That is the risk the player manages near goats and look-alikes.
-- **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is.
-- **Head visibility:** each sprite marks a head box. The head is hidden when any scenery drawn in front of the animal covers that box.
+- **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is. Meters are drawn on top of everything.
+- **Head visibility:** each sprite marks a head box. The head is hidden when any scenery drawn in front of the animal covers the box's center, or a hill in front rises above it.
 - Once looked at, the animal stays marked and is never counted twice.
 - **Marker:** a bright outline traced around the sprite, blue for horses and red for non-horses, generated from the sprite itself at load. At the Dot tier, a ring of the same color circles the dot. Fallback: a rectangular border, if the outline hurts performance or needs complex code.
 

@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createRng, randomBetween } from '../src/game/rng.js';
+import { createRng, randomBetween, rngStep } from '../src/game/rng.js';
 
 test('the same seed gives the same sequence', () => {
   const a = createRng(42);
@@ -26,5 +26,15 @@ test('randomBetween stays in [min, max)', () => {
   for (let i = 0; i < 1_000; i++) {
     const v = randomBetween(rng, 0.15, 0.3);
     assert.ok(v >= 0.15 && v < 0.3, `out of range: ${v}`);
+  }
+});
+
+test('rngStep matches createRng and threads its state', () => {
+  const rng = createRng(99);
+  let state = 99;
+  for (let i = 0; i < 50; i++) {
+    const [value, next] = rngStep(state);
+    assert.equal(value, rng());
+    state = next;
   }
 });

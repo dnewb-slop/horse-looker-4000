@@ -19,7 +19,13 @@ import { drawBarn } from './art/barn.js';
 import { drawDatacenter } from './art/datacenter.js';
 import { HORSE } from './art/horse.js';
 import { drawOak } from './art/oak.js';
-import { BARN_PALETTE, BREED_PALETTES, DATACENTER_PALETTE, OAK_PALETTE } from './palette.js';
+import {
+  BARN_PALETTE,
+  BREED_PALETTES,
+  DATACENTER_PALETTE,
+  MARKER_HORSE,
+  OAK_PALETTE,
+} from './palette.js';
 
 /**
  * @typedef {'dot' | 'far' | 'mid' | 'near'} Tier
@@ -103,7 +109,38 @@ export function validateGrid(rows, width, height, palette) {
  * @typedef {object} SpriteSet
  * @property {Record<Breed, Record<GridTier, SpriteImage>>} horses
  * @property {Record<SceneryKind, Record<GridTier, SpriteImage>>} scenery
+ * @property {Record<GridTier, SpriteImage>} horseMarker looked-at outline, one grid pixel bigger
+ *   than the horse sprite on every side
  */
+
+/**
+ * The outline around a grid: every transparent cell touching an opaque one, including diagonally,
+ * marked 'x'. The result is one cell bigger on every side, so the outline can sit outside the
+ * sprite.
+ * @param {string[]} rows
+ * @returns {string[]}
+ */
+export function outlineGrid(rows) {
+  const height = rows.length;
+  const width = rows[0]?.length ?? 0;
+  /** @param {number} x @param {number} y */
+  const opaque = (x, y) => x >= 0 && y >= 0 && x < width && y < height && rows[y][x] !== '.';
+  const out = [];
+  for (let y = -1; y <= height; y++) {
+    let row = '';
+    for (let x = -1; x <= width; x++) {
+      let edge = false;
+      if (!opaque(x, y)) {
+        for (let dy = -1; dy <= 1 && !edge; dy++) {
+          for (let dx = -1; dx <= 1 && !edge; dx++) edge = opaque(x + dx, y + dy);
+        }
+      }
+      row += edge ? 'x' : '.';
+    }
+    out.push(row);
+  }
+  return out;
+}
 
 /**
  * Paint a grid into a canvas, one canvas pixel per grid cell.
@@ -148,15 +185,17 @@ export function createSpriteSet() {
   return {
     horses: { A: horse('A'), B: horse('B'), C: horse('C') },
     scenery: { barn: scenery('barn'), oak: scenery('oak'), datacenter: scenery('datacenter') },
+    horseMarker: perTier((tier) => gridToCanvas(outlineGrid(HORSE[tier]), { x: MARKER_HORSE })),
   };
 }
 
 /**
- * Draw a horse standing at world (x, y), its feet at the bottom center of the sprite.
+ * Draw a horse standing at world (x, y), its feet at the bottom center of the sprite. A looked-at
+ * horse gets its marker: an outline traced around the sprite, or a ring around the dot.
  * @param {CanvasRenderingContext2D} ctx
  * @param {import('../game/camera.js').Camera} cam
  * @param {SpriteSet} sprites
- * @param {{x: number, y: number, breed: Breed, facing: 1 | -1}} horse
+ * @param {{x: number, y: number, breed: Breed, facing: 1 | -1, lookedAt?: boolean}} horse
  */
 export function drawHorse(ctx, cam, sprites, horse) {
   const tier = spriteTier(cam.zoom);
@@ -167,7 +206,22 @@ export function drawHorse(ctx, cam, sprites, horse) {
     const h = Math.max(1, Math.round(HORSE_HEIGHT * cam.zoom * 0.45));
     ctx.fillStyle = BREED_PALETTES[horse.breed].B;
     ctx.fillRect(Math.round(p.x - w / 2), Math.round(p.y - h / 2), w, h);
+    if (horse.lookedAt) drawRing(ctx, p.x, p.y, Math.max(DOT_RING_MIN_PX, w), MARKER_HORSE);
     return;
+  }
+  if (horse.lookedAt) {
+    // The outline grid has one extra grid pixel on each side.
+    const pad = 1 / TIER_DENSITY[tier];
+    drawImageAt(
+      ctx,
+      cam,
+      sprites.horseMarker[tier],
+      horse.x,
+      horse.y + pad,
+      HORSE_WIDTH + 2 * pad,
+      HORSE_HEIGHT + 2 * pad,
+      horse.facing,
+    );
   }
   drawImageAt(
     ctx,
@@ -179,6 +233,24 @@ export function drawHorse(ctx, cam, sprites, horse) {
     HORSE_HEIGHT,
     horse.facing,
   );
+}
+
+/** Smallest radius of the ring marking a looked-at dot, in screen pixels. */
+const DOT_RING_MIN_PX = 6;
+
+/**
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} x screen center
+ * @param {number} y
+ * @param {number} radius
+ * @param {string} color
+ */
+function drawRing(ctx, x, y, radius, color) {
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
 
 /**

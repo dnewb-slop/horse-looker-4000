@@ -2,6 +2,20 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Looking at horses (milestone 4, 2026-10-20)
+
+| Decision            | Choice                                                                                                                                                                            | Why                                                                                                     |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Sandbox level       | Until milestone 5's level table, a level is 30 horses of all three breeds and no look-alikes                                                                                      | Lets the owner try looking at every breed before the rules arrive                                       |
+| Head visibility     | The center of the head box must be above every crest in front and outside every scenery rectangle drawn in front of the animal                                                    | Simple, and matches what the player sees closely enough; scenery is treated as its full rectangle       |
+| Grazing randomness  | Each animal carries its own mulberry32 state (`rngStep`), so grazing is a pure function of the animal                                                                             | Keeps `stepAnimals` pure and seeded without threading a shared generator through every tick             |
+| Walking             | Walks are mostly sideways (depth movement scaled by `GRAZE_DEPTH_SCALE`, 0.4), checked at 6 points against the slope and scenery bases before starting; blocked walks are skipped | Walking straight up or down a slope reads oddly from the side; checking up front keeps every step valid |
+| Scenery placement   | No two scenery sprites overlap, even on different hills; biggest objects are placed first                                                                                         | Simplest way to keep the pasture readable; placing big things first means they always fit               |
+| Draw order          | Each hill is followed by its own tufts, scenery and animals, sorted by base y; look meters are drawn last, on top                                                                 | Hiding comes from draw order; a meter shouldn't vanish behind a crest while it fills                    |
+| Look meter position | Centered above the head                                                                                                                                                           | DESIGN.md asks for a bar above the head                                                                 |
+| Looked-at outline   | Built at load from each grid: transparent cells touching the sprite, including diagonally, one grid pixel outside it; the dot gets a 2 px ring                                    | Traces the sprite exactly at every tier without per-frame work                                          |
+| Bottom strip        | 96 px HTML strip under the canvas: level, horse meter, strikes, looked-at chips with the Near sprite as icon; the canvas (and the look threshold) uses the height above it        | Matches the plan's layout; the viewport the threshold refers to excludes the strip                      |
+
 ## Sprites (milestone 3, 2026-10-20)
 
 | Decision                  | Choice                                                                                                                                                   | Why                                                                                        |
