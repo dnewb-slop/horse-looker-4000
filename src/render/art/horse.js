@@ -3,6 +3,7 @@
 // palettes (see BREED_PALETTES in ../palette.js).
 //
 // Keys: o outline, B coat, b coat shade, w coat highlight, M mane and tail, h hooves, e eye.
+// The Near horse smiles: a mouth line along the muzzle that curls up at the corner.
 
 /** @type {import('../sprites.js').CreatureArt} */
 export const HORSE = {
@@ -43,8 +44,8 @@ export const HORSE = {
     '................................oMMMMBBBBeBBo...',
     '................................oMMMBBBBBBBBBo..',
     '...........ooo................ooMMMMBBBBBBBBBBo.',
-    '.........ooBBBoo.............oBBMMMBBBBBBBBBBBBo',
-    '........oBBBBBwwooooooooooooowBMMMMBBBBBoBBBBBBo',
+    '.........ooBBBoo.............oBBMMMBBBBBBBoBBBBo',
+    '........oBBBBBwwooooooooooooowBMMMMBBBBBoBBooooo',
     '.......oMBBBBBwwwwwwwwwwwwwBwwBMMMBBBBBo.oBBBBo.',
     '......oMMBBBBBBBBBBBBBBBBBBBBBBMMMBBBBBo..oooo..',
     '.....oMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBo........',
