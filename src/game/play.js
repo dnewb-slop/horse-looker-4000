@@ -1,9 +1,10 @@
 // @ts-check
 // The game in progress: the current level's pasture, what the player has looked at, and the
-// phase (playing, level complete, won or lost).
+// phase (intro, playing, level complete, won or lost).
 
 import { LEVEL_CARD_S } from './config.js';
 import { stepLooks } from './detect.js';
+import { stepIntro } from './intro.js';
 import { LEVELS, levelRoster, levelSeed } from './levels.js';
 import { createRng } from './rng.js';
 import { countLooks, isLastLevel, nextPhase } from './rules.js';
@@ -15,6 +16,8 @@ import { generateHills, placeScenery, spawnAnimals, stepAnimals } from './world.
  * @property {number} level 1-based
  * @property {import('./rules.js').Phase} phase
  * @property {number} cardTime seconds left on the "Level n complete" card
+ * @property {{line: number, time: number} | null} intro where the opening sequence is, while
+ *   the phase is 'intro'
  * @property {import('./world.js').Hill[]} hills
  * @property {import('./world.js').Scenery[]} scenery
  * @property {import('./world.js').Animal[]} animals
@@ -28,13 +31,15 @@ import { generateHills, placeScenery, spawnAnimals, stepAnimals } from './world.
  * Start a game at a level. The same seed and level always make the same pasture.
  * @param {number} seed
  * @param {number} [level] 1-based
+ * @param {{intro?: boolean}} [options] intro: open with the opening sequence
  * @returns {Play}
  */
-export function createPlay(seed, level = 1) {
+export function createPlay(seed, level = 1, { intro = false } = {}) {
   return {
     seed,
-    phase: 'playing',
+    phase: intro ? 'intro' : 'playing',
     cardTime: 0,
+    intro: intro ? { line: 0, time: 0 } : null,
     nonHorsesTotal: 0,
     log: [],
     ...createLevel(seed, level),
@@ -61,10 +66,17 @@ function createLevel(seed, level) {
  * @param {import('./camera.js').Camera} cam
  * @param {Record<import('./world.js').AnimalKind, import('./detect.js').HeadBox>} headBoxes
  * @param {number} dt
+ * @param {number} [clicks] clicks on the opening sequence since the last step
  * @returns {Play}
  */
-export function stepPlay(play, cam, headBoxes, dt) {
+export function stepPlay(play, cam, headBoxes, dt, clicks = 0) {
   const grazed = stepAnimals(play.animals, play.hills, play.scenery, dt);
+  if (play.phase === 'intro' && play.intro) {
+    const intro = stepIntro(play.intro, dt, clicks);
+    return intro
+      ? { ...play, animals: grazed, intro }
+      : { ...play, animals: grazed, intro: null, phase: 'playing' };
+  }
   if (play.phase === 'levelComplete') {
     const cardTime = play.cardTime - dt;
     if (cardTime > 0) return { ...play, animals: grazed, cardTime };

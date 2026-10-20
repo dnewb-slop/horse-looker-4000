@@ -22,7 +22,7 @@ async function waitForZoomToSettle(page) {
 }
 
 test('wheel zooms toward the cursor and the readout follows', async ({ page }) => {
-  await page.goto('/?seed=4000');
+  await page.goto('/?seed=4000&intro=off');
   await page.mouse.move(900, 300);
   for (let i = 0; i < 5; i++) await page.mouse.wheel(0, -200);
   await waitForZoomToSettle(page);
@@ -47,7 +47,7 @@ test('wheel zooms toward the cursor and the readout follows', async ({ page }) =
 });
 
 test('dragging pans the view', async ({ page }) => {
-  await page.goto('/?seed=4000');
+  await page.goto('/?seed=4000&intro=off');
   await page.mouse.move(640, 400);
   for (let i = 0; i < 6; i++) await page.mouse.wheel(0, -200);
   await waitForZoomToSettle(page);

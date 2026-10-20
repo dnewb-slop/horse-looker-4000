@@ -147,10 +147,11 @@ export function createStrip(root, sprites) {
 }
 
 /**
+ * A looked-at chip: the animal's Near sprite and its label, edged blue or red.
  * @param {Chip} chip
  * @param {import('../render/sprites.js').SpriteSet} sprites
  */
-function chipElement(chip, sprites) {
+export function chipElement(chip, sprites) {
   const li = document.createElement('li');
   li.className = chip.horse ? 'chip horse' : 'chip non-horse';
   const icon = sprites.creatures[chip.kind][chip.breed].near;

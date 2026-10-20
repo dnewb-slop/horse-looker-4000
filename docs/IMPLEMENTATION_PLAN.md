@@ -17,7 +17,7 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 - [x] **3. Sprites:** three horse breeds at all four tiers, barns, California live oaks and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
 - [x] **4. Looking at horses:** animals spawn and graze on their own hill (each belongs to one hill layer and never crosses a ridge yet), look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
 - [x] **5. Rules and levels:** level table (replacing milestone 4's sandbox of 30 horses), look-alike placeholders as plain shapes, strikes, level-complete card.
-- [ ] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
+- [x] **6. Screens:** intro, win and lose screens, "Horse again". **Play it:** a full game, start to finish.
 - [ ] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
 - [ ] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits, with telltales at the Mid tier. Goats, sheep and centaurs were settled during milestone 5; for each remaining creature, Claude shows a few alternatives beside the reference horse and the owner picks and refines.
 - [ ] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. Comes after the full game is playable, so it can't delay it; a static frame is the fallback. **Play it:** does the pasture feel alive?
@@ -112,10 +112,10 @@ stateDiagram-v2
   Lose --> Playing: "Horse again" (level 1)
 ```
 
-- **Intro:** show the three opening lines in turn. Each fades in, holds about 2 s, then fades out _(tune)_. A click skips ahead.
+- **Intro:** show the three opening lines in turn. Each fades in over 0.6 s, holds 2 s, then fades out _(tune)_. A click skips to the next line. `?intro=off` (for tests) and `?level=n` skip it.
 - **Playing (level n):** the main loop below.
 - **Level complete:** a short "Level n complete" card (2.5 s _(tune)_), then the next level is generated from the game's seed and the level number, with the whole pasture in view. `?level=n` starts a game at a later level for playtesting.
-- **Win / Lose:** the end screens from DESIGN.md. "Horse again" skips the intro and starts level 1.
+- **Win / Lose:** the end screens from DESIGN.md, fading in over the game in 1.5 s. The lose screen shows horses and non-horses looked at over the whole game, the level reached, and a chip for every animal looked at. "Horse again" skips the intro and starts level 1 with a new random pasture (or the same one again when the URL has `?seed=`).
 
 ### World and animals
 
