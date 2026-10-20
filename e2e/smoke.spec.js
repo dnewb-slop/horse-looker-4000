@@ -7,7 +7,7 @@ test('the game loads with a full-window canvas and no errors', async ({ page }) 
   page.on('pageerror', (err) => errors.push(err.message));
   page.on('console', (msg) => msg.type() === 'error' && errors.push(msg.text()));
 
-  await page.goto('/');
+  await page.goto('/?seed=4000');
   await expect(page).toHaveTitle('Horse Looker 4000');
 
   const canvas = page.locator('#pasture');
@@ -15,6 +15,7 @@ test('the game loads with a full-window canvas and no errors', async ({ page }) 
   const box = await canvas.boundingBox();
   expect(box?.width).toBe(1280);
   expect(box?.height).toBe(800);
+  await expect(page.locator('#zoom-readout')).toHaveText('×1.0');
 
   // Screenshots let Claude look at the build; they are not compared against a baseline.
   await page.screenshot({ path: 'e2e/screenshots/smoke.png' });

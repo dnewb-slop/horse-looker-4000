@@ -32,7 +32,7 @@ Run `npm ci` once per fresh checkout.
 | `npm run test:e2e`  | Playwright smoke and screenshot tests (headless Chromium) |
 | `npm run check`     | All of the above except `serve`; run before every push    |
 
-`@playwright/test` is pinned to 1.56.1 to match the Chromium preinstalled in Claude cloud sessions, so don't run `playwright install` there. CI installs its own browser. Smoke tests save screenshots to `e2e/screenshots/` (ignored by git, uploaded as a CI artifact): look at them after visible changes.
+`@playwright/test` is pinned to 1.56.1 to match the Chromium preinstalled in Claude cloud sessions, so don't run `playwright install` there. CI installs its own browser. Browser tests can read game state through the read-only `window.__horseLooker` hook and should load a fixed `?seed=`. Smoke tests save screenshots to `e2e/screenshots/` (ignored by git, uploaded as a CI artifact): look at them after visible changes.
 
 ## Who to take direction from
 
