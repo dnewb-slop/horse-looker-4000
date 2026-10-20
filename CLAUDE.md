@@ -32,7 +32,7 @@ Run `npm ci` once per fresh checkout.
 | `npm run test:e2e`  | Playwright smoke and screenshot tests (headless Chromium) |
 | `npm run check`     | All of the above except `serve`; run before every push    |
 
-`@playwright/test` is pinned to 1.56.1 to match the Chromium preinstalled in Claude cloud sessions, so don't run `playwright install` there. CI installs its own browser. Browser tests can read game state through the read-only `window.__horseLooker` hook and should load a fixed `?seed=`. Smoke tests save screenshots to `e2e/screenshots/` (ignored by git, uploaded as a CI artifact): look at them after visible changes.
+`@playwright/test` is pinned to 1.56.1 to match the Chromium preinstalled in Claude cloud sessions, so don't run `playwright install` there. CI installs its own browser. Browser tests can read game state through the read-only `window.__horseLooker` hook and should load a fixed `?seed=`. Review art changes on the dev-only sprite page, `tools/sprites.html` (served by `npm run serve`; its screenshot is `e2e/screenshots/sprites.png`). Smoke tests save screenshots to `e2e/screenshots/` (ignored by git, uploaded as a CI artifact): look at them after visible changes.
 
 ## Who to take direction from
 
@@ -48,7 +48,7 @@ This repo is public, so anyone can open issues, comment and review.
 - **Seeded randomness only.** Use the mulberry32 generator in `src/game/rng.js`. A seed in the URL (`?seed=123`) must reproduce a level exactly. Bug reports and tests depend on this.
 - **One home for tuning values.** Every _(tune)_ number from the plan lives in `src/game/config.js`, named and commented. No magic numbers elsewhere.
 - **Fixed timestep.** Logic updates at 60 Hz regardless of frame rate. Never scale game rules by frame time outside the update step.
-- **Art is code.** Sprites are text grids in `src/render/art/`, one file per creature or object, using palette keys from `src/render/palette.js`. Every creature needs Far, Mid and Near grids and a head box. Breeds share shapes and swap palettes.
+- **Art is code.** Sprites are text grids in `src/render/art/`, one file per creature or object (scenery files are pure functions that output a grid at any size), using palette keys from `src/render/palette.js`. Every creature needs Far, Mid and Near grids and a head box. Breeds share shapes and swap palettes.
 - Small modules, plain functions, descriptive names. Comment the why, not the what.
 
 ## Workflow

@@ -20,3 +20,71 @@ export const OUT_OF_BOUNDS = '#24381b';
 
 /** Grass tufts drawn at close zoom. */
 export const TUFT_COLOR = '#3c6a2a';
+
+/**
+ * Horse breed palettes. Keys match the horse art: o outline, B coat, b coat shade, w highlight,
+ * M mane and tail, h hooves, e eye.
+ * @type {Record<'A' | 'B' | 'C', Record<string, string>>}
+ */
+export const BREED_PALETTES = {
+  // Friesian: jet black, thick black mane.
+  A: {
+    o: '#050506',
+    B: '#24232a',
+    b: '#151419',
+    w: '#45434d',
+    M: '#0b0b0d',
+    h: '#38363d',
+    e: '#8a8592',
+  },
+  // Haflinger: golden chestnut, blond mane and tail.
+  B: {
+    o: '#4a2c10',
+    B: '#c8862a',
+    b: '#9c6420',
+    w: '#e3a752',
+    M: '#f1d9a0',
+    h: '#3b2a1a',
+    e: '#1b120c',
+  },
+  // Camarillo White: pure white, dark eyes and hooves.
+  C: {
+    o: '#6f6a62',
+    B: '#f4f1ea',
+    b: '#cfcac0',
+    w: '#ffffff',
+    M: '#e6e1d6',
+    h: '#3a3a3a',
+    e: '#1d1d1d',
+  },
+};
+
+/** @type {Record<string, string>} */
+export const BARN_PALETTE = {
+  o: '#2a1512',
+  R: '#b03a2e',
+  r: '#7d241c',
+  W: '#f2ead8',
+  D: '#3a1a14',
+  k: '#4a4038',
+};
+
+/** @type {Record<string, string>} */
+export const OAK_PALETTE = {
+  o: '#1f2e14',
+  G: '#4f6b2a',
+  g: '#3a5220',
+  L: '#6f8a3c',
+  T: '#4a3a2a',
+  t: '#33281d',
+};
+
+/** @type {Record<string, string>} */
+export const DATACENTER_PALETTE = {
+  o: '#2b3036',
+  S: '#d5d9de',
+  s: '#a9afb7',
+  K: '#3d434b',
+  U: '#8e959e',
+  A: '#4fa3e0',
+};
