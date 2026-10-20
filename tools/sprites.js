@@ -126,7 +126,7 @@ for (const factor of [1, 5, 16, 45]) {
     x: 2010,
     y: 1300,
   });
-  renderPasture(ctx, cam, hills, seed);
+  renderPasture(ctx, cam, { hills }, seed);
   for (const t of things) {
     if (t.type === 'horse') drawHorse(ctx, cam, sprites, t);
     else drawScenery(ctx, cam, sprites, t);

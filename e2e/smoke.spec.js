@@ -1,7 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test('the game loads with a full-window canvas and no errors', async ({ page }) => {
+test('the game loads with a full-width canvas above the strip and no errors', async ({ page }) => {
   /** @type {string[]} */
   const errors = [];
   page.on('pageerror', (err) => errors.push(err.message));
@@ -14,7 +14,9 @@ test('the game loads with a full-window canvas and no errors', async ({ page }) 
   await expect(canvas).toBeVisible();
   const box = await canvas.boundingBox();
   expect(box?.width).toBe(1280);
-  expect(box?.height).toBe(800);
+  // The window is 800 px tall; the bottom strip takes 96.
+  expect(box?.height).toBe(704);
+  await expect(page.locator('#strip')).toBeVisible();
   await expect(page.locator('#zoom-readout')).toHaveText('×1.0');
 
   // Screenshots let Claude look at the build; they are not compared against a baseline.

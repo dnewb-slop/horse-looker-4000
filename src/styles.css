@@ -6,10 +6,17 @@ body {
   background: #000;
 }
 
-.viewport {
-  position: relative;
+/* The pasture fills the window above a 96 px progress strip. */
+.game {
+  display: grid;
+  grid-template-rows: 1fr 96px;
   width: 100vw;
   height: 100vh;
+}
+
+.viewport {
+  position: relative;
+  min-height: 0;
 }
 
 #pasture {
@@ -46,4 +53,97 @@ body {
     monospace;
   letter-spacing: 0.05em;
   text-shadow: 0 1px 2px rgb(0 0 0 / 80%);
+}
+
+.strip {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  padding: 0 20px;
+  overflow: hidden;
+  color: #fff;
+  background: #1b2614;
+  border-top: 2px solid #0e140a;
+  font:
+    700 14px/1.3 ui-monospace,
+    'SF Mono',
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+.strip section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.strip-level {
+  font-size: 16px;
+}
+
+.strip-label {
+  color: #d6ebc0;
+}
+
+.slots {
+  display: flex;
+  gap: 4px;
+}
+
+.slot {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #6f8a5c;
+  background: transparent;
+}
+
+.horse-meter .slot.filled {
+  border-color: #2f8cff;
+  background: #2f8cff;
+}
+
+.strike-meter .slot {
+  border-radius: 50%;
+}
+
+.strike-meter .slot.filled {
+  border-color: #ff3b30;
+  background: #ff3b30;
+}
+
+.strip-looked {
+  flex: 1;
+  min-width: 0;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.chip {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 8px 2px 4px;
+  background: #2a3a20;
+  border: 2px solid transparent;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.chip.horse {
+  border-color: #2f8cff;
+}
+
+.chip canvas {
+  width: 36px;
+  height: 24px;
+  image-rendering: pixelated;
 }
