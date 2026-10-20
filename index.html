@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="src/styles.css" />
   </head>
   <body>
-    <canvas id="pasture" aria-label="Pasture"></canvas>
+    <main class="viewport">
+      <canvas id="pasture" aria-label="Pasture"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div id="zoom-readout" class="zoom-readout" aria-live="polite">×1.0</div>
+    </main>
     <script type="module" src="src/main.js"></script>
   </body>
 </html>

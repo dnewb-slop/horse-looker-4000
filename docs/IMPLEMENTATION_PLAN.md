@@ -13,7 +13,7 @@ Horse Looker 4000 is a static browser game: HTML5 Canvas with plain JavaScript, 
 Each milestone ships as its own PR and leaves a working build on GitHub Pages. Builds marked **Play it** are worth the owner's feedback.
 
 - [x] **1. Scaffolding:** the repo files listed under [AI-first workflow](#ai-first-workflow), CI, the Pages deploy, and a blank canvas live at the Pages URL.
-- [ ] **2. Pasture and zoom:** procedural hills and grass, cursor-centered eased zoom, drag to pan, vignette and zoom readout. **Play it:** does zooming feel good?
+- [x] **2. Pasture and zoom:** procedural hills and grass, cursor-centered eased zoom, drag to pan, vignette and zoom readout. **Play it:** does zooming feel good?
 - [ ] **3. Sprites:** three horse breeds at all four tiers, barns, redwoods and datacenters, and the sprite review page. The owner approves the look from its screenshot before moving on.
 - [ ] **4. Looking at horses:** animals spawn and graze, look meters, looked-at detection, outlines, bottom strip and horse meter. **Play it:** is the looked-at threshold right?
 - [ ] **5. Rules and levels:** level table, look-alike placeholders as plain shapes, strikes, level-complete card.
@@ -130,7 +130,7 @@ stateDiagram-v2
 - The camera is `{x, y, zoom}`. Zoom ranges from the whole pasture fitting the screen to 24× _(tune)_.
 - Each wheel event sets a target zoom: `target *= exp(-deltaY × k)`. `deltaY` is normalized first, because mice and trackpads report very different amounts.
 - Zoom is centered on the cursor: the world point under the cursor stays under the cursor.
-- Each frame, zoom eases toward its target: `zoom += (target − zoom) × (1 − e^(−dt·12))`.
+- Each tick, zoom eases toward its target in log space: `log zoom += (log target − log zoom) × (1 − e^(−dt·12))`, so zooming feels equally smooth at every depth.
 - Click-and-drag pans the view, clamped to the pasture edges.
 
 ### Looked-at detection

@@ -2,6 +2,18 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Pasture and zoom (milestone 2, 2026-10-20)
+
+| Decision    | Choice                                                                                                         | Why                                                                                             |
+| ----------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Zoom easing | Eases `log(zoom)` rather than zoom                                                                             | A linear ease feels fast when zoomed out and sluggish when zoomed in                            |
+| Zoom range  | 1× fits the whole pasture; 24× maximum; a window with a different shape shows a dark border beside the pasture | The whole pasture is always reachable, and the camera never shows past its edges once zoomed in |
+| Wheel input | Lines and pages converted to pixels; each event capped at 240 px                                               | Mice and trackpads feel similar, and a hard flick can't jump the whole range                    |
+| Hills       | 7 bands from summed sine waves, generated from the seed; paler toward the back                                 | Cheap, deterministic, and reads as depth                                                        |
+| Grass tufts | Placed by a hash of world cell and seed, shown from about 3 px tall                                            | Gives a sense of scale at close zoom and stays put while zooming                                |
+| Seeds       | `?seed=123` reproduces a pasture; otherwise random                                                             | Reproducible bug reports and tests                                                              |
+| Test hook   | `window.__horseLooker` exposes the seed and camera read-only                                                   | Browser tests can check camera state without parsing pixels                                     |
+
 ## Going public (2026-10-20)
 
 | Decision                        | Choice                                       | Why                                                                                        |
