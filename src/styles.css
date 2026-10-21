@@ -37,7 +37,7 @@ body {
 }
 
 .viewport.lost #pasture {
-  filter: grayscale(0.9) brightness(0.75);
+  filter: grayscale(0.7) brightness(0.85);
 }
 
 /* A telephoto lens darkens toward the edges. */

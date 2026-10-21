@@ -116,7 +116,7 @@ stateDiagram-v2
 - **Intro:** show the three opening lines in turn. Each fades in over 0.6 s, holds (1.2 s, 3.2 s and 3 s for the three lines), then fades out _(tune)_. A click skips to the next line. `?intro=off` (for tests) and `?level=n` skip it.
 - **Playing (level n):** the main loop below.
 - **Level complete:** a short "Level n complete" card (2.5 s _(tune)_), then the next level is generated from the game's seed and the level number, with the whole pasture in view. `?level=n` starts a game at a later level for playtesting.
-- **Losing:** a 2 s pause _(tune)_ after the last allowed non-horse. The pasture canvas fades to near grayscale and dims (a CSS filter, 1.5 s transition) and the music fades out. Animals keep grazing and finish their reactions, but no look meter fills, so nothing more is counted.
+- **Losing:** a 2 s pause _(tune)_ after the last allowed non-horse. The pasture canvas fades to mostly grey and dims a little (a CSS filter, 1.5 s transition, _(tune)_) and the music fades out. Animals keep grazing and finish their reactions, but no look meter fills, so nothing more is counted.
 - **Win / Lose:** the end screens from DESIGN.md, fading in over the game in 1.5 s. The lose screen shows horses and non-horses looked at over the whole game, the level reached, and a chip for every animal looked at. "Horse again" skips the intro and starts level 1 with a new random pasture (or the same one again when the URL has `?seed=`). `?screen=win` and `?screen=lose` open straight on an end screen with a sample of looks, for testing.
 
 ### World and animals
