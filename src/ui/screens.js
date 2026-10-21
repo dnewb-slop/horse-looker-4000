@@ -4,6 +4,7 @@
 // main.js through callbacks.
 
 import { introView } from '../game/intro.js';
+import { musicCredits } from './audio.js';
 import { animalLabel, chipElement } from './hud.js';
 
 /** End-of-game lines from DESIGN.md. */
@@ -46,9 +47,10 @@ export function endModel(play) {
 /**
  * @param {HTMLElement} root the full-window overlay
  * @param {import('../render/sprites.js').SpriteSet} sprites for the looked-at icons
+ * @param {(import('./tracks.js').Track | null)[]} tracks credited on the end screens
  * @param {{onClick: () => void, onHorseAgain: () => void}} handlers
  */
-export function createScreens(root, sprites, handlers) {
+export function createScreens(root, sprites, tracks, handlers) {
   root.addEventListener('click', handlers.onClick);
   /** What is built into the overlay now, so it is only rebuilt when that changes. */
   let shown = '';
@@ -118,6 +120,8 @@ export function createScreens(root, sprites, handlers) {
         handlers.onHorseAgain();
       });
       parts.push(again);
+      const credits = musicCredits(tracks);
+      if (credits.length > 0) parts.push(el('screen-credits', `Music: ${credits.join(' · ')}`));
       root.replaceChildren(...parts);
       root.className = 'screen shown end';
     },

@@ -14,8 +14,10 @@ import { createEndPreview, createPlay, stepPlay } from './game/play.js';
 import { createInput } from './input.js';
 import { renderPasture } from './render/renderer.js';
 import { HEAD_BOXES, createSpriteSet } from './render/sprites.js';
+import { createMusic } from './ui/audio.js';
 import { createStrip, createZoomReadout } from './ui/hud.js';
 import { createScreens } from './ui/screens.js';
+import { TRACKS } from './ui/tracks.js';
 
 const STEP = 1 / TICK_HZ;
 /** Don't try to catch up more than this after a stall (e.g. a background tab). */
@@ -27,7 +29,9 @@ const readout = createZoomReadout(
   /** @type {HTMLElement} */ (document.getElementById('zoom-readout')),
 );
 const sprites = createSpriteSet();
-const strip = createStrip(/** @type {HTMLElement} */ (document.getElementById('strip')), sprites);
+const stripEl = /** @type {HTMLElement} */ (document.getElementById('strip'));
+const strip = createStrip(stripEl, sprites);
+const music = createMusic(stripEl, TRACKS);
 /** Clicks on the opening sequence since the last logic step. */
 let introClicks = 0;
 /** Set by "Horse again"; the next logic step starts a new game. */
@@ -35,6 +39,7 @@ let restart = false;
 const screens = createScreens(
   /** @type {HTMLElement} */ (document.getElementById('screen')),
   sprites,
+  TRACKS,
   {
     onClick: () => introClicks++,
     onHorseAgain: () => (restart = true),
@@ -102,7 +107,8 @@ let accumulator = 0;
 
 /** @param {number} now */
 function frame(now) {
-  accumulator += Math.min((now - last) / 1000, MAX_FRAME_TIME);
+  const elapsed = Math.min((now - last) / 1000, MAX_FRAME_TIME);
+  accumulator += elapsed;
   last = now;
   while (accumulator >= STEP) {
     update();
@@ -112,6 +118,7 @@ function frame(now) {
   readout.update(zoomFactor(camera));
   strip.update(play);
   screens.update(play);
+  music.update(play, elapsed);
   requestAnimationFrame(frame);
 }
 
@@ -130,6 +137,9 @@ Object.defineProperty(window, '__horseLooker', {
     },
     get play() {
       return play;
+    },
+    get music() {
+      return music.state;
     },
   }),
 });

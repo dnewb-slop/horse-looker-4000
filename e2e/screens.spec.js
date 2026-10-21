@@ -58,3 +58,26 @@ test('?screen=win and ?screen=lose open straight on the end screens', async ({ p
   await page.getByRole('button', { name: 'Horse again' }).click();
   await expect.poll(() => phase(page)).toBe('playing');
 });
+
+test('the mute button is remembered between visits and works over the end screens', async ({
+  page,
+}) => {
+  const music = () => page.evaluate(() => /** @type {any} */ (globalThis).__horseLooker.music);
+  await page.goto('/?seed=4000&intro=off');
+  const mute = page.getByRole('button', { name: 'Mute music' });
+  await expect(mute).toHaveAttribute('aria-pressed', 'false');
+  // Sound waits for the first click, then the level's track fades in.
+  expect((await music()).unlocked).toBe(false);
+  await page.mouse.click(640, 400);
+  await expect.poll(async () => (await music()).gains[0]).toBeGreaterThan(0);
+
+  await mute.click();
+  await expect(mute).toHaveAttribute('aria-pressed', 'true');
+  await page.screenshot({ path: 'e2e/screenshots/muted.png' });
+  await page.goto('/?seed=4000&screen=lose');
+  await expect(mute).toHaveAttribute('aria-pressed', 'true');
+  expect((await music()).muted).toBe(true);
+  // The end screen covers the strip, but not the mute button.
+  await mute.click();
+  await expect(mute).toHaveAttribute('aria-pressed', 'false');
+});
