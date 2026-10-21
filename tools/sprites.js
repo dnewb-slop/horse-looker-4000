@@ -26,7 +26,8 @@ const BREEDS = ['A', 'B', 'C'];
 /** On-screen horse heights to show each tier at: inside that tier's range. */
 const SHOW_PX = { dot: 6, far: 24, mid: 96, near: 220 };
 /**
- * The standing sprite at every tier, then the walk, graze and rearing frames at Mid and Near.
+ * The standing sprite at every tier, then the walk, graze, rearing and unmasking frames at Mid and
+ * Near.
  * @type {{pose: import('../src/game/pose.js').Pose, px: number, caption: string}[]}
  */
 const SHOTS = [
@@ -35,7 +36,7 @@ const SHOTS = [
     px,
     caption: `${tier} (${px} px tall)`,
   })),
-  .../** @type {const} */ (['walk', 'graze', 'rear']).flatMap((pose) =>
+  .../** @type {const} */ (['walk', 'graze', 'rear', 'unmask']).flatMap((pose) =>
     /** @type {const} */ (['mid', 'near']).map((tier) => ({
       pose,
       px: SHOW_PX[tier],
@@ -52,12 +53,16 @@ const SHOTS = [
  */
 function creatureRow(row, label, who) {
   for (const { pose, px, caption } of SHOTS) {
-    // Only horses rear; the rest stand when looked at.
+    // Only horses rear and only the horse suit unmasks.
     if (pose === 'rear' && !CREATURES[who.kind].rear) continue;
+    if (pose === 'unmask' && !CREATURES[who.kind].unmask) continue;
     const zoom = px / HORSE_HEIGHT;
     const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
-    // A rearing horse is taller than its sprite box.
-    const tall = pose === 'rear' ? poseGrid(CREATURES[who.kind], pose, 'mid').length / 16 : 1;
+    // Rearing and unmasking frames are taller than the sprite box.
+    const tall =
+      pose === 'rear' || pose === 'unmask'
+        ? poseGrid(CREATURES[who.kind], pose, 'mid').length / 16
+        : 1;
     const h = Math.ceil(px * tall) + 12;
     const ctx = figure(row, w, h, `${label} · ${caption}`);
     const animal = { ...who, x: 0, y: 0, facing: /** @type {1} */ (1) };

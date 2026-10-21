@@ -155,7 +155,7 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 - **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is. Meters are drawn on top of everything.
 - **Head visibility:** each sprite marks a head box. The head is hidden when any scenery drawn in front of the animal covers the box's center, or a hill in front rises above it.
 - Once looked at, the animal stays marked and is never counted twice.
-- **Reaction:** a newly looked-at animal stands still for 2.5 s _(tune)_ and says its line in a speech bubble drawn above its head, over everything, at a fixed screen size. Horses rear up for the first 1 s _(tune)_: a frame made in code by turning the body up about the hip over the planted hind legs (`rearFrame` in `src/render/art/motion.js`). A robot horse fires red lasers from its eye for the first 0.8 s _(tune)_, starting a small flickering fire in the grass in front of it that burns until the reaction ends. The horse suit's split into two people is a separate change.
+- **Reaction:** a newly looked-at animal stands still for 2.5 s _(tune)_ and says its line in a speech bubble drawn above its head, over everything, at a fixed screen size. Horses rear up for the first 1 s _(tune)_: a frame made in code by turning the body up about the hip over the planted hind legs (`rearFrame` in `src/render/art/motion.js`). A robot horse fires red lasers from its eye for the first 0.8 s _(tune)_, starting a small flickering fire in the grass in front of it that burns until the reaction ends. The men in horse suit stand while the front man lifts the horse head off his own for 1.6 s _(tune)_, from 0.3 s in, then put it back on; that frame is drawn with shapes in `src/render/art/horse-suit.js`, taller than the sprite box.
 - **Marker:** a bright outline traced around the sprite, blue for horses and red for non-horses, generated from the sprite itself at load. At the Dot tier, a ring of the same color circles the dot. Fallback: a rectangular border, if the outline hurts performance or needs complex code.
 
 ### Levels
@@ -205,7 +205,7 @@ The renderer picks a tier by how tall a horse is on screen, then scales the spri
 | Mid  | 32–128 px      | 24 × 16 grid               | Telltales: horns and beard, a centaur torso, robot joints and LED eye  |
 | Near | over 128 px    | 48 × 32 grid               | Full detail: mane, face, hooves. Most looks finish before this, in Mid |
 
-Goats, sheep, centaurs and robot horses differ from their horse by only a few pixels of shape or color at Far, so the player has to zoom to Mid to be sure. Reverse centaurs and horse suits are jokes that show from Far. Cutoffs are _(tune)_.
+Goats, sheep, centaurs and robot horses differ from their horse by only a few pixels of shape or color at Far, so the player has to zoom to Mid to be sure. Reverse centaurs and men in horse suits are jokes that show from Far. Cutoffs are _(tune)_.
 
 ### Palette
 
@@ -299,7 +299,7 @@ Claude does all the coding, code review and merging; the owner plays the live bu
 
 Not in the MVP. Each needs the owner's go-ahead and a DESIGN.md change before it's built.
 
-- **Horse suit reveal:** looking at a horse suit plays an animation: the two humans take the suit off and run off in different directions. The owner asked for this with the other looked-at reactions (2026-10-21); it ships as its own change.
+- **Horse suit reveal:** looking at a horse suit plays an animation: the two humans take the suit off and run off in different directions. Replaced on 2026-10-21 by the owner's simpler version, which shipped: the front man lifts the horse head off and puts it back on.
 
 ## Post-MVP creature images
 

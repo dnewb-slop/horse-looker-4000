@@ -14,7 +14,7 @@ export const KIND_NAMES = {
   centaur: 'Centaur',
   reverseCentaur: 'Reverse centaur',
   robotHorse: 'Robot horse',
-  horseSuit: 'Horse suit',
+  horseSuit: 'Men in horse suit',
 };
 
 /**

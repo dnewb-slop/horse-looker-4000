@@ -20,14 +20,16 @@ const DENSITY = { far: 0.5, mid: 1, near: 2 };
 /**
  * @param {import('../raster.js').Raster} r
  * @param {number} d density
+ * @param {number} [top] world units of headroom above the box: the raster's first row is at
+ *   y = -top
  * @returns {Pen}
  */
-function penFor(r, d) {
+function penFor(r, d, top = 0) {
   return {
-    rect: (x0, y0, x1, y1, key) => r.fillRect(x0 * d, y0 * d, x1 * d, y1 * d, key),
+    rect: (x0, y0, x1, y1, key) => r.fillRect(x0 * d, (y0 + top) * d, x1 * d, (y1 + top) * d, key),
     ellipse: (cx, cy, rx, ry, key) =>
-      r.fillWhere((x, y) => inEllipse(x / d, y / d, cx, cy, rx, ry), key),
-    polygon: (points, key) => r.fillWhere((x, y) => inPolygon(x / d, y / d, points), key),
+      r.fillWhere((x, y) => inEllipse(x / d, y / d - top, cx, cy, rx, ry), key),
+    polygon: (points, key) => r.fillWhere((x, y) => inPolygon(x / d, y / d - top, points), key),
   };
 }
 
@@ -35,11 +37,13 @@ function penFor(r, d) {
  * Rasterize a shape drawing at one tier, then trace its outline.
  * @param {(pen: Pen) => void} draw
  * @param {GridTier} tier
+ * @param {number} [headroom] world units added above the box, for a frame that reaches higher
+ *   than the box (drawn at negative y); the ground stays on the bottom row
  */
-export function drawShapes(draw, tier) {
+export function drawShapes(draw, tier, headroom = 0) {
   const d = DENSITY[tier];
-  const r = createRaster(HORSE_WIDTH * d, HORSE_HEIGHT * d);
-  draw(penFor(r, d));
+  const r = createRaster(HORSE_WIDTH * d, (HORSE_HEIGHT + headroom) * d);
+  draw(penFor(r, d, headroom));
   r.outline('o');
   return r.rows();
 }

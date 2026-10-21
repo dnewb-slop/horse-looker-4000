@@ -54,7 +54,7 @@ The moment it is looked at, an animal reacts. It stops where it is for a couple 
 - **Centaurs** say "What's up?".
 - **Reverse centaurs** say "AAAaaaa".
 - **Robot horses** say "Bzowt" and fire red lasers from their eye at the grass in front of them, starting a small fire that burns until the reaction ends.
-- **Humans in a horse suit** split into two people, who walk off in opposite directions (coming in a later change).
+- **Men in horse suit:** the man in front lifts off the horse head, showing his own human head, then puts the horse head back on.
 
 Each looked-at animal also appears in a strip along the bottom of the screen that tracks the animals looked at on the current level. Like in Tetris, once you've looked at enough horses in a level, you progress to the next level.
 
@@ -81,9 +81,9 @@ The pasture is a series of rolling hills, one behind another. Each animal stands
   - **Centaurs:** the horse body shares horse breed A's color; the human torso wears a black waistcoat.
   - **Reverse centaurs:** a human standing upright under breed B's horse neck and head, in a mustard shirt that nearly matches the coat.
   - **Robot horses:** look like horse breed C but have metal robot legs, a red eye, an antenna light and a charging bolt on the rump.
-  - **Humans in a horse suit:** horse breed A's color, but actually two humans in a horse suit: too short for a horse, with the head held stiffly too high, legs lighter than the body and big black shoes.
+  - **Men in horse suit:** horse breed A's color, but actually two men in a horse suit: too short for a horse, with the head held stiffly too high, legs lighter than the body and big black shoes.
 
-From far away, goats, sheep, centaurs and robot horses look almost exactly like the horse breed they copy: only a few pixels of shape or color give them away, so the player has to zoom to the middle zoom levels to be sure. Reverse centaurs and horse suits are jokes, easy to spot even from far away.
+From far away, goats, sheep, centaurs and robot horses look almost exactly like the horse breed they copy: only a few pixels of shape or color give them away, so the player has to zoom to the middle zoom levels to be sure. Reverse centaurs and men in horse suits are jokes, easy to spot even from far away.
 
 ### Animals for each level
 

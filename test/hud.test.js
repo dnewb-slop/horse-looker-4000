@@ -48,5 +48,5 @@ test('non-horses are labeled by kind and marked as imposters', () => {
 test('every kind has a label', () => {
   assert.equal(animalLabel({ kind: 'horse', breed: 'B' }), 'Haflinger');
   assert.equal(animalLabel({ kind: 'reverseCentaur', breed: 'B' }), 'Reverse centaur');
-  assert.equal(animalLabel({ kind: 'horseSuit', breed: 'A' }), 'Horse suit');
+  assert.equal(animalLabel({ kind: 'horseSuit', breed: 'A' }), 'Men in horse suit');
 });
