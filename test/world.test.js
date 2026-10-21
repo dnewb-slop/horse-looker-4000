@@ -26,10 +26,8 @@ import {
   CROSS_OVERSHOOT,
   MIN_RIDGE_GAP,
   VALLEY_DEPTH,
-  BARN_COUNT,
-  DATACENTER_COUNT,
   HILL_COUNT,
-  OAK_COUNT,
+  SCENERY_PER_LEVEL,
   WORLD_HEIGHT,
   WORLD_WIDTH,
 } from '../src/game/config.js';
@@ -55,7 +53,7 @@ const SEEDS = Array.from({ length: 40 }, (_, i) => i * 7919);
 function level(seed) {
   const rng = createRng(seed);
   const hills = generateHills(rng);
-  const scenery = placeScenery(rng, hills);
+  const scenery = placeScenery(rng, hills, SCENERY_PER_LEVEL[2]);
   const animals = spawnAnimals(rng, hills, scenery, levelRoster(rng, LEVELS[2]));
   return { hills, scenery, animals };
 }
@@ -77,7 +75,8 @@ test('the same seed makes the same scenery and animals', () => {
 test('every scenery object is placed on a visible slope, inside the pasture, without overlaps', () => {
   for (const seed of SEEDS) {
     const { hills, scenery } = level(seed);
-    assert.equal(scenery.length, BARN_COUNT + OAK_COUNT + DATACENTER_COUNT, `seed ${seed}`);
+    const { barns, oaks, datacenters } = SCENERY_PER_LEVEL[2];
+    assert.equal(scenery.length, barns + oaks + datacenters, `seed ${seed}`);
     for (const s of scenery) {
       const { width, height } = SCENERY_SIZE[s.kind];
       assert.ok(onVisibleSlope(hills, s, width / 2), `seed ${seed}: ${s.kind} off its slope`);

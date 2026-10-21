@@ -62,3 +62,39 @@ test('dragging pans the view', async ({ page }) => {
   expect(after.x - before.x).toBeCloseTo(100 / before.zoom, 3);
   expect(after.y - before.y).toBeCloseTo(50 / before.zoom, 3);
 });
+
+test('level 2 shows its live oaks with grass around them', async ({ page }) => {
+  await page.goto('/?seed=4000&level=2');
+  const oaks = await page.evaluate(
+    () =>
+      /** @type {any} */ (globalThis).__horseLooker.play.scenery.filter(
+        (/** @type {any} */ s) => s.kind === 'oak',
+      ).length,
+  );
+  expect(oaks).toBe(12);
+  await page.screenshot({ path: 'e2e/screenshots/level2.png' });
+  // Zoom onto the oak nearest the middle, keeping the cursor on its trunk.
+  const trunk = () =>
+    page.evaluate(() => {
+      const hook = /** @type {any} */ (globalThis).__horseLooker;
+      const c = hook.camera;
+      const oak = hook.play.scenery
+        .filter((/** @type {any} */ s) => s.kind === 'oak')
+        .sort(
+          (/** @type {any} */ a, /** @type {any} */ b) =>
+            Math.abs(a.x - 2000) - Math.abs(b.x - 2000),
+        )[0];
+      return {
+        x: (oak.x - c.x) * c.zoom + c.viewWidth / 2,
+        y: (oak.y - 20 - c.y) * c.zoom + c.viewHeight / 2,
+      };
+    });
+  for (let i = 0; i < 9; i++) {
+    const p = await trunk();
+    await page.mouse.move(p.x, p.y);
+    await page.mouse.wheel(0, -120);
+    await page.waitForTimeout(80);
+  }
+  await waitForZoomToSettle(page);
+  await page.screenshot({ path: 'e2e/screenshots/oak-grass.png' });
+});

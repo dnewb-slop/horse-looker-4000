@@ -59,10 +59,16 @@ export const DOT_MAX_PX = 8;
 export const FAR_MAX_PX = 32;
 export const MID_MAX_PX = 128;
 
-/** Scenery per level. (tune) */
-export const BARN_COUNT = 3;
-export const OAK_COUNT = 6;
-export const DATACENTER_COUNT = 1;
+/**
+ * Scenery on each level, in level order. (tune)
+ * Levels 2 and 3 are busier: more barns and live oaks to hide behind.
+ * @type {{barns: number, oaks: number, datacenters: number}[]}
+ */
+export const SCENERY_PER_LEVEL = [
+  { barns: 3, oaks: 6, datacenters: 1 },
+  { barns: 5, oaks: 12, datacenters: 1 },
+  { barns: 5, oaks: 12, datacenters: 1 },
+];
 
 /** Closest two animals may spawn, center to center, in world units. (tune) */
 export const ANIMAL_MIN_SPACING = 36;
@@ -150,3 +156,13 @@ export const MUSIC_CROSSFADE_S = 2;
 
 /** Music volume at full fade, from 0 to 1. Calm background, not the main event. (tune) */
 export const MUSIC_VOLUME = 0.6;
+
+/**
+ * Grass around each live oak: how many tufts, how far they spread from the trunk sideways and
+ * up or down the slope, and how tall they are, in world units. Taller than the open pasture's
+ * 5-unit tufts, so the patches show from farther out. (tune)
+ */
+export const OAK_GRASS_TUFTS = 100;
+export const OAK_GRASS_SPREAD_X = 64;
+export const OAK_GRASS_SPREAD_Y = 14;
+export const OAK_GRASS_HEIGHT = 8;

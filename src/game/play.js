@@ -2,7 +2,7 @@
 // The game in progress: the current level's pasture, what the player has looked at, and the
 // phase (intro, playing, level complete, won or lost).
 
-import { LEVEL_CARD_S, MAX_STRIKES } from './config.js';
+import { LEVEL_CARD_S, MAX_STRIKES, SCENERY_PER_LEVEL } from './config.js';
 import { stepLooks } from './detect.js';
 import { stepIntro } from './intro.js';
 import { LEVELS, levelRoster, levelSeed } from './levels.js';
@@ -76,7 +76,7 @@ export function createEndPreview(seed, outcome) {
 function createLevel(seed, level) {
   const rng = createRng(levelSeed(seed, level));
   const hills = generateHills(rng);
-  const scenery = placeScenery(rng, hills);
+  const scenery = placeScenery(rng, hills, SCENERY_PER_LEVEL[level - 1]);
   const roster = levelRoster(rng, LEVELS[level - 1]);
   const animals = spawnAnimals(rng, hills, scenery, roster);
   return { level, hills, scenery, animals, lookedAt: [], horsesThisLevel: 0 };
