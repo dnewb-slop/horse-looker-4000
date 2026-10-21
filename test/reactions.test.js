@@ -2,13 +2,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createCamera } from '../src/game/camera.js';
-import { HORSE_HEIGHT, REACTION_S, REAR_S } from '../src/game/config.js';
+import { HORSE_HEIGHT, LASER_S, REACTION_S, REAR_S } from '../src/game/config.js';
 import { stepLooks } from '../src/game/detect.js';
 import { createPlay } from '../src/game/play.js';
 import { animalPose } from '../src/game/pose.js';
 import { stepAnimals } from '../src/game/world.js';
+import { FIRE_FRAMES } from '../src/render/art/fire.js';
 import { REACTION_LINES, spriteTop } from '../src/render/bubbles.js';
-import { CREATURES, HEAD_BOXES, poseGrid } from '../src/render/sprites.js';
+import { laserShow, robotEye } from '../src/render/effects.js';
+import { FIRE_PALETTE } from '../src/render/palette.js';
+import { CREATURES, HEAD_BOXES, poseGrid, validateGrid } from '../src/render/sprites.js';
 
 const DT = 1 / 60;
 
@@ -19,7 +22,7 @@ test('each kind says the line DESIGN.md gives it', () => {
     sheep: 'Nayyyy',
     centaur: 'What’s up?',
     reverseCentaur: 'AAAaaaa',
-    robotHorse: null,
+    robotHorse: 'Bzowt',
     horseSuit: null,
   });
 });
@@ -81,4 +84,28 @@ test('the bubble follows the head: higher and further back on a rearing horse', 
   assert.equal(stand.y, HORSE_HEIGHT);
   assert.ok(stand.x > 0, 'a standing horse holds its head at the front');
   assert.ok(rear.y > stand.y && rear.x < stand.x);
+});
+
+test('a robot horse fires its lasers first, and the fire burns until the reaction ends', () => {
+  const start = laserShow(REACTION_S);
+  assert.deepEqual([start.beam, start.fire], [true, 0]);
+  const later = laserShow(REACTION_S - LASER_S - 0.5);
+  assert.equal(later.beam, false);
+  assert.equal(later.fire, 1);
+  assert.ok(laserShow(0.1).fire < 1, 'dying down at the end');
+  assert.deepEqual([laserShow(0).beam, laserShow(0).fire], [false, 0]);
+});
+
+test("the lasers come from the robot horse's eye, not its antenna light", () => {
+  for (const tier of /** @type {const} */ (['mid', 'near'])) {
+    const eye = robotEye(tier);
+    assert.ok(eye.x > 0, `${tier}: at the front`);
+    assert.ok(eye.y > HORSE_HEIGHT * 0.7 && eye.y < HORSE_HEIGHT - 1, `${tier}: below the top`);
+  }
+});
+
+test('the fire frames use only fire colors and share one size', () => {
+  for (const rows of FIRE_FRAMES) {
+    assert.deepEqual(validateGrid(rows, 10, 10, FIRE_PALETTE), []);
+  }
 });

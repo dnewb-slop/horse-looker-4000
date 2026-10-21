@@ -53,8 +53,8 @@ The moment it is looked at, an animal reacts. It stops where it is for a couple 
 - **Goats and sheep** say "Nayyyy".
 - **Centaurs** say "What's up?".
 - **Reverse centaurs** say "AAAaaaa".
+- **Robot horses** say "Bzowt" and fire red lasers from their eye at the grass in front of them, starting a small fire that burns until the reaction ends.
 - **Humans in a horse suit** split into two people, who walk off in opposite directions (coming in a later change).
-- **Robot horses** have no reaction yet.
 
 Each looked-at animal also appears in a strip along the bottom of the screen that tracks the animals looked at on the current level. Like in Tetris, once you've looked at enough horses in a level, you progress to the next level.
 

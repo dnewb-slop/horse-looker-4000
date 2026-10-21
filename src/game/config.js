@@ -141,6 +141,17 @@ export const LOOK_ZOOM_SPREAD = 0.2;
 export const REACTION_S = 2.5;
 export const REAR_S = 1;
 
+/**
+ * A looked-at robot horse fires red lasers from its eye at the grass in front of it for the first
+ * LASER_S of its reaction; the fire they start burns until the reaction ends. (tune)
+ */
+export const LASER_S = 0.8;
+/** How far in front of the robot horse's feet the lasers hit, in world units. (tune) */
+export const LASER_REACH = 20;
+/** The fire's size in world units. (tune) */
+export const FIRE_WIDTH = 7;
+export const FIRE_HEIGHT = 7;
+
 /** Seconds of qualifying view to fill a look meter, and how much faster it drains. (tune) */
 export const LOOK_FILL_S = 0.5;
 export const LOOK_DRAIN_MULTIPLIER = 2;

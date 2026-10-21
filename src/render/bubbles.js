@@ -9,8 +9,8 @@ import { BUBBLE_FILL, BUBBLE_INK } from './palette.js';
 import { CREATURES, poseGrid } from './sprites.js';
 
 /**
- * Each kind's line, or null for one that says nothing. The robot horse is waiting on the owner;
- * the horse suit gets its own reaction (two people splitting off) later.
+ * Each kind's line, or null for one that says nothing. The horse suit gets its own reaction (two
+ * people splitting off) later.
  * @type {Record<import('../game/levels.js').AnimalKind, string | null>}
  */
 export const REACTION_LINES = {
@@ -19,17 +19,19 @@ export const REACTION_LINES = {
   sheep: 'Nayyyy',
   centaur: 'What’s up?',
   reverseCentaur: 'AAAaaaa',
-  robotHorse: null,
+  robotHorse: 'Bzowt',
   horseSuit: null,
 };
 
 /** Bubble look, in screen pixels. Fixed on screen so it reads at any zoom. */
-const FONT = '700 16px system-ui, sans-serif';
-const PAD_X = 8;
-const PAD_Y = 5;
-const TEXT_HEIGHT = 16;
-const TAIL = 6;
-const GAP = 2;
+const FONT = '700 32px system-ui, sans-serif';
+const PAD_X = 16;
+const PAD_Y = 10;
+const TEXT_HEIGHT = 32;
+const TAIL = 12;
+const GAP = 4;
+const RADIUS = 12;
+const BORDER = 4;
 /** Closest a bubble comes to the edge of the view. */
 const EDGE = 4;
 /** Seconds the bubble takes to fade out at the end of the reaction. */
@@ -92,20 +94,20 @@ export function drawBubble(ctx, cam, animal) {
   // bubble's bottom edge.
   const x = Math.round(clamp(tip.x - w / 2, EDGE, cam.viewWidth - EDGE - w));
   const y = Math.round(clamp(tip.y - GAP - TAIL - h, EDGE, cam.viewHeight - EDGE - h - TAIL));
-  const tx = Math.round(clamp(tip.x, x + TAIL + 4, x + w - TAIL - 4));
+  const tx = Math.round(clamp(tip.x, x + TAIL + RADIUS, x + w - TAIL - RADIUS));
   ctx.beginPath();
-  ctx.roundRect(x, y, w, h, 6);
+  ctx.roundRect(x, y, w, h, RADIUS);
   ctx.moveTo(tx - TAIL, y + h);
   ctx.lineTo(tx, y + h + TAIL);
   ctx.lineTo(tx + TAIL, y + h);
   ctx.fillStyle = BUBBLE_FILL;
   ctx.strokeStyle = BUBBLE_INK;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = BORDER;
   ctx.stroke();
   ctx.fill();
   ctx.fillStyle = BUBBLE_INK;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(line, x + w / 2, y + h / 2 + 1);
+  ctx.fillText(line, x + w / 2, y + h / 2 + 2);
   ctx.restore();
 }

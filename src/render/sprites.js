@@ -26,10 +26,12 @@ import { ROBOT_HORSE } from './art/robot-horse.js';
 import { rearFrame, walkFrame } from './art/motion.js';
 import { SHEEP } from './art/sheep.js';
 import { drawOak } from './art/oak.js';
+import { FIRE_FRAMES } from './art/fire.js';
 import {
   BARN_PALETTE,
   BREED_PALETTES,
   DATACENTER_PALETTE,
+  FIRE_PALETTE,
   LOOKALIKE_KEYS,
   MARKER_HORSE,
   MARKER_NON_HORSE,
@@ -176,6 +178,7 @@ export function validateGrid(rows, width, height, palette) {
  * @property {Record<SceneryKind, Record<GridTier, SpriteImage>>} scenery
  * @property {Record<AnimalKind, Record<Pose, Record<GridTier, SpriteImage>>>} markers looked-at outlines, one
  *   grid pixel bigger than the sprite on every side: blue for horses, red for everything else
+ * @property {{fire: SpriteImage[]}} effects reaction effects: the robot horse's fire frames
  */
 
 /**
@@ -285,6 +288,7 @@ export function createSpriteSet() {
     creatures: perKind(creature),
     scenery: { barn: scenery('barn'), oak: scenery('oak'), datacenter: scenery('datacenter') },
     markers: perKind(marker),
+    effects: { fire: FIRE_FRAMES.map((rows) => gridToCanvas(rows, FIRE_PALETTE)) },
   };
 }
 
