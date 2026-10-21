@@ -45,6 +45,13 @@ test('zooming in on a horse looks at it', async ({ page }) => {
     });
   await expect.poll(shown).toMatchObject({ strip: true, chips: true, slots: true });
   expect((await shown()).horses).toBeGreaterThanOrEqual(1);
+  // It reacts: it stops to rear up and say its line.
+  const reacting = await page.evaluate(() =>
+    /** @type {any} */ (globalThis).__horseLooker.play.animals.some(
+      (/** @type {any} */ a) => a.lookedAt && a.reactTime > 0,
+    ),
+  );
+  expect(reacting).toBe(true);
   await page.screenshot({ path: 'e2e/screenshots/looked-horse.png' });
 });
 

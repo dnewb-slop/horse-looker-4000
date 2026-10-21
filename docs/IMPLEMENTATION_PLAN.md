@@ -155,6 +155,7 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 - **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is. Meters are drawn on top of everything.
 - **Head visibility:** each sprite marks a head box. The head is hidden when any scenery drawn in front of the animal covers the box's center, or a hill in front rises above it.
 - Once looked at, the animal stays marked and is never counted twice.
+- **Reaction:** a newly looked-at animal stands still for 2.5 s _(tune)_ and says its line in a speech bubble drawn above its head, over everything, at a fixed screen size. Horses rear up for the first 1 s _(tune)_: a frame made in code by turning the body up about the hip over the planted hind legs (`rearFrame` in `src/render/art/motion.js`). The horse suit's split into two people is a separate change.
 - **Marker:** a bright outline traced around the sprite, blue for horses and red for non-horses, generated from the sprite itself at load. At the Dot tier, a ring of the same color circles the dot. Fallback: a rectangular border, if the outline hurts performance or needs complex code.
 
 ### Levels
@@ -298,7 +299,7 @@ Claude does all the coding, code review and merging; the owner plays the live bu
 
 Not in the MVP. Each needs the owner's go-ahead and a DESIGN.md change before it's built.
 
-- **Horse suit reveal:** looking at a horse suit plays an animation: the two humans take the suit off and run off in different directions.
+- **Horse suit reveal:** looking at a horse suit plays an animation: the two humans take the suit off and run off in different directions. The owner asked for this with the other looked-at reactions (2026-10-21); it ships as its own change.
 
 ## Post-MVP creature images
 

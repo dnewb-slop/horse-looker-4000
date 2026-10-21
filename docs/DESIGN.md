@@ -47,6 +47,15 @@ Once the player has zoomed in far enough on an animal, it becomes "looked at":
 
 A looked-at animal stays in the game but is marked with a bright outline traced around its sprite: blue for horses, red for non-horses. When zoomed far out, a small ring of the same color circles it. If the sprite outline causes performance issues or needs complex code, it becomes a simple rectangular border instead.
 
+The moment it is looked at, an animal reacts. It stops where it is for a couple of seconds and says something in a little speech bubble above its head:
+
+- **Horses** rear up and say "Yayyy".
+- **Goats and sheep** say "Nayyyy".
+- **Centaurs** say "What's up?".
+- **Reverse centaurs** say "AAAaaaa".
+- **Humans in a horse suit** split into two people, who walk off in opposite directions (coming in a later change).
+- **Robot horses** have no reaction yet.
+
 Each looked-at animal also appears in a strip along the bottom of the screen that tracks the animals looked at on the current level. Like in Tetris, once you've looked at enough horses in a level, you progress to the next level.
 
 The challenge is that the pasture is also populated with creatures that are not horses: goats, sheep, and other horse look-alikes. If the player zooms in on these far enough, the same "looked at" mechanism triggers.

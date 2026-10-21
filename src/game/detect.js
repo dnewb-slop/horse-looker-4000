@@ -3,7 +3,13 @@
 // Pure functions: they take the camera and animals and return new animals.
 
 import { worldToScreen } from './camera.js';
-import { HORSE_HEIGHT, HORSE_WIDTH, LOOK_DRAIN_MULTIPLIER, LOOK_FILL_S } from './config.js';
+import {
+  HORSE_HEIGHT,
+  HORSE_WIDTH,
+  LOOK_DRAIN_MULTIPLIER,
+  LOOK_FILL_S,
+  REACTION_S,
+} from './config.js';
 import { headBoxFor } from './pose.js';
 import { SCENERY_SIZE, ridgeY } from './world.js';
 
@@ -63,7 +69,8 @@ export function isLooking(animal, cam, box, hills, scenery) {
 }
 
 /**
- * Fill or drain every look meter by dt seconds. A full meter marks the animal looked at, once.
+ * Fill or drain every look meter by dt seconds. A full meter marks the animal looked at, once, and
+ * starts its reaction.
  * @param {import('./world.js').Animal[]} animals
  * @param {import('./camera.js').Camera} cam
  * @param {Record<import('./world.js').Animal['kind'], import('./pose.js').PoseHeadBoxes>} headBoxes
@@ -85,7 +92,7 @@ export function stepLooks(animals, cam, headBoxes, hills, scenery, dt) {
       : Math.max(0, a.lookMeter - fill * LOOK_DRAIN_MULTIPLIER);
     if (lookMeter === a.lookMeter) return a;
     if (lookMeter < 1) return { ...a, lookMeter };
-    const done = { ...a, lookMeter, lookedAt: true };
+    const done = { ...a, lookMeter, lookedAt: true, reactTime: REACTION_S };
     looked.push(done);
     return done;
   });

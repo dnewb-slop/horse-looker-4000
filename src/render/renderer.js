@@ -28,6 +28,7 @@ import {
   RIDGE_HIGHLIGHT,
   TUFT_COLOR,
 } from './palette.js';
+import { drawBubble } from './bubbles.js';
 import { HEAD_BOXES, drawAnimal, drawScenery } from './sprites.js';
 
 /** Screen pixels between sampled points along a ridge. */
@@ -101,6 +102,8 @@ export function renderPasture(ctx, cam, pasture, seed, sprites) {
   });
   // Meters go on top of everything, so a filling animal behind a crest still shows progress.
   for (const a of animals) drawLookMeter(ctx, cam, a);
+  // Speech bubbles too, so a reaction is never hidden.
+  for (const a of animals) drawBubble(ctx, cam, a);
 
   ctx.restore();
 }

@@ -112,3 +112,7 @@ export const LOOKALIKE_KEYS = {
 /** Look meter: neutral white, so it doesn't give away what the animal is. */
 export const LOOK_METER = '#ffffff';
 export const LOOK_METER_BACK = 'rgba(0, 0, 0, 0.55)';
+
+/** Speech bubbles: white, with dark ink for the border and words. */
+export const BUBBLE_FILL = '#ffffff';
+export const BUBBLE_INK = '#1b2614';

@@ -167,6 +167,8 @@ export function ridgeY(hill, x) {
  * @property {number} lookPx how tall it must be on screen, in CSS pixels, before its look meter
  *   fills: its own value from LOOK_MIN_PX up to LOOK_ZOOM_SPREAD more
  * @property {boolean} lookedAt
+ * @property {number} reactTime seconds left reacting to being looked at (standing still, saying
+ *   its line); 0 when not reacting
  * @property {number} rng this animal's own generator state, so grazing stays pure and seeded
  * @property {'idle' | 'walk'} mode
  * @property {number} idleTime seconds left standing still, while idle
@@ -340,6 +342,7 @@ export function spawnAnimals(rng, hills, scenery, roster) {
         facing: rng() < 0.5 ? 1 : -1,
         lookMeter: 0,
         lookedAt: false,
+        reactTime: 0,
         ...firstRest(Math.floor(rng() * 2 ** 32)),
         mode: 'idle',
         idleTime: randomBetween(rng, 0, GRAZE_IDLE_MAX_S),
@@ -381,7 +384,7 @@ const WALK_SAMPLE_STEP = 2;
 
 /**
  * Advance every animal's grazing by dt seconds: stand a while, then walk a short way or over a
- * ridge, and repeat.
+ * ridge, and repeat. An animal reacting to being looked at stays put until it is done.
  * @param {Animal[]} animals
  * @param {Hill[]} hills
  * @param {Scenery[]} scenery
@@ -389,9 +392,10 @@ const WALK_SAMPLE_STEP = 2;
  * @returns {Animal[]}
  */
 export function stepAnimals(animals, hills, scenery, dt) {
-  return animals.map((a) =>
-    a.mode === 'idle' ? stepIdle(a, hills, scenery, dt) : stepWalk(a, dt),
-  );
+  return animals.map((a) => {
+    if (a.reactTime > 0) return { ...a, reactTime: Math.max(0, a.reactTime - dt) };
+    return a.mode === 'idle' ? stepIdle(a, hills, scenery, dt) : stepWalk(a, dt);
+  });
 }
 
 /**

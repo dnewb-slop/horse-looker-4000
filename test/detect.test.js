@@ -38,6 +38,7 @@ function horse(over = {}) {
     lookMeter: 0,
     lookPx: LOOK_MIN_PX,
     lookedAt: false,
+    reactTime: 0,
     rng: 1,
     mode: 'idle',
     idleTime: 5,

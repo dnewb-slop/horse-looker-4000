@@ -5,7 +5,8 @@
 // Keys: o outline, B coat, b coat shade, w coat highlight, M mane and tail, h hooves, e eye.
 // The Near horse smiles: a mouth line along the muzzle that curls up at the corner.
 // Besides standing, it walks (the standing grid with its legs swung, see ./motion.js) and grazes
-// with its head down (hand-drawn), at Mid and Near. Far stays still.
+// with its head down (hand-drawn), at Mid and Near, and rears up when looked at (the standing
+// body turned up over its hind legs, see ./motion.js). Far stays still.
 
 /** @type {import('../sprites.js').CreatureArt} */
 export const HORSE = {
@@ -71,6 +72,8 @@ export const HORSE = {
     '........ohhhohhhho..........ohhhhohhho..........',
     '.........ooo.oooo............oooo.ooo...........',
   ],
+  // Rearing up when looked at: the body turns up about the hip over the planted hind legs.
+  rear: { pivot: [7, 10], degrees: 40, planted: (wx, wy) => wx < 10 && wy >= 11 },
   // Where the head is, as fractions of the sprite box. Detection checks this is visible.
   headBox: { x: 0.74, y: 0, w: 0.26, h: 0.37 },
   // The walk frame swings the back legs back and the front legs forward.
