@@ -21,7 +21,7 @@ Each milestone ships as its own PR and leaves a working build on GitHub Pages. B
 - [x] **7. Hills with depth:** animals in the valley behind a ridge are hidden by the hill in front; animals cross ridges by sinking behind the crest and rising over it; heads peeking over a crest can be looked at. Comes after the full game is playable, so it can't delay it; staying on one hill (milestone 4) is the fallback. **Play it:** do peeking horses add fun without making horses too hard to find?
 - [x] **8. Look-alike art:** goats, sheep, centaurs, reverse centaurs, robot horses and horse suits. The owner picked and refined each from alternatives shown beside the horse breed it copies. Goats, sheep, centaurs and robot horses differ from their horse by a few pixels at Far; reverse centaurs and horse suits are jokes you can spot from Far. **Play it:** are the look-alikes hard enough, and are the jokes funny?
 - [x] **9. Animation:** two-frame walk and head-down graze for every creature at the Mid and Near tiers. The walk frame swings each creature's own legs; the horse's graze frame is hand-drawn and the look-alikes built on the horse wear its lowered head. **Play it:** does the pasture feel alive?
-- [ ] **10. Music:** Claude shortlists licensed, calming tracks for each level; the owner picks by ear; then Claude adds playback, crossfades, the mute button and credits. **Play it:** does each level sound right?
+- [x] **10. Music:** Claude shortlisted licensed, calming tracks for each level and the owner picked by ear: "Etirwer" (level 1), "Feel Good Island Loop" (level 2) and "Porch Swing Days - faster" (level 3). Playback, 2 s crossfades, the remembered mute button and credits are in `src/ui/audio.js`. **Play it:** does each level sound right?
 - [ ] **11. Tuning pass:** adjust every _(tune)_ value from playtest notes. **Play it:** MVP done.
 
 ## Technology stack
@@ -229,9 +229,9 @@ Each level gets its own simple, calming track that loops while playing.
 - **Choosing tracks:** Claude finds 3–4 candidates per level and posts links on the PR. The owner listens and picks, since Claude can't hear audio. Claude then adds the picks with credits.
 - **Allowed licenses:** CC0 / public domain (e.g. OpenGameArt filtered to CC0), or CC BY 4.0 (e.g. Kevin MacLeod at incompetech). Not the Pixabay Content License, which restricts redistributing files as-is from a public repo. Check each track's license before committing it.
 - **Credits:** a "Music by…" line on the win and lose screens, and a `CREDITS.md` listing each track, artist, source link and license.
-- **Playback:** one looping `<audio>` element per level, with a 2 s crossfade between levels _(tune)_. Sound starts after the player's first click, because browsers block autoplay; the intro's click-to-skip covers this.
-- **Mute:** a speaker button in the bottom strip. The setting is remembered between visits.
-- **Files:** compressed tracks of about 2–4 MB each in `audio/`.
+- **Playback:** one looping `<audio>` element per level, with a 2 s crossfade between levels _(tune)_ at a volume of 0.6 _(tune)_. The intro is silent; the current level's track plays from the start of the level, keeps playing under the win screen and fades out on the lose screen. Sound starts after the player's first click or key press, because browsers block autoplay; the intro's click-to-skip covers this.
+- **Mute:** a speaker button at the right end of the bottom strip, kept above the full-window screens. The setting is remembered between visits.
+- **Files:** Ogg Vorbis tracks of up to about 4 MB each in `audio/`, listed in `src/ui/tracks.js`.
 
 ## User interface
 
@@ -276,7 +276,7 @@ Claude does all the coding, code review and merging; the owner plays the live bu
 | `.github/workflows/pages.yml`                 | Deploys `main` to GitHub Pages                                                                            |
 | `.github/ISSUE_TEMPLATE/playtest.md`          | A short form for gameplay feedback                                                                        |
 | `.claude/settings.json`                       | Pre-approved commands (npm scripts, Playwright) to cut permission prompts                                 |
-| `CREDITS.md`                                  | Music and any other third-party assets, with licenses (added in milestone 9)                              |
+| `CREDITS.md`                                  | Music and any other third-party assets, with licenses (added in milestone 10)                             |
 
 ### The loop
 

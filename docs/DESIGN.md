@@ -88,6 +88,8 @@ From far away, goats, sheep, centaurs and robot horses look almost exactly like 
 
 Each level has its own simple, calming music track, used under a license that allows it (CC0 or CC BY 4.0). The player can mute it.
 
+The intro is silent: music starts when the first level does. Each new level crossfades to its own track. On the winning screen the last level's music plays on; on the losing screen it fades out with the game.
+
 ### Losing screen
 
 The main game loop fades away, and the player sees the words:

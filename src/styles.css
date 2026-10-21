@@ -237,3 +237,46 @@ body {
 .horse-again:focus-visible {
   background: #d6ebc0;
 }
+
+.screen-credits {
+  color: #888;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* The mute button sits at the strip's right end and stays above the full-window screens, so the
+   music can be muted at any time. */
+.mute {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  padding: 0;
+  color: #fff;
+  background: #2a3a20;
+  border: 2px solid #6f8a5c;
+  cursor: pointer;
+}
+
+.mute:hover,
+.mute:focus-visible {
+  background: #3a4f2c;
+}
+
+.mute svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mute .cross,
+.mute[aria-pressed='true'] .waves {
+  display: none;
+}
+
+.mute[aria-pressed='true'] .cross {
+  display: inline;
+}

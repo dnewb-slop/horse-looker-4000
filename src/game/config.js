@@ -144,3 +144,9 @@ export const INTRO_FADE_S = 0.6;
  * The first is a quick setup; the joke needs time to land in the other two.
  */
 export const INTRO_HOLDS_S = [1.2, 3.2, 3];
+
+/** Seconds one level's music takes to crossfade into the next. (tune) */
+export const MUSIC_CROSSFADE_S = 2;
+
+/** Music volume at full fade, from 0 to 1. Calm background, not the main event. (tune) */
+export const MUSIC_VOLUME = 0.6;
