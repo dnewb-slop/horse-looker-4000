@@ -17,9 +17,13 @@ test('the game opens with the intro, and clicks skip through it', async ({ page 
   await expect(page.locator('#screen')).toContainText('The American Cowboy is dead.');
   await page.mouse.click(640, 400);
   await expect(page.locator('#screen')).toContainText("It's you. The Horse Looker.");
+  // Music waits for level 1, even though the clicks have unlocked sound.
+  const music = () => page.evaluate(() => /** @type {any} */ (globalThis).__horseLooker.music);
+  expect((await music()).gains).toEqual([0, 0, 0]);
   await page.mouse.click(640, 400);
   await expect.poll(() => phase(page)).toBe('playing');
   await expect(page.locator('#screen')).not.toHaveClass(/shown/);
+  await expect.poll(async () => (await music()).playing).toEqual([true, false, false]);
 });
 
 test('three imposters lose the game, and "Horse again" starts over at level 1', async ({
@@ -41,6 +45,10 @@ test('three imposters lose the game, and "Horse again" starts over at level 1', 
   expect(await screen.locator('.chip.non-horse').count()).toBeGreaterThanOrEqual(3);
   await page.waitForTimeout(1600);
   await page.screenshot({ path: 'e2e/screenshots/lose.png' });
+  // The music fades out on the lose screen.
+  await expect
+    .poll(() => page.evaluate(() => /** @type {any} */ (globalThis).__horseLooker.music.playing))
+    .toEqual([false, false, false]);
 
   await screen.getByRole('button', { name: 'Horse again' }).click();
   await expect.poll(() => phase(page)).toBe('playing');

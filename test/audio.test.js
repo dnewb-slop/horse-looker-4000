@@ -8,11 +8,13 @@ import { musicCredits, stepGains, trackIndex } from '../src/ui/audio.js';
 import { TRACKS } from '../src/ui/tracks.js';
 import { LEVELS } from '../src/game/levels.js';
 
-test('each level plays its own track, from the intro through the end screens', () => {
-  assert.equal(trackIndex(createPlay(1, 1, { intro: true })), 0);
+test('music waits out the intro, plays on under the win screen and stops on the lose screen', () => {
+  assert.equal(trackIndex(createPlay(1, 1, { intro: true })), -1);
+  assert.equal(trackIndex(createPlay(1, 1)), 0);
   assert.equal(trackIndex(createPlay(1, 2)), 1);
+  assert.equal(trackIndex({ ...createPlay(1, 2), phase: 'levelComplete' }), 1);
   assert.equal(trackIndex(createEndPreview(1, 'won')), LEVELS.length - 1);
-  assert.equal(trackIndex(createEndPreview(1, 'lost')), 1);
+  assert.equal(trackIndex(createEndPreview(1, 'lost')), -1);
 });
 
 test('every level has its own track, under an allowed license, with its file in audio/', () => {

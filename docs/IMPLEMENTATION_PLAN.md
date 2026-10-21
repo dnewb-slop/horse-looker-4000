@@ -229,7 +229,7 @@ Each level gets its own simple, calming track that loops while playing.
 - **Choosing tracks:** Claude finds 3–4 candidates per level and posts links on the PR. The owner listens and picks, since Claude can't hear audio. Claude then adds the picks with credits.
 - **Allowed licenses:** CC0 / public domain (e.g. OpenGameArt filtered to CC0), or CC BY 4.0 (e.g. Kevin MacLeod at incompetech). Not the Pixabay Content License, which restricts redistributing files as-is from a public repo. Check each track's license before committing it.
 - **Credits:** a "Music by…" line on the win and lose screens, and a `CREDITS.md` listing each track, artist, source link and license.
-- **Playback:** one looping `<audio>` element per level, with a 2 s crossfade between levels _(tune)_ at a volume of 0.6 _(tune)_. The current level's track plays from the intro through the end screens. Sound starts after the player's first click or key press, because browsers block autoplay; the intro's click-to-skip covers this.
+- **Playback:** one looping `<audio>` element per level, with a 2 s crossfade between levels _(tune)_ at a volume of 0.6 _(tune)_. The intro is silent; the current level's track plays from the start of the level, keeps playing under the win screen and fades out on the lose screen. Sound starts after the player's first click or key press, because browsers block autoplay; the intro's click-to-skip covers this.
 - **Mute:** a speaker button at the right end of the bottom strip, kept above the full-window screens. The setting is remembered between visits.
 - **Files:** Ogg Vorbis tracks of up to about 4 MB each in `audio/`, listed in `src/ui/tracks.js`.
 

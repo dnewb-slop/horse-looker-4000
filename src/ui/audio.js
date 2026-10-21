@@ -8,12 +8,14 @@ import { MUSIC_CROSSFADE_S, MUSIC_VOLUME } from '../game/config.js';
 export const MUTE_KEY = 'horseLooker.muted';
 
 /**
- * Which level's track should be playing: the current level's, from the intro (level 1) through
- * the level-complete card and the end screens, so the music never cuts out mid-game.
- * @param {{level: number}} play
- * @returns {number} 0-based track index
+ * Which level's track should be playing (DESIGN.md, Music): none during the intro, then the
+ * current level's through its level-complete card. It plays on under the win screen but fades
+ * out on the lose screen.
+ * @param {{level: number, phase: import('../game/rules.js').Phase}} play
+ * @returns {number} 0-based track index, or -1 for silence
  */
 export function trackIndex(play) {
+  if (play.phase === 'intro' || play.phase === 'lost') return -1;
   return play.level - 1;
 }
 
@@ -77,8 +79,8 @@ export function createMusic(strip, tracks) {
   });
   let gains = tracks.map(() => 0);
   let muted = loadMuted();
-  // Browsers block sound until the player interacts with the page; the first click or key
-  // (usually skipping the intro) lets it start.
+  // Browsers block sound until the player interacts with the page, so music can't start before
+  // the first click or key, even once level 1 begins.
   let unlocked = false;
   const unlock = () => (unlocked = true);
   window.addEventListener('pointerdown', unlock, { capture: true, once: true });
@@ -102,7 +104,7 @@ export function createMusic(strip, tracks) {
 
   return {
     /**
-     * @param {{level: number}} play
+     * @param {{level: number, phase: import('../game/rules.js').Phase}} play
      * @param {number} dt seconds since the last frame
      */
     update(play, dt) {
