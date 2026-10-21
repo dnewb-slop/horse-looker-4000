@@ -123,10 +123,16 @@ export const GRAZE_CHANCE = 0.7;
 export const GRAZE_LOOK_UP_S = 1;
 
 /**
- * A look starts as soon as an animal is drawn with its Mid sprite, the tier where look-alike
- * telltales first show, so the player has to judge it quickly. (tune)
+ * The earliest a look can start: as soon as an animal is drawn with its Mid sprite, the tier
+ * where look-alike telltales first show, so the player has to judge it quickly. (tune)
  */
 export const LOOK_MIN_PX = FAR_MAX_PX;
+
+/**
+ * Each animal needs its own amount of zoom before its look starts: from LOOK_MIN_PX up to this
+ * much more (0.2 = 20% more zoom), spread evenly across animals. (tune)
+ */
+export const LOOK_ZOOM_SPREAD = 0.2;
 
 /** Seconds of qualifying view to fill a look meter, and how much faster it drains. (tune) */
 export const LOOK_FILL_S = 0.5;

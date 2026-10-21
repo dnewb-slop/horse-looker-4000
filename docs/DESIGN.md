@@ -40,7 +40,7 @@ The game displays rolling fields of grass from a great distance, as if the playe
 
 Once the player has zoomed in far enough on an animal, it becomes "looked at":
 
-- Looking starts as soon as the player zooms in far enough to see an animal's mid-distance detail, the same zoom at which look-alikes' telltales first show. The player has to judge quickly.
+- Each animal needs its own amount of zoom before looking starts, so some are looked at sooner than others. The earliest is the zoom where the player first sees an animal's mid-distance detail, the same zoom at which look-alikes' telltales first show; the latest needs 20% more zoom than that, and every amount in between is equally likely. The player has to judge quickly.
 - A look meter above the animal fills over about half a second while the player stays zoomed in. Zooming out before it fills drains it, which gives the player a brief moment to notice a goat and back off. Looks start at middling zoom, before the animal fills the screen, so the player has to decide quickly whether it's a horse.
 - Every animal on screen that is zoomed in that far fills its own meter, not just the one under the cursor.
 - An animal only counts if its head is visible. A horse whose head is hidden behind a barn can't be looked at. A grazing animal holds its head down in the grass, so a crest or a barn hides it more easily until it looks up.

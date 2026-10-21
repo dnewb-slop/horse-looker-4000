@@ -148,8 +148,8 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 
 ### Looked-at detection
 
-- A look starts at the Mid tier: as soon as an animal is drawn with its Mid sprite (32 px tall on screen), the zoom where look-alike telltales first show _(tune)_. Every animal shares this threshold. (Until the 2026-10-20 tuning, each animal had its own threshold of 8–15% of the viewport height.)
-- An animal's look meter fills while all three of these hold: it is drawn at the Mid tier or closer, its center is on screen, and its head is visible.
+- Each animal has its own look threshold, spread evenly from the Mid tier (32 px tall on screen, the zoom where look-alike telltales first show) up to 20% more zoom (38.4 px) _(tune)_. It is fixed at spawn from a side branch of the animal's own generator, so seeds keep their pastures. (Before the 2026-10-20 tuning, thresholds were 8–15% of the viewport height; from then until 2026-10-21 every animal shared the Mid tier.)
+- An animal's look meter fills while all three of these hold: it is zoomed in to its own threshold or closer, its center is on screen, and its head is visible.
 - The meter fills over 0.5 s and drains at twice that speed when any condition stops _(tune)_. A full meter means looked at.
 - Every qualifying animal on screen fills its own meter at once, not just the one under the cursor. That is the risk the player manages near goats and look-alikes.
 - **Look meter display:** a thin bar above each filling animal's head, in neutral white so it doesn't give away what the animal is. Meters are drawn on top of everything.
