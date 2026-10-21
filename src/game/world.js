@@ -16,6 +16,8 @@ import {
   DATACENTER_HEIGHT,
   DATACENTER_WIDTH,
   GRAZE_CHANCE,
+  LOOK_MIN_PX,
+  LOOK_ZOOM_SPREAD,
   GRAZE_DEPTH_SCALE,
   GRAZE_IDLE_MAX_S,
   GRAZE_IDLE_MIN_S,
@@ -162,6 +164,8 @@ export function ridgeY(hill, x) {
  *   crest down into the valley behind the next crest, where the next hill hides it.
  * @property {1 | -1} facing 1 faces right
  * @property {number} lookMeter 0 to 1
+ * @property {number} lookPx how tall it must be on screen, in CSS pixels, before its look meter
+ *   fills: its own value from LOOK_MIN_PX up to LOOK_ZOOM_SPREAD more
  * @property {boolean} lookedAt
  * @property {number} rng this animal's own generator state, so grazing stays pure and seeded
  * @property {'idle' | 'walk'} mode
@@ -349,13 +353,24 @@ export function spawnAnimals(rng, hills, scenery, roster) {
 }
 
 /**
- * Whether an animal's first rest is spent grazing. Drawn from its own generator rather than the
+ * Whether an animal's first rest is spent grazing, and how much zoom its look needs. Drawn from its own generator rather than the
  * pasture's, so adding it didn't move any animal of an existing seed.
  * @param {number} state the animal's generator state
  */
 function firstRest(state) {
   const [value, rng] = rngStep(state);
-  return { rng, grazing: value < GRAZE_CHANCE };
+  return { rng, grazing: value < GRAZE_CHANCE, lookPx: lookThreshold(state) };
+}
+
+/**
+ * An animal's own look threshold, evenly spread from LOOK_MIN_PX to LOOK_ZOOM_SPREAD more. Taken
+ * from a side branch of its generator, so neither the pasture nor its grazing changed when this
+ * was added.
+ * @param {number} state the animal's starting generator state
+ */
+export function lookThreshold(state) {
+  const [value] = rngStep(state ^ 0x9e3779b9);
+  return LOOK_MIN_PX * (1 + LOOK_ZOOM_SPREAD * value);
 }
 
 /**

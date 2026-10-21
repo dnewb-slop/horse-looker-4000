@@ -17,6 +17,7 @@ const animal = (over) => ({
   hill: 0,
   facing: 1,
   lookMeter: 0,
+  lookPx: 32,
   lookedAt: false,
   rng: 1,
   mode: 'idle',

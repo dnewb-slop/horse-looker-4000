@@ -2,7 +2,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createCamera } from '../src/game/camera.js';
-import { FAR_MAX_PX, HORSE_HEIGHT, LOOK_FILL_S } from '../src/game/config.js';
+import {
+  FAR_MAX_PX,
+  HORSE_HEIGHT,
+  LOOK_FILL_S,
+  LOOK_MIN_PX,
+  LOOK_ZOOM_SPREAD,
+} from '../src/game/config.js';
 import { headCenter, headVisible, isLooking, stepLooks } from '../src/game/detect.js';
 import { createPlay, stepPlay } from '../src/game/play.js';
 import { headBoxFor } from '../src/game/pose.js';
@@ -30,6 +36,7 @@ function horse(over = {}) {
     hill: 0,
     facing: 1,
     lookMeter: 0,
+    lookPx: LOOK_MIN_PX,
     lookedAt: false,
     rng: 1,
     mode: 'idle',
@@ -87,6 +94,31 @@ test('a look starts as soon as the horse is drawn at the Mid tier', () => {
   assert.equal(spriteTier(cameraShowing(atFar).zoom), 'far');
   assert.equal(isLooking(horse(), cameraShowing(atFar), BOX, HILLS, []), false);
   assert.equal(isLooking(horse(), cameraShowing(0.3), BOX, HILLS, []), true);
+});
+
+test("each animal's look waits for its own zoom, up to LOOK_ZOOM_SPREAD past the Mid tier", () => {
+  const needy = horse({ lookPx: LOOK_MIN_PX * (1 + LOOK_ZOOM_SPREAD) });
+  const atMid = (LOOK_MIN_PX + 0.5) / 800;
+  assert.equal(isLooking(needy, cameraShowing(atMid), BOX, HILLS, []), false);
+  const past = (LOOK_MIN_PX * (1 + LOOK_ZOOM_SPREAD) + 0.5) / 800;
+  assert.equal(isLooking(needy, cameraShowing(past), BOX, HILLS, []), true);
+});
+
+test('look thresholds are spread evenly from the Mid tier to 20% more zoom', () => {
+  const max = LOOK_MIN_PX * (1 + LOOK_ZOOM_SPREAD);
+  const thresholds = [];
+  for (let seed = 0; seed < 25; seed++) {
+    for (const a of createPlay(seed, 2).animals) thresholds.push(a.lookPx);
+  }
+  for (const t of thresholds) assert.ok(t >= LOOK_MIN_PX && t < max, String(t));
+  // Even spread: each fifth of the range holds about a fifth of the animals.
+  const bins = [0, 0, 0, 0, 0];
+  for (const t of thresholds) bins[Math.floor(((t - LOOK_MIN_PX) / (max - LOOK_MIN_PX)) * 5)]++;
+  for (const b of bins) assert.ok(Math.abs(b / thresholds.length - 0.2) < 0.03, String(bins));
+  assert.deepEqual(
+    createPlay(9, 1).animals.map((a) => a.lookPx),
+    createPlay(9, 1).animals.map((a) => a.lookPx),
+  );
 });
 
 test('a horse whose center is off screen is not being looked at', () => {

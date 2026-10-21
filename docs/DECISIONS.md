@@ -2,6 +2,13 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Per-animal look thresholds (2026-10-21)
+
+| Decision       | Choice                                                                                                                                                                                                                                                         | Why                                                                                                                                |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Look threshold | Reinstated per animal: each animal's `lookPx` is drawn evenly (a uniform distribution) from 32 px tall on screen, the Mid tier, up to 20% more zoom, 38.4 px (`LOOK_ZOOM_SPREAD`). Supersedes "When looks start" from the 2026-10-20 tuning. DESIGN.md updated | Owner: each animal should need a different amount of zoom; the minimum stays where it is, the maximum is 20% more, spread linearly |
+| Seeds          | The threshold comes from a side branch of the animal's own starting generator state, not the pasture's generator or the animal's grazing stream                                                                                                                | Every existing seed keeps the same pasture and the same grazing                                                                    |
+
 ## Level 2 and 3 pastures (2026-10-21)
 
 | Decision           | Choice                                                                                                                                                                                                                                                                                           | Why                                           |
