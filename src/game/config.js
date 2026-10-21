@@ -142,6 +142,13 @@ export const REACTION_S = 2.5;
 export const REAR_S = 1;
 
 /**
+ * A looked-at horse suit's front man waits UNMASK_DELAY_S, then holds the horse head off his own
+ * for UNMASK_S before putting it back on for the rest of the reaction. (tune)
+ */
+export const UNMASK_DELAY_S = 0.3;
+export const UNMASK_S = 1.6;
+
+/**
  * A looked-at robot horse fires red lasers from its eye at the grass in front of it for the first
  * LASER_S of its reaction; the fire they start burns until the reaction ends. (tune)
  */

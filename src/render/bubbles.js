@@ -9,8 +9,8 @@ import { BUBBLE_FILL, BUBBLE_INK } from './palette.js';
 import { CREATURES, poseGrid } from './sprites.js';
 
 /**
- * Each kind's line, or null for one that says nothing. The horse suit gets its own reaction (two
- * people splitting off) later.
+ * Each kind's line, or null for one that says nothing: the men in a horse suit show their
+ * reaction instead (the front one lifts the horse head off).
  * @type {Record<import('../game/levels.js').AnimalKind, string | null>}
  */
 export const REACTION_LINES = {

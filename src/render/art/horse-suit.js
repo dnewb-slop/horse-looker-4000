@@ -3,14 +3,19 @@
 // two-person costume: a body too short for a horse, hanging low and baggy over human legs; a stiff
 // upright neck that holds the head too high; big black shoes; and legs lighter than the body,
 // the reverse of a real horse. It's a joke rather than a challenge, so it shows from Far on.
-// Keys: the horse's (o outline, B coat, b shade, w legs, M mane, tail and shoes, e eye).
+// Looked at, the front man takes the horse head off to show his own head, then puts it back on.
+// Keys: the horse's (o outline, B coat, b shade, w legs, M mane, tail, shoes and hair, e eye), plus
+// S skin.
 
 import { HORSE_HEIGHT, HORSE_WIDTH } from '../../game/config.js';
 import { grazeFrame, grazeHeadBox } from './motion.js';
 import { drawShapes, stampGrid } from './pen.js';
 
-/** @param {import('./pen.js').Pen} p */
-function drawSuit(p) {
+/**
+ * @param {import('./pen.js').Pen} p
+ * @param {boolean} [unmasked] the front man has lifted the horse head off, showing his own
+ */
+function drawSuit(p, unmasked = false) {
   for (const [x, lean] of [
     [5.4, -0.6],
     [8.4, 0.4],
@@ -67,8 +72,24 @@ function drawSuit(p) {
     ],
     'M',
   ); // mane down the back
+  if (unmasked) {
+    drawUnmasked(p);
+    return;
+  }
+  drawHorseHead(p, 0, 0);
+}
+
+/**
+ * The suit's horse head, held high on the neck, moved by (dx, dy) world units.
+ * @param {import('./pen.js').Pen} p
+ * @param {number} dx
+ * @param {number} dy
+ */
+function drawHorseHead(p, dx, dy) {
+  /** @param {[number, number][]} points */
+  const at = (points) => points.map(([x, y]) => /** @type {[number, number]} */ ([x + dx, y + dy]));
   p.polygon(
-    [
+    at([
       [16, 1.6],
       [19.6, 1.2],
       [23.4, 3.2],
@@ -76,30 +97,68 @@ function drawSuit(p) {
       [21, 5.2],
       [18.6, 4.6],
       [16.4, 4],
-    ],
+    ]),
     'B',
   ); // head held high
   p.polygon(
-    [
+    at([
       [16.2, 2],
       [16.8, 0],
       [18, 1.6],
-    ],
+    ]),
     'B',
   ); // ears
   p.polygon(
-    [
+    at([
       [18, 1.6],
       [19, 0],
       [19.6, 1.5],
-    ],
+    ]),
     'B',
   );
-  p.rect(22.4, 4, 23.2, 4.6, 'o'); // nostril
+  p.rect(22.4 + dx, 4 + dy, 23.2 + dx, 4.6 + dy, 'o'); // nostril
+}
+
+/** How far the front man lifts the horse head off, in world units. */
+const LIFT = 5;
+
+/**
+ * The front man has lifted the horse head straight up off his own, arms raised to hold it: his
+ * head with short dark hair shows out of the neck opening.
+ * @param {import('./pen.js').Pen} p
+ */
+function drawUnmasked(p) {
+  p.ellipse(17.7, 2.2, 1.5, 1.9, 'S'); // head
+  p.polygon(
+    [
+      [16.1, 1.4],
+      [16.6, 0.4],
+      [17.8, 0.1],
+      [19.0, 0.5],
+      [19.4, 1.2],
+      [17.6, 0.9],
+    ],
+    'M',
+  ); // short dark hair
+  p.rect(15.2, -0.6, 16, 3.6, 'S'); // arms up, holding the horse head
+  p.rect(19.5, -0.6, 20.3, 3.6, 'S');
+  drawHorseHead(p, 0, -LIFT);
 }
 
 /** A one-pixel eye like the horse's, which a shape would round away at Mid. */
 const EYE = { mid: { x: 20, y: 3 }, near: { x: 40, y: 6 } };
+
+/** Unmasked, in the taller grid: the lifted horse head's eye, and the front man's own eye. */
+const UNMASKED_EYES = {
+  mid: [
+    { x: 20, y: 3 },
+    { x: 18, y: 2 + LIFT },
+  ],
+  near: [
+    { x: 40, y: 6 },
+    { x: 36, y: 4 + 2 * LIFT },
+  ],
+};
 
 /**
  * @param {'mid' | 'near'} tier
@@ -107,6 +166,17 @@ const EYE = { mid: { x: 20, y: 3 }, near: { x: 40, y: 6 } };
  */
 function suitAt(tier) {
   return stampGrid(drawShapes(drawSuit, tier), EYE[tier].x, EYE[tier].y, ['e']);
+}
+
+/**
+ * @param {'mid' | 'near'} tier
+ * @returns {string[]}
+ */
+function unmaskedAt(tier) {
+  return UNMASKED_EYES[tier].reduce(
+    (rows, eye) => stampGrid(rows, eye.x, eye.y, ['e']),
+    drawShapes((p) => drawSuit(p, true), tier, LIFT),
+  );
 }
 
 /**
@@ -147,4 +217,6 @@ export const HORSE_SUIT = {
     near: grazeFrame(near, 'near', NOD),
     headBox: grazeHeadBox(HEAD_BOX, NOD, HORSE_WIDTH, HORSE_HEIGHT),
   },
+  // Looked at: the front man takes the horse head off to show his own, then puts it back on.
+  unmask: { mid: unmaskedAt('mid'), near: unmaskedAt('near') },
 };

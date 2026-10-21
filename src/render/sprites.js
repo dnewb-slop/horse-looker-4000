@@ -58,6 +58,8 @@ import {
  * @property {import('./art/motion.js').WalkRig} walk
  * @property {{mid: string[], near: string[], headBox: Box}} graze
  * @property {import('./art/motion.js').RearRig} [rear] how it rears up when looked at (horses)
+ * @property {{mid: string[], near: string[]}} [unmask] looked at with the horse head lifted off
+ *   (the horse suit); taller than the box
  */
 
 /** Every creature's art. */
@@ -88,8 +90,8 @@ export const HEAD_BOXES =
 
 /**
  * The grid a creature shows in a pose at a tier. Far has no walk, graze or rearing frame: it
- * stays still. A creature that doesn't rear stands instead. The rearing grid is taller than the
- * others; the rest share the sprite box.
+ * stays still. A creature without a rearing or unmasking frame stands instead. Those two grids are
+ * taller than the others; the rest share the sprite box.
  * @param {CreatureArt} art
  * @param {import('../game/pose.js').Pose} pose
  * @param {GridTier} tier
@@ -98,6 +100,7 @@ export function poseGrid(art, pose, tier) {
   if (tier === 'far' || pose === 'stand') return art[tier];
   if (pose === 'graze') return art.graze[tier];
   if (pose === 'rear') return art.rear ? rearFrame(art[tier], tier, art.rear) : art[tier];
+  if (pose === 'unmask') return art.unmask ? art.unmask[tier] : art[tier];
   return walkFrame(art[tier], tier, art.walk);
 }
 
@@ -247,6 +250,7 @@ export function createSpriteSet() {
     walk: make('walk'),
     graze: make('graze'),
     rear: make('rear'),
+    unmask: make('unmask'),
   });
   /** @param {AnimalKind} kind */
   const creature = (kind) => {
@@ -324,7 +328,7 @@ export function drawAnimal(ctx, cam, sprites, animal, pose = 'stand') {
     return;
   }
   const image = sprites.creatures[animal.kind][animal.breed][pose][tier];
-  // A rearing horse's grid is taller than the sprite box, so size it from the grid.
+  // Rearing and unmasking grids are taller than the sprite box, so size it from the grid.
   const height = image.height / TIER_DENSITY[tier];
   if (animal.lookedAt) {
     // The outline grid has one extra grid pixel on each side.

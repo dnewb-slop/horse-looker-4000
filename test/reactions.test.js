@@ -2,7 +2,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createCamera } from '../src/game/camera.js';
-import { HORSE_HEIGHT, LASER_S, REACTION_S, REAR_S } from '../src/game/config.js';
+import {
+  HORSE_HEIGHT,
+  LASER_S,
+  REACTION_S,
+  REAR_S,
+  UNMASK_DELAY_S,
+  UNMASK_S,
+} from '../src/game/config.js';
 import { stepLooks } from '../src/game/detect.js';
 import { createPlay } from '../src/game/play.js';
 import { animalPose } from '../src/game/pose.js';
@@ -107,5 +114,31 @@ test("the lasers come from the robot horse's eye, not its antenna light", () => 
 test('the fire frames use only fire colors and share one size', () => {
   for (const rows of FIRE_FRAMES) {
     assert.deepEqual(validateGrid(rows, 10, 10, FIRE_PALETTE), []);
+  }
+});
+
+test('the men in a horse suit show the front one’s head, then put the horse head back', () => {
+  const found = createPlay(1, 3).animals.find((a) => a.kind === 'horseSuit');
+  assert.ok(found);
+  /** @param {number} t seconds into the reaction */
+  const at = (t) => animalPose({ ...found, reactTime: REACTION_S - t });
+  assert.equal(at(0), 'stand');
+  assert.equal(at(UNMASK_DELAY_S + 0.01), 'unmask');
+  assert.equal(at(UNMASK_DELAY_S + UNMASK_S - 0.01), 'unmask');
+  assert.equal(at(UNMASK_DELAY_S + UNMASK_S + 0.01), 'stand');
+  assert.ok(UNMASK_DELAY_S + UNMASK_S < REACTION_S, 'the head goes back on before it ends');
+});
+
+test('the unmasked suit is taller, with the human head on top and the ground row unchanged', () => {
+  for (const tier of /** @type {const} */ (['mid', 'near'])) {
+    const stand = poseGrid(CREATURES.horseSuit, 'stand', tier);
+    const unmask = poseGrid(CREATURES.horseSuit, 'unmask', tier);
+    assert.ok(unmask.length > stand.length, tier);
+    assert.equal(unmask.at(-1), stand.at(-1));
+    assert.ok(
+      unmask.some((row) => row.includes('S')),
+      `${tier}: a human head shows`,
+    );
+    assert.ok(!stand.some((row) => row.includes('S')), `${tier}: no skin in the closed suit`);
   }
 });

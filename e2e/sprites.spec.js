@@ -12,8 +12,9 @@ test('the sprite review page renders every sprite without errors', async ({ page
     .poll(() => page.evaluate(() => /** @type {any} */ (globalThis).__spritesReady))
     .toBe(true);
   // 9 creature rows (3 breeds, 6 look-alikes) of 4 tiers and 4 animation frames, plus 2
-  // rearing frames for each horse breed, 3 scenery objects × 3 tiers, 4 scenes.
-  await expect(page.locator('canvas')).toHaveCount(9 * 8 + 3 * 2 + 9 + 4);
+  // rearing frames for each horse breed and 2 unmasking frames for the horse suit, 3 scenery
+  // objects × 3 tiers, 4 scenes.
+  await expect(page.locator('canvas')).toHaveCount(9 * 8 + 3 * 2 + 2 + 9 + 4);
   await page.screenshot({ path: 'e2e/screenshots/sprites.png', fullPage: true });
   expect(errors).toEqual([]);
 });
