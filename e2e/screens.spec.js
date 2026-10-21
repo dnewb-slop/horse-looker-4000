@@ -34,9 +34,16 @@ test('three imposters lose the game, and "Horse again" starts over at level 1', 
   // Zooming in can catch neighbors too, so keep going until the game is lost.
   for (let i = 0; i < 3 && (await phase(page)) === 'playing'; i++) {
     await zoomOnto(page, await pickAnimal(page, false));
+    if ((await phase(page)) !== 'playing') break;
     // Back off to the whole pasture before the next one.
     for (let j = 0; j < 30; j++) await page.mouse.wheel(0, 240);
   }
+  // A pause first: the pasture drains of color, and only then the lose screen.
+  await expect.poll(() => phase(page)).toBe('losing');
+  await expect(page.locator('.viewport')).toHaveClass(/lost/);
+  await expect(page.locator('#screen')).not.toHaveClass(/shown/);
+  await page.waitForTimeout(1200);
+  await page.screenshot({ path: 'e2e/screenshots/losing.png' });
   await expect.poll(() => phase(page)).toBe('lost');
   const screen = page.locator('#screen');
   await expect(screen).toContainText("Sorry kid, but you don't have what it takes");

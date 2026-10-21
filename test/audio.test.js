@@ -14,6 +14,7 @@ test('music waits out the intro, plays on under the win screen and stops on the 
   assert.equal(trackIndex(createPlay(1, 2)), 1);
   assert.equal(trackIndex({ ...createPlay(1, 2), phase: 'levelComplete' }), 1);
   assert.equal(trackIndex(createEndPreview(1, 'won')), LEVELS.length - 1);
+  assert.equal(trackIndex({ ...createPlay(1, 2), phase: 'losing' }), -1);
   assert.equal(trackIndex(createEndPreview(1, 'lost')), -1);
 });
 

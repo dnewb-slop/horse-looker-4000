@@ -101,7 +101,9 @@ The intro is silent: music starts when the first level does. Each new level cros
 
 ### Losing screen
 
-The main game loop fades away, and the player sees the words:
+When the player looks at their last allowed non-horse, the game pauses for about two seconds before the losing screen. The pasture drains of color and dims so the player can tell they've lost, and the music fades. Animals finish their reactions, but nothing more counts as looked at.
+
+Then the main game loop fades away, and the player sees the words:
 
 > "Sorry kid, but you don't have what it takes to be an American horse looker."
 

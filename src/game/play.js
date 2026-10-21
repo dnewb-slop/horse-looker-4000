@@ -1,8 +1,8 @@
 // @ts-check
 // The game in progress: the current level's pasture, what the player has looked at, and the
-// phase (intro, playing, level complete, won or lost).
+// phase (intro, playing, level complete, won, losing or lost).
 
-import { LEVEL_CARD_S, MAX_STRIKES, SCENERY_PER_LEVEL } from './config.js';
+import { LEVEL_CARD_S, LOSE_PAUSE_S, MAX_STRIKES, SCENERY_PER_LEVEL } from './config.js';
 import { stepLooks } from './detect.js';
 import { stepIntro } from './intro.js';
 import { LEVELS, levelRoster, levelSeed } from './levels.js';
@@ -15,7 +15,8 @@ import { generateHills, placeScenery, spawnAnimals, stepAnimals } from './world.
  * @property {number} seed the game's seed; each level derives its own from it
  * @property {number} level 1-based
  * @property {import('./rules.js').Phase} phase
- * @property {number} cardTime seconds left on the "Level n complete" card
+ * @property {number} cardTime seconds left on the "Level n complete" card, or of the pause before
+ *   the lose screen
  * @property {{line: number, time: number} | null} intro where the opening sequence is, while
  *   the phase is 'intro'
  * @property {import('./world.js').Hill[]} hills
@@ -105,11 +106,18 @@ export function stepPlay(play, cam, headBoxes, dt, clicks = 0) {
     if (isLastLevel(play.level)) return { ...play, animals: grazed, cardTime: 0, phase: 'won' };
     return { ...play, ...createLevel(play.seed, play.level + 1), phase: 'playing', cardTime: 0 };
   }
+  if (play.phase === 'losing') {
+    // The pause before the lose screen: animals finish reacting, but no look counts.
+    const cardTime = play.cardTime - dt;
+    if (cardTime > 0) return { ...play, animals: grazed, cardTime };
+    return { ...play, animals: grazed, cardTime: 0, phase: 'lost' };
+  }
   if (play.phase !== 'playing') return { ...play, animals: grazed };
 
   const { animals, looked } = stepLooks(grazed, cam, headBoxes, play.hills, play.scenery, dt);
   const counted = countLooks({ ...play, animals }, looked);
   const phase = nextPhase(counted);
   if (phase === 'levelComplete') return { ...counted, phase, cardTime: LEVEL_CARD_S };
+  if (phase === 'lost') return { ...counted, phase: 'losing', cardTime: LOSE_PAUSE_S };
   return { ...counted, phase };
 }

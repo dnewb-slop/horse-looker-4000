@@ -10,12 +10,12 @@ export const MUTE_KEY = 'horseLooker.muted';
 /**
  * Which level's track should be playing (DESIGN.md, Music): none during the intro, then the
  * current level's through its level-complete card. It plays on under the win screen but fades
- * out on the lose screen.
+ * out as soon as the game is lost, through the pause before the lose screen.
  * @param {{level: number, phase: import('../game/rules.js').Phase}} play
  * @returns {number} 0-based track index, or -1 for silence
  */
 export function trackIndex(play) {
-  if (play.phase === 'intro' || play.phase === 'lost') return -1;
+  if (play.phase === 'intro' || play.phase === 'losing' || play.phase === 'lost') return -1;
   return play.level - 1;
 }
 

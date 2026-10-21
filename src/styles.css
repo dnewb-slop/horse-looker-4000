@@ -31,6 +31,15 @@ body {
   cursor: grabbing;
 }
 
+/* The game is lost: the pasture drains of color and dims before the lose screen. */
+#pasture {
+  transition: filter 1.5s ease;
+}
+
+.viewport.lost #pasture {
+  filter: grayscale(0.9) brightness(0.75);
+}
+
 /* A telephoto lens darkens toward the edges. */
 .vignette {
   position: absolute;

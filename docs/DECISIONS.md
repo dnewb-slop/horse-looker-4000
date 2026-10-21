@@ -2,6 +2,13 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Pause before the lose screen (2026-10-21)
+
+| Decision   | Choice                                                                                                                                                                                                                                     | Why                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Pause      | A new `losing` phase lasts 2 s (`LOSE_PAUSE_S`) between the last allowed non-horse and the `lost` phase. Animals keep grazing and finish reacting; looks are not stepped, so no meter fills and nothing more is counted. DESIGN.md updated | Owner: a pause before the lose screen, with no more looks recorded meanwhile                         |
+| Showing it | The pasture canvas fades to `grayscale(0.9) brightness(0.75)` over 1.5 s, a CSS filter toggled by `main.js`; the music starts fading at the same moment. The strip stays in color, showing the three imposters                             | Owner suggested dimming the saturation; a CSS filter is the simplest way and costs nothing per frame |
+
 ## Looked-at reactions (2026-10-21)
 
 | Decision           | Choice                                                                                                                                                                                                                                                                                                                                                                         | Why                                                                                                                                          |
