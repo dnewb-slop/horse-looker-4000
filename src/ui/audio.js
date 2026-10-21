@@ -36,7 +36,7 @@ export function stepGains(gains, wanted, dt) {
  * @returns {string[]}
  */
 export function musicCredits(tracks) {
-  return tracks.filter((t) => t !== null).map((t) => `“${t.title}” by ${t.artist} (${t.license})`);
+  return tracks.filter((t) => t !== null).map((t) => `“${t.title}” by ${t.artist}, ${t.license}`);
 }
 
 /** @returns {boolean} */

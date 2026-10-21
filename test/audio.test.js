@@ -1,4 +1,5 @@
 // @ts-check
+import { existsSync } from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { MUSIC_CROSSFADE_S } from '../src/game/config.js';
@@ -14,8 +15,16 @@ test('each level plays its own track, from the intro through the end screens', (
   assert.equal(trackIndex(createEndPreview(1, 'lost')), 1);
 });
 
-test('there is one track slot per level', () => {
+test('every level has its own track, under an allowed license, with its file in audio/', () => {
   assert.equal(TRACKS.length, LEVELS.length);
+  const files = new Set();
+  for (const t of TRACKS) {
+    assert.ok(t);
+    assert.ok(['CC0', 'CC BY 4.0'].includes(t.license), t.title);
+    assert.ok(existsSync(new URL(`../${t.file}`, import.meta.url)), t.file);
+    files.add(t.file);
+  }
+  assert.equal(files.size, LEVELS.length);
 });
 
 test('a level change crossfades over MUSIC_CROSSFADE_S', () => {
@@ -37,6 +46,6 @@ test('gains stay between 0 and 1, and -1 fades everything out', () => {
 
 test('credits name each track, its artist and its license, skipping empty levels', () => {
   const track = { file: 'audio/a.mp3', title: 'Meadow', artist: 'Someone', license: 'CC0' };
-  assert.deepEqual(musicCredits([track, null]), ['“Meadow” by Someone (CC0)']);
+  assert.deepEqual(musicCredits([track, null]), ['“Meadow” by Someone, CC0']);
   assert.deepEqual(musicCredits([null, null]), []);
 });

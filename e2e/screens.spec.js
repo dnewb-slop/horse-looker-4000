@@ -52,6 +52,11 @@ test('three imposters lose the game, and "Horse again" starts over at level 1', 
 test('?screen=win and ?screen=lose open straight on the end screens', async ({ page }) => {
   await page.goto('/?seed=4000&screen=win');
   await expect(page.locator('#screen')).toContainText("That's some damn fine horse looking!");
+  await expect(page.locator('#screen')).toContainText(
+    '“Porch Swing Days - faster” by Kevin MacLeod (incompetech.com), CC BY 4.0',
+  );
+  await page.waitForTimeout(1600);
+  await page.screenshot({ path: 'e2e/screenshots/win.png' });
   await page.goto('/?seed=4000&screen=lose');
   await expect(page.locator('#screen')).toContainText('Sorry kid');
   await expect(page.locator('#screen .chip')).toHaveCount(6);
@@ -70,6 +75,7 @@ test('the mute button is remembered between visits and works over the end screen
   expect((await music()).unlocked).toBe(false);
   await page.mouse.click(640, 400);
   await expect.poll(async () => (await music()).gains[0]).toBeGreaterThan(0);
+  await expect.poll(async () => (await music()).playing).toEqual([true, false, false]);
 
   await mute.click();
   await expect(mute).toHaveAttribute('aria-pressed', 'true');
