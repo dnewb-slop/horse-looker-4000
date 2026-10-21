@@ -82,8 +82,9 @@ export function createScreens(root, sprites, tracks, handlers) {
       if (key === shown) return;
       shown = key;
 
-      if (play.phase === 'playing') {
-        // Keep the old content while it fades out.
+      if (play.phase === 'playing' || play.phase === 'losing') {
+        // Keep the old content while it fades out. The pasture stays in view, drained of
+        // color, for the pause before the lose screen.
         root.className = 'screen';
         return;
       }

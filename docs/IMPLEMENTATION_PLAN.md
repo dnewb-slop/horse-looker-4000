@@ -107,7 +107,8 @@ stateDiagram-v2
   Playing --> LevelComplete: 5 horses
   LevelComplete --> Playing: levels 1–2, next level
   LevelComplete --> Win: after level 3
-  Playing --> Lose: 3rd non-horse
+  Playing --> Losing: 3rd non-horse
+  Losing --> Lose: after 2 s
   Win --> Playing: "Horse again" (level 1)
   Lose --> Playing: "Horse again" (level 1)
 ```
@@ -115,6 +116,7 @@ stateDiagram-v2
 - **Intro:** show the three opening lines in turn. Each fades in over 0.6 s, holds (1.2 s, 3.2 s and 3 s for the three lines), then fades out _(tune)_. A click skips to the next line. `?intro=off` (for tests) and `?level=n` skip it.
 - **Playing (level n):** the main loop below.
 - **Level complete:** a short "Level n complete" card (2.5 s _(tune)_), then the next level is generated from the game's seed and the level number, with the whole pasture in view. `?level=n` starts a game at a later level for playtesting.
+- **Losing:** a 2 s pause _(tune)_ after the last allowed non-horse. The pasture canvas fades to mostly grey and dims a little (a CSS filter, 1.5 s transition, _(tune)_) and the music fades out. Animals keep grazing and finish their reactions, but no look meter fills, so nothing more is counted.
 - **Win / Lose:** the end screens from DESIGN.md, fading in over the game in 1.5 s. The lose screen shows horses and non-horses looked at over the whole game, the level reached, and a chip for every animal looked at. "Horse again" skips the intro and starts level 1 with a new random pasture (or the same one again when the URL has `?seed=`). `?screen=win` and `?screen=lose` open straight on an end screen with a sample of looks, for testing.
 
 ### World and animals
@@ -171,7 +173,7 @@ Each level needs at least 5 horses to be winnable. Levels 2 and 3 have 11 spare 
 ### Scoring, winning and losing
 
 - `horsesThisLevel` reaches 5 → level complete. After level 3 → Win. Levels have no time limit.
-- `nonHorsesTotal` counts across the whole game. It reaching 3 → Lose immediately.
+- `nonHorsesTotal` counts across the whole game. It reaching 3 → the game is lost at once: looks stop counting, and the lose screen follows a 2 s pause.
 - The bottom strip's list resets each level. A game log keeps every looked-at animal for the end screens.
 
 ### Frame loop

@@ -25,6 +25,7 @@ const MAX_FRAME_TIME = 0.25;
 
 const canvas = /** @type {HTMLCanvasElement} */ (document.getElementById('pasture'));
 const ctx = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
+const viewport = /** @type {HTMLElement} */ (document.querySelector('.viewport'));
 const readout = createZoomReadout(
   /** @type {HTMLElement} */ (document.getElementById('zoom-readout')),
 );
@@ -118,6 +119,8 @@ function frame(now) {
   readout.update(zoomFactor(camera));
   strip.update(play);
   screens.update(play);
+  // Losing drains the pasture of color, from the last imposter through the lose screen's fade-in.
+  viewport.classList.toggle('lost', play.phase === 'losing' || play.phase === 'lost');
   music.update(play, elapsed);
   requestAnimationFrame(frame);
 }

@@ -170,6 +170,12 @@ export const LEVEL_COUNT = 3;
 /** Non-horses that end the game. Rule from DESIGN.md. */
 export const MAX_STRIKES = 3;
 
+/**
+ * Seconds between the last allowed imposter and the lose screen. The pasture drains of color
+ * meanwhile and no more looks count. (tune)
+ */
+export const LOSE_PAUSE_S = 2;
+
 /** Seconds the "Level n complete" card shows before the next level. (tune) */
 export const LEVEL_CARD_S = 2.5;
 

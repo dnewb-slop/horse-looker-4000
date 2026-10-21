@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSES_PER_LEVEL, LEVEL_CARD_S, MAX_STRIKES } from '../src/game/config.js';
+import { HORSES_PER_LEVEL, LEVEL_CARD_S, LOSE_PAUSE_S, MAX_STRIKES } from '../src/game/config.js';
 import { createPlay, stepPlay } from '../src/game/play.js';
 import { countLooks, nextPhase } from '../src/game/rules.js';
 import { createCamera } from '../src/game/camera.js';
@@ -93,11 +93,28 @@ test('finishing level 3 wins the game after its card', () => {
   assert.equal(play.level, 3);
 });
 
-test('the last allowed non-horse ends the game at once, and nothing counts after', () => {
+test('the last allowed non-horse loses the game; after a pause with no looks, the lose screen', () => {
   let play = lookAt(createPlay(7, 2), notHorse, MAX_STRIKES);
   play = stepPlay(play, FAR_CAMERA, HEAD_BOXES, DT);
+  assert.equal(play.phase, 'losing');
+
+  // Zoomed right in on an animal not yet looked at: during the pause, its meter never fills.
+  const target = play.animals.find((a) => !a.lookedAt);
+  assert.ok(target);
+  const zoom = (0.5 * 704) / 16;
+  const close = { ...FAR_CAMERA, zoom, targetZoom: zoom, x: target.x, y: target.y - 8 };
+  const log = play.log.length;
+  for (let i = 0; i < Math.floor(LOSE_PAUSE_S / DT) - 1; i++) {
+    play = stepPlay(play, close, HEAD_BOXES, DT);
+  }
+  assert.equal(play.phase, 'losing');
+  assert.equal(play.log.length, log);
+  assert.equal(play.nonHorsesTotal, MAX_STRIKES);
+  assert.ok(play.animals.every((a) => a.lookedAt || a.lookMeter === 0));
+
+  for (let i = 0; i < 3; i++) play = stepPlay(play, close, HEAD_BOXES, DT);
   assert.equal(play.phase, 'lost');
-  const after = stepPlay(play, FAR_CAMERA, HEAD_BOXES, DT);
+  const after = stepPlay(play, close, HEAD_BOXES, DT);
   assert.equal(after.phase, 'lost');
-  assert.equal(after.nonHorsesTotal, MAX_STRIKES);
+  assert.equal(after.log.length, log);
 });
