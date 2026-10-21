@@ -19,6 +19,7 @@ const animal = (over) => ({
   lookMeter: 0,
   lookPx: 32,
   lookedAt: false,
+  reactTime: 0,
   rng: 1,
   mode: 'idle',
   idleTime: 5,

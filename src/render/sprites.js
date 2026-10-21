@@ -23,13 +23,15 @@ import { GOAT } from './art/goat.js';
 import { HORSE_SUIT } from './art/horse-suit.js';
 import { REVERSE_CENTAUR } from './art/reverse-centaur.js';
 import { ROBOT_HORSE } from './art/robot-horse.js';
-import { walkFrame } from './art/motion.js';
+import { rearFrame, walkFrame } from './art/motion.js';
 import { SHEEP } from './art/sheep.js';
 import { drawOak } from './art/oak.js';
+import { FIRE_FRAMES } from './art/fire.js';
 import {
   BARN_PALETTE,
   BREED_PALETTES,
   DATACENTER_PALETTE,
+  FIRE_PALETTE,
   LOOKALIKE_KEYS,
   MARKER_HORSE,
   MARKER_NON_HORSE,
@@ -55,6 +57,7 @@ import {
  * @property {Box} headBox
  * @property {import('./art/motion.js').WalkRig} walk
  * @property {{mid: string[], near: string[], headBox: Box}} graze
+ * @property {import('./art/motion.js').RearRig} [rear] how it rears up when looked at (horses)
  */
 
 /** Every creature's art. */
@@ -84,7 +87,9 @@ export const HEAD_BOXES =
   );
 
 /**
- * The grid a creature shows in a pose at a tier. Far has no walk or graze frame: it stays still.
+ * The grid a creature shows in a pose at a tier. Far has no walk, graze or rearing frame: it
+ * stays still. A creature that doesn't rear stands instead. The rearing grid is taller than the
+ * others; the rest share the sprite box.
  * @param {CreatureArt} art
  * @param {import('../game/pose.js').Pose} pose
  * @param {GridTier} tier
@@ -92,6 +97,7 @@ export const HEAD_BOXES =
 export function poseGrid(art, pose, tier) {
   if (tier === 'far' || pose === 'stand') return art[tier];
   if (pose === 'graze') return art.graze[tier];
+  if (pose === 'rear') return art.rear ? rearFrame(art[tier], tier, art.rear) : art[tier];
   return walkFrame(art[tier], tier, art.walk);
 }
 
@@ -172,6 +178,7 @@ export function validateGrid(rows, width, height, palette) {
  * @property {Record<SceneryKind, Record<GridTier, SpriteImage>>} scenery
  * @property {Record<AnimalKind, Record<Pose, Record<GridTier, SpriteImage>>>} markers looked-at outlines, one
  *   grid pixel bigger than the sprite on every side: blue for horses, red for everything else
+ * @property {{fire: SpriteImage[]}} effects reaction effects: the robot horse's fire frames
  */
 
 /**
@@ -235,7 +242,12 @@ export function createSpriteSet() {
   /** @param {(tier: GridTier) => SpriteImage} make */
   const perTier = (make) => ({ far: make('far'), mid: make('mid'), near: make('near') });
   /** @param {(pose: Pose) => Record<GridTier, SpriteImage>} make */
-  const perPose = (make) => ({ stand: make('stand'), walk: make('walk'), graze: make('graze') });
+  const perPose = (make) => ({
+    stand: make('stand'),
+    walk: make('walk'),
+    graze: make('graze'),
+    rear: make('rear'),
+  });
   /** @param {AnimalKind} kind */
   const creature = (kind) => {
     /** @param {Breed} breed */
@@ -276,6 +288,7 @@ export function createSpriteSet() {
     creatures: perKind(creature),
     scenery: { barn: scenery('barn'), oak: scenery('oak'), datacenter: scenery('datacenter') },
     markers: perKind(marker),
+    effects: { fire: FIRE_FRAMES.map((rows) => gridToCanvas(rows, FIRE_PALETTE)) },
   };
 }
 
@@ -310,6 +323,9 @@ export function drawAnimal(ctx, cam, sprites, animal, pose = 'stand') {
     }
     return;
   }
+  const image = sprites.creatures[animal.kind][animal.breed][pose][tier];
+  // A rearing horse's grid is taller than the sprite box, so size it from the grid.
+  const height = image.height / TIER_DENSITY[tier];
   if (animal.lookedAt) {
     // The outline grid has one extra grid pixel on each side.
     const pad = 1 / TIER_DENSITY[tier];
@@ -320,20 +336,11 @@ export function drawAnimal(ctx, cam, sprites, animal, pose = 'stand') {
       animal.x,
       animal.y + pad,
       HORSE_WIDTH + 2 * pad,
-      HORSE_HEIGHT + 2 * pad,
+      height + 2 * pad,
       animal.facing,
     );
   }
-  drawImageAt(
-    ctx,
-    cam,
-    sprites.creatures[animal.kind][animal.breed][pose][tier],
-    animal.x,
-    animal.y,
-    HORSE_WIDTH,
-    HORSE_HEIGHT,
-    animal.facing,
-  );
+  drawImageAt(ctx, cam, image, animal.x, animal.y, HORSE_WIDTH, height, animal.facing);
 }
 
 /** Smallest radius of the ring marking a looked-at dot, in screen pixels. */

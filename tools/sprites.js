@@ -11,11 +11,13 @@ import { renderPasture } from '../src/render/renderer.js';
 import { HILL_COLORS } from '../src/render/palette.js';
 import { BREED_NAMES, KIND_NAMES } from '../src/ui/hud.js';
 import {
+  CREATURES,
   SCENERY,
   TIER_DENSITY,
   createSpriteSet,
   drawAnimal,
   drawScenery,
+  poseGrid,
 } from '../src/render/sprites.js';
 
 const sprites = createSpriteSet();
@@ -24,7 +26,7 @@ const BREEDS = ['A', 'B', 'C'];
 /** On-screen horse heights to show each tier at: inside that tier's range. */
 const SHOW_PX = { dot: 6, far: 24, mid: 96, near: 220 };
 /**
- * The standing sprite at every tier, then the walk and graze frames at Mid and Near.
+ * The standing sprite at every tier, then the walk, graze and rearing frames at Mid and Near.
  * @type {{pose: import('../src/game/pose.js').Pose, px: number, caption: string}[]}
  */
 const SHOTS = [
@@ -33,7 +35,7 @@ const SHOTS = [
     px,
     caption: `${tier} (${px} px tall)`,
   })),
-  .../** @type {const} */ (['walk', 'graze']).flatMap((pose) =>
+  .../** @type {const} */ (['walk', 'graze', 'rear']).flatMap((pose) =>
     /** @type {const} */ (['mid', 'near']).map((tier) => ({
       pose,
       px: SHOW_PX[tier],
@@ -50,9 +52,13 @@ const SHOTS = [
  */
 function creatureRow(row, label, who) {
   for (const { pose, px, caption } of SHOTS) {
+    // Only horses rear; the rest stand when looked at.
+    if (pose === 'rear' && !CREATURES[who.kind].rear) continue;
     const zoom = px / HORSE_HEIGHT;
     const w = Math.max(48, Math.ceil(HORSE_WIDTH * zoom) + 16);
-    const h = Math.ceil(px) + 12;
+    // A rearing horse is taller than its sprite box.
+    const tall = pose === 'rear' ? poseGrid(CREATURES[who.kind], pose, 'mid').length / 16 : 1;
+    const h = Math.ceil(px * tall) + 12;
     const ctx = figure(row, w, h, `${label} · ${caption}`);
     const animal = { ...who, x: 0, y: 0, facing: /** @type {1} */ (1) };
     drawAnimal(ctx, stageCamera(w, h, zoom), sprites, animal, pose);

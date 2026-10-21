@@ -112,3 +112,12 @@ export const LOOKALIKE_KEYS = {
 /** Look meter: neutral white, so it doesn't give away what the animal is. */
 export const LOOK_METER = '#ffffff';
 export const LOOK_METER_BACK = 'rgba(0, 0, 0, 0.55)';
+
+/** The robot horse's laser beam (a soft red glow around a bright red core) and its fire. */
+export const LASER_GLOW = 'rgba(255, 70, 50, 0.5)';
+export const LASER_CORE = '#ff1e14';
+export const FIRE_PALETTE = { r: '#d8261c', o: '#ff7a1a', y: '#ffd23a', w: '#fff6c8' };
+
+/** Speech bubbles: white, with dark ink for the border and words. */
+export const BUBBLE_FILL = '#ffffff';
+export const BUBBLE_INK = '#1b2614';

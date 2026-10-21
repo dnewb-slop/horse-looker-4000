@@ -113,3 +113,68 @@ export function grazeHeadBox(box, rig, width, height) {
   const y = clamp(ny0 / height);
   return { x, y, w: clamp(nx1 / width) - x, h: clamp(ny1 / height) - y };
 }
+
+/**
+ * @typedef {object} RearRig tips a creature up onto its hind legs, for rearing up
+ * @property {[number, number]} pivot world point the body turns about: the hip
+ * @property {number} degrees how far the front lifts
+ * @property {(wx: number, wy: number) => boolean} planted the hind legs, in world units, which stay
+ *   where they are
+ */
+
+/**
+ * The rearing frame: everything but the planted hind legs turns about the hip so the front lifts,
+ * by nearest-neighbor sampling so every pixel keeps its palette color. Turning pixel art leaves
+ * gaps in its outline, so any empty cell beside a colored one is outlined again. The grid grows
+ * taller to fit the raised head; it keeps its width and the hooves stay on the bottom row.
+ * @param {string[]} rows
+ * @param {MotionTier} tier
+ * @param {RearRig} rig
+ */
+export function rearFrame(rows, tier, rig) {
+  const d = DENSITY[tier];
+  const width = rows[0].length;
+  const legs = editGrid(rows, tier, (wx, wy) => (rig.planted(wx, wy) ? undefined : '.'));
+  const body = eraseFromGrid(rows, tier, (wx, wy) => rig.planted(wx, wy));
+  const [px, py] = [rig.pivot[0] * d, rig.pivot[1] * d];
+  const a = (rig.degrees * Math.PI) / 180;
+  const [cos, sin] = [Math.cos(a), Math.sin(a)];
+  // Head room: how far above the pivot the turned sprite reaches.
+  let reach = 0;
+  body.forEach((row, y) => {
+    for (let x = 0; x < width; x++) {
+      if (row[x] === '.') continue;
+      const [dx, dy] = [x + 0.5 - px, y + 0.5 - py];
+      reach = Math.max(reach, -(dy * cos - dx * sin));
+    }
+  });
+  const height = Math.max(rows.length, Math.ceil(reach + (rows.length - py)));
+  const top = height - rows.length;
+  // Each output cell samples the source cell that turns onto it.
+  const turned = Array.from({ length: height }, (_, y) =>
+    Array.from({ length: width }, (_, x) => {
+      const [dx, dy] = [x + 0.5 - px, y - top + 0.5 - py];
+      const sx = Math.floor(px + dx * cos - dy * sin);
+      const sy = Math.floor(py + dx * sin + dy * cos);
+      // The planted legs' colors stay on top, so the turned body's outline can't cut them.
+      const leg = legs[y - top]?.[x] ?? '.';
+      if (leg !== '.' && leg !== 'o') return leg;
+      const k = body[sy]?.[sx] ?? '.';
+      return k === '.' ? leg : k;
+    }),
+  );
+  /** @param {number} x @param {number} y */
+  const filled = (x, y) => {
+    const k = turned[y]?.[x];
+    return k !== undefined && k !== '.' && k !== 'o';
+  };
+  return turned.map((row, y) =>
+    row
+      .map((k, x) =>
+        k === '.' && (filled(x - 1, y) || filled(x + 1, y) || filled(x, y - 1) || filled(x, y + 1))
+          ? 'o'
+          : k,
+      )
+      .join(''),
+  );
+}
