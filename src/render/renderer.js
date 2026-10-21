@@ -3,10 +3,20 @@
 //
 // Hills are drawn back to front. Right after each hill come the tufts, scenery and animals
 // standing on it, ordered by their base, so the hill in front covers anything behind its crest
-// and a horse behind a barn is partly hidden.
+// and a horse behind a barn is partly hidden. The grass around a live oak is ordered with them,
+// so tufts in front of the trunk cover its base.
 
 import { screenToWorld, worldToScreen } from '../game/camera.js';
-import { HORSE_HEIGHT, HORSE_WIDTH, WORLD_HEIGHT, WORLD_WIDTH } from '../game/config.js';
+import {
+  HORSE_HEIGHT,
+  HORSE_WIDTH,
+  OAK_GRASS_HEIGHT,
+  OAK_GRASS_SPREAD_X,
+  OAK_GRASS_SPREAD_Y,
+  OAK_GRASS_TUFTS,
+  WORLD_HEIGHT,
+  WORLD_WIDTH,
+} from '../game/config.js';
 import { headCenter } from '../game/detect.js';
 import { animalPose, headBoxFor } from '../game/pose.js';
 import { ridgeY } from '../game/world.js';
@@ -67,14 +77,19 @@ export function renderPasture(ctx, cam, pasture, seed, sprites) {
   ctx.clip();
 
   const tufts = visibleTufts(cam, hills, seed);
+  const grass = oakGrass(scenery, hills, seed);
   hills.forEach((hill, i) => {
     drawHill(ctx, cam, hill, left, right, bottom);
-    drawTufts(ctx, cam, tufts[i]);
+    drawTufts(ctx, cam, tufts[i], TUFT_HEIGHT);
     if (!sprites) return;
     /** @type {({y: number, draw: () => void})[]} */
     const items = [];
     for (const s of scenery) {
       if (s.hill === i) items.push({ y: s.y, draw: () => drawScenery(ctx, cam, sprites, s) });
+    }
+    for (const t of grass) {
+      if (t.hill === i)
+        items.push({ y: t.y, draw: () => drawTufts(ctx, cam, [t], OAK_GRASS_HEIGHT) });
     }
     for (const a of animals) {
       if (a.hill === i) {
@@ -182,14 +197,50 @@ function visibleTufts(cam, hills, seed) {
   return buckets;
 }
 
+/** Grass placed for each level's scenery, worked out once per level rather than every frame. */
+const grassCache = new WeakMap();
+
+/**
+ * Lots of grass around each live oak's trunk, thickest near it. Placed deterministically from
+ * the tree's position, and only on the tree's own hill, below its crest.
+ * @param {import('../game/world.js').Scenery[]} scenery
+ * @param {import('../game/world.js').Hill[]} hills
+ * @param {number} seed
+ * @returns {{x: number, y: number, hill: number}[]}
+ */
+export function oakGrass(scenery, hills, seed) {
+  const cached = grassCache.get(scenery);
+  if (cached) return cached;
+  /** @type {{x: number, y: number, hill: number}[]} */
+  const grass = [];
+  for (const s of scenery) {
+    if (s.kind !== 'oak') continue;
+    let h = hash(Math.round(s.x), Math.round(s.y), seed);
+    /** A value from -1 to 1, most often near 0, so the grass is thickest at the trunk. */
+    const centered = () => {
+      h = hash(h, 1, seed);
+      return (h & 0xffff) / 0xffff + (h >>> 16) / 0xffff - 1;
+    };
+    for (let i = 0; i < OAK_GRASS_TUFTS; i++) {
+      const x = s.x + centered() * OAK_GRASS_SPREAD_X;
+      const y = s.y + centered() * OAK_GRASS_SPREAD_Y;
+      if (x < 0 || x > WORLD_WIDTH || ridgeY(hills[s.hill], x) > y) continue;
+      grass.push({ x, y, hill: s.hill });
+    }
+  }
+  grassCache.set(scenery, grass);
+  return grass;
+}
+
 /**
  * Small blades of grass that fade in at close zoom.
  * @param {CanvasRenderingContext2D} ctx
  * @param {import('../game/camera.js').Camera} cam
  * @param {{x: number, y: number}[]} tufts world positions
+ * @param {number} height in world units
  */
-function drawTufts(ctx, cam, tufts) {
-  const tuftPx = TUFT_HEIGHT * cam.zoom;
+function drawTufts(ctx, cam, tufts, height) {
+  const tuftPx = height * cam.zoom;
   if (tuftPx < TUFT_MIN_PX || tufts.length === 0) return;
   const blade = Math.max(1, Math.round(cam.zoom));
   const tall = Math.round(tuftPx);

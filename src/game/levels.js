@@ -13,12 +13,14 @@
  * @property {number} goatsAndSheep split between goats and sheep at random
  * @property {number} others look-alikes of random kinds
  * @property {Breed[]} breeds horse breeds, chosen at random per horse
+ * @property {Partial<Record<Breed, number>>} [maxPerBreed] most horses of a breed on the level
  */
 
 /** @type {LevelDef[]} */
 export const LEVELS = [
   { horses: 20, goatsAndSheep: 20, others: 0, breeds: ['A'] },
-  { horses: 16, goatsAndSheep: 64, others: 0, breeds: ['A', 'B', 'C'] },
+  // Owner's call: at most two black horses on level 2.
+  { horses: 16, goatsAndSheep: 64, others: 0, breeds: ['A', 'B', 'C'], maxPerBreed: { A: 2 } },
   { horses: 16, goatsAndSheep: 48, others: 16, breeds: ['A', 'B', 'C'] },
 ];
 
@@ -57,8 +59,13 @@ export function levelSeed(seed, level) {
 export function levelRoster(rng, def) {
   /** @type {{kind: AnimalKind, breed: Breed}[]} */
   const roster = [];
+  /** @type {Partial<Record<Breed, number>>} */
+  const counts = {};
   for (let i = 0; i < def.horses; i++) {
-    roster.push({ kind: 'horse', breed: def.breeds[Math.floor(rng() * def.breeds.length)] });
+    const open = def.breeds.filter((b) => (counts[b] ?? 0) < (def.maxPerBreed?.[b] ?? Infinity));
+    const breed = open[Math.floor(rng() * open.length)];
+    counts[breed] = (counts[breed] ?? 0) + 1;
+    roster.push({ kind: 'horse', breed });
   }
   for (let i = 0; i < def.goatsAndSheep; i++) {
     const kind = rng() < 0.5 ? 'goat' : 'sheep';

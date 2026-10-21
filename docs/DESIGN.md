@@ -53,7 +53,7 @@ The challenge is that the pasture is also populated with creatures that are not 
 
 ### Scenery
 
-The pasture contains barns, big trees (California live oaks, with broad, rounded, low-spreading canopies), and datacenters. Datacenters are the largest objects, small by datacenter standards but at least twice the size of a barn. Animals walk around scenery and can pass behind it, which can hide them.
+The pasture contains barns, big trees (California live oaks, with broad, rounded, low-spreading canopies), and datacenters. Datacenters are the largest objects, small by datacenter standards but at least twice the size of a barn. Animals walk around scenery and can pass behind it, which can hide them. Levels 2 and 3 have more barns and trees than level 1, and lots of grass grows around the trees.
 
 ### Hills
 
@@ -78,11 +78,11 @@ From far away, goats, sheep, centaurs and robot horses look almost exactly like 
 
 ### Animals for each level
 
-| Level | Animals | Horses   | Goats and sheep               | Other creatures      | Horse breeds      |
-| ----- | ------- | -------- | ----------------------------- | -------------------- | ----------------- |
-| 1     | 40      | 50% (20) | 50%, mix randomized per level | none                 | A only            |
-| 2     | 80      | 20% (16) | 80%, mix randomized per level | none                 | A, B, C at random |
-| 3     | 80      | 20% (16) | 60%, mix randomized per level | 20%, kinds at random | A, B, C at random |
+| Level | Animals | Horses   | Goats and sheep               | Other creatures      | Horse breeds                       |
+| ----- | ------- | -------- | ----------------------------- | -------------------- | ---------------------------------- |
+| 1     | 40      | 50% (20) | 50%, mix randomized per level | none                 | A only                             |
+| 2     | 80      | 20% (16) | 80%, mix randomized per level | none                 | A, B, C at random, but at most 2 A |
+| 3     | 80      | 20% (16) | 60%, mix randomized per level | 20%, kinds at random | A, B, C at random                  |
 
 ### Music
 

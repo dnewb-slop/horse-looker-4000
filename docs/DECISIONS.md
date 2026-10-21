@@ -2,6 +2,14 @@
 
 Settled choices and why, newest first within each section. Check here before re-opening a question; changing one needs the owner's agreement and a new entry.
 
+## Level 2 and 3 pastures (2026-10-21)
+
+| Decision           | Choice                                                                                                                                                                                                                                                                                           | Why                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| Black horses       | Level 2 has at most 2 Friesians (`maxPerBreed` in the level table); the rest of its 16 horses are Haflingers and Camarillo Whites. DESIGN.md updated                                                                                                                                             | Owner's request                               |
+| More scenery       | Scenery counts are per level (`SCENERY_PER_LEVEL`): level 1 keeps 3 barns and 6 live oaks; levels 2 and 3 get 5 barns and 12 live oaks. Each level keeps 1 datacenter                                                                                                                            | Owner: more trees and barns on levels 2 and 3 |
+| Grass around trees | 100 tufts per live oak, 8 world units tall (open-pasture tufts are 5), spread up to 64 units sideways and 14 up or down the slope, thickest at the trunk. Drawn in depth order with the tree, so tufts in front cover the trunk's base. Decoration only: grass never hides an animal from a look | Owner: lots of grass around the trees         |
+
 ## Music (milestone 10, 2026-10-21)
 
 | Decision        | Choice                                                                                                                                                                                                                                                                                                                                                | Why                                                                                           |

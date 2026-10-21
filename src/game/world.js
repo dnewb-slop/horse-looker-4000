@@ -11,10 +11,8 @@ import {
   CROSS_OVERSHOOT,
   MIN_RIDGE_GAP,
   VALLEY_DEPTH,
-  BARN_COUNT,
   BARN_HEIGHT,
   BARN_WIDTH,
-  DATACENTER_COUNT,
   DATACENTER_HEIGHT,
   DATACENTER_WIDTH,
   GRAZE_CHANCE,
@@ -29,7 +27,6 @@ import {
   HILL_COUNT,
   HORSE_HEIGHT,
   HORSE_WIDTH,
-  OAK_COUNT,
   OAK_HEIGHT,
   OAK_WIDTH,
   SCENERY_FOOTPRINT_DEPTH,
@@ -273,14 +270,15 @@ export function inSceneryFootprint(scenery, x, y) {
  * inside the pasture, and no two sprites overlap. Biggest first, so they always find room.
  * @param {() => number} rng
  * @param {Hill[]} hills
+ * @param {{barns: number, oaks: number, datacenters: number}} counts how many of each
  * @returns {Scenery[]}
  */
-export function placeScenery(rng, hills) {
+export function placeScenery(rng, hills, counts) {
   /** @type {SceneryKind[]} */
   const kinds = [
-    ...Array(DATACENTER_COUNT).fill('datacenter'),
-    ...Array(BARN_COUNT).fill('barn'),
-    ...Array(OAK_COUNT).fill('oak'),
+    ...Array(counts.datacenters).fill('datacenter'),
+    ...Array(counts.barns).fill('barn'),
+    ...Array(counts.oaks).fill('oak'),
   ];
   /** @type {Scenery[]} */
   const placed = [];

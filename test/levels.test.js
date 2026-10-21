@@ -1,7 +1,7 @@
 // @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSES_PER_LEVEL, LEVEL_COUNT } from '../src/game/config.js';
+import { HORSES_PER_LEVEL, LEVEL_COUNT, SCENERY_PER_LEVEL } from '../src/game/config.js';
 import { LEVELS, LOOKALIKE_COAT, OTHER_KINDS, levelRoster, levelSeed } from '../src/game/levels.js';
 import { createPlay } from '../src/game/play.js';
 import { createRng } from '../src/game/rng.js';
@@ -33,6 +33,23 @@ test('rosters have the right mix, and look-alikes wear their paired coat', () =>
         if (a.kind !== 'horse') assert.equal(a.breed, LOOKALIKE_COAT[a.kind]);
       }
     });
+  }
+});
+
+test('level 2 never has more than two black horses', () => {
+  assert.equal(LEVELS[1].maxPerBreed?.A, 2);
+  for (let seed = 0; seed < 200; seed++) {
+    const roster = levelRoster(createRng(seed), LEVELS[1]);
+    const black = roster.filter((a) => a.kind === 'horse' && a.breed === 'A').length;
+    assert.ok(black <= 2, `seed ${seed}: ${black} black horses`);
+  }
+});
+
+test('levels 2 and 3 have more barns and trees than level 1', () => {
+  const [one, two, three] = SCENERY_PER_LEVEL;
+  for (const busier of [two, three]) {
+    assert.ok(busier.barns > one.barns);
+    assert.ok(busier.oaks > one.oaks);
   }
 });
 

@@ -123,7 +123,7 @@ stateDiagram-v2
 - Each animal has `kind` (horse, goat, sheep, centaur, reverseCentaur, robotHorse, horseSuit), `breed` (A, B, C, or none), `color`, `x`, `y`, `facing`, `lookMeter` and `lookedAt`.
 - Animals spawn at random positions with a minimum spacing, so two never overlap at close zoom.
 - Animals graze: they idle, then walk a short distance in a random direction and stop. Walking alternates two frames 4 times a second (`WALK_FRAME_RATE`). 70% of rests are spent with the head down (`GRAZE_CHANCE`), lifting it 1 s before walking off (`GRAZE_LOOK_UP_S`) _(tune)_. The head box follows the pose, so a grazing head can drop behind a crest. They stay inside the pasture and walk around scenery.
-- **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 3.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Each level gets roughly 3 barns, 6 live oaks and 1 datacenter _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
+- **Scenery:** barns, California live oaks and datacenters are placed at level start, before animals, and never overlap each other. Each object stands on one hill, like animals. Datacenters are the largest, at least twice a barn's size. Starting sizes: a barn about 5 horses wide, a live oak about 4 horses wide and 3.5 tall (a broad, rounded, low-spreading canopy on a short dark trunk), a datacenter about 10 horses wide. Level 1 gets 3 barns, 6 live oaks and 1 datacenter; levels 2 and 3 get 5 barns, 12 live oaks and 1 datacenter _(tune)_. Lots of taller grass tufts grow around each live oak's trunk _(tune)_. Animals can pass behind scenery. Everything is drawn back to front by its base, so a horse behind a barn is partly hidden.
 - All randomness comes from a seeded generator (mulberry32). A fixed seed makes tests and bug reports reproducible.
 
 ### Hills with depth
@@ -159,11 +159,11 @@ Each hill is a layer. Everything on the pasture (animals and scenery) belongs to
 
 ### Levels
 
-| Level | Animals | Horses   | Goats + sheep        | Other creatures      | Horse breeds      |
-| ----- | ------- | -------- | -------------------- | -------------------- | ----------------- |
-| 1     | 40      | 50% (20) | 50%, split at random | 0%                   | A only            |
-| 2     | 80      | 20% (16) | 80%, split at random | 0%                   | A, B, C at random |
-| 3     | 80      | 20% (16) | 60%, split at random | 20%, kinds at random | A, B, C at random |
+| Level | Animals | Horses   | Goats + sheep        | Other creatures      | Horse breeds                   |
+| ----- | ------- | -------- | -------------------- | -------------------- | ------------------------------ |
+| 1     | 40      | 50% (20) | 50%, split at random | 0%                   | A only                         |
+| 2     | 80      | 20% (16) | 80%, split at random | 0%                   | A, B, C at random, at most 2 A |
+| 3     | 80      | 20% (16) | 60%, split at random | 20%, kinds at random | A, B, C at random              |
 
 Each level needs at least 5 horses to be winnable. Levels 2 and 3 have 11 spare horses, which keeps the hunt for the last horse short _(tune)_.
 
@@ -208,15 +208,15 @@ Goats, sheep, centaurs and robot horses differ from their horse by only a few pi
 
 ### Palette
 
-| Use                      | Colors                                                                                 |
-| ------------------------ | -------------------------------------------------------------------------------------- |
-| Breed A, Friesian        | Black coat, dark gray highlights, black mane                                           |
-| Breed B, Haflinger       | Golden chestnut coat, blond mane and tail                                              |
-| Breed C, Camarillo White | White coat, light gray shading, dark eyes and hooves                                   |
-| Look-alikes              | Same coat colors as their paired breed, per DESIGN.md                                  |
-| Looked-at outline        | Blue for horses, red for non-horses (blue, not green, so it stands out from the grass) |
-| Look meter               | Neutral white                                                                          |
-| Pasture                  | Three or four greens for hills, plus grass tufts drawn procedurally at close zoom      |
+| Use                      | Colors                                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Breed A, Friesian        | Black coat, dark gray highlights, black mane                                                                     |
+| Breed B, Haflinger       | Golden chestnut coat, blond mane and tail                                                                        |
+| Breed C, Camarillo White | White coat, light gray shading, dark eyes and hooves                                                             |
+| Look-alikes              | Same coat colors as their paired breed, per DESIGN.md                                                            |
+| Looked-at outline        | Blue for horses, red for non-horses (blue, not green, so it stands out from the grass)                           |
+| Look meter               | Neutral white                                                                                                    |
+| Pasture                  | Three or four greens for hills, plus grass tufts drawn procedurally at close zoom, thickest around the live oaks |
 
 ### Reviewing art
 
